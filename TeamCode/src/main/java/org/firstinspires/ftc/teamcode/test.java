@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,12 +8,21 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
 @TeleOp
+@Config
+
 public class test extends LinearOpMode {
+
+    public static double onoPos;
+    public static double paletaPos;
+
     @Override
+
     public void runOpMode() throws InterruptedException {
         DcMotorEx frontLeft = hardwareMap.get(DcMotorEx.class, "front_left");
         DcMotorEx frontRight = hardwareMap.get(DcMotorEx.class, "front_right");
@@ -20,6 +30,9 @@ public class test extends LinearOpMode {
         DcMotorEx backRight = hardwareMap.get(DcMotorEx.class, "back_right");
         DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
         DcMotorEx intake = hardwareMap.get(DcMotorEx.class, "intake");
+
+        ServoImplEx onofrei = hardwareMap.get(ServoImplEx.class, "onofrei");
+        ServoImplEx paleta = hardwareMap.get(ServoImplEx.class, "paleta");
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -42,6 +55,8 @@ public class test extends LinearOpMode {
 
         boolean launcherState = false, intakeState = false;
 
+        ElapsedTime time = new ElapsedTime();
+
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -62,10 +77,12 @@ public class test extends LinearOpMode {
             // Store gamepad values from the previous loop iteration
             previousGamepad1.copy(currentGamepad1);
             previousGamepad2.copy(currentGamepad2);
+            
             // Store gamepad values from this loop iteration
             currentGamepad1.copy(gamepad1);
             currentGamepad2.copy(gamepad2);
 
+            //sistem de miscare
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
@@ -80,16 +97,22 @@ public class test extends LinearOpMode {
             backLeft.setPower(backLeftPower);
             frontRight.setPower(frontRightPower);
             backRight.setPower(backRightPower);
-
+            
+            //Lansator
             if (previousGamepad1.a && !currentGamepad1.a) {
                 launcherState = !launcherState;
+                time.reset();
             }
             if (launcherState) {
                 launcher.setPower(0.6);
+                if(time.milliseconds()>=3000)
+                    onofrei.setPosition(1);
             } else {
                 launcher.setPower(0);
+                onofrei.setPosition(0);
             }
 
+            //Intake
             if (previousGamepad1.b && !currentGamepad1.b) {
                 intakeState = !intakeState;
             }
@@ -99,7 +122,14 @@ public class test extends LinearOpMode {
                 intake.setPower(0);
             }
 
+            /*//Onofrei
+            onofrei.setPosition(onoPos);
+
+            //Paleta
+            paleta.setPosition(paletaPos);*/
+
         }
 
     }
+
 }
