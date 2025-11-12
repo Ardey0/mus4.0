@@ -2,11 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.util.List;
 
+@TeleOp
 public class test extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -14,12 +18,30 @@ public class test extends LinearOpMode {
         DcMotorEx frontRight = hardwareMap.get(DcMotorEx.class, "front_right");
         DcMotorEx backLeft = hardwareMap.get(DcMotorEx.class, "back_left");
         DcMotorEx backRight = hardwareMap.get(DcMotorEx.class, "back_right");
+        DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        DcMotorEx intake = hardwareMap.get(DcMotorEx.class, "intake");
+
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad currentGamepad2 = new Gamepad();
 
         Gamepad previousGamepad1 = new Gamepad();
         Gamepad previousGamepad2 = new Gamepad();
+
+        boolean launcherState = false, intakeState = false;
+
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -58,6 +80,25 @@ public class test extends LinearOpMode {
             backLeft.setPower(backLeftPower);
             frontRight.setPower(frontRightPower);
             backRight.setPower(backRightPower);
+
+            if (previousGamepad1.a && !currentGamepad1.a) {
+                launcherState = !launcherState;
+            }
+            if (launcherState) {
+                launcher.setPower(0.6);
+            } else {
+                launcher.setPower(0);
+            }
+
+            if (previousGamepad1.b && !currentGamepad1.b) {
+                intakeState = !intakeState;
+            }
+            if (intakeState) {
+                intake.setPower(1);
+            } else {
+                intake.setPower(0);
+            }
+
         }
 
     }
