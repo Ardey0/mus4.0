@@ -1,3 +1,31 @@
+## REGULI pentru Cod Citibil
+
+1)  Nume sugestive pentru clase, obiecte si metode.
+
+    ex: ASA DA: ``public class Launcher ... {...}``
+    ``launcher.setPower(Launcher.LAUNCH_FROM_CLOSE)``
+    ``launcher.resetEncoder()``
+
+    ASA NU: ``public class Dorel ... {...}``
+    ``launcher.ceva(...)``
+
+2)  Fara numere magice. Toate numerele trebuie sa vina dintr-o variabila.
+
+3)  Metodele sa nu aiba mai mult de 14-16 randuri, iar randurile sa nu depaseasca linia de la IDE.
+    (preferabil, nu obligatoriu; uneori s-ar putea sa fie
+    mai complicat de citit/scris daca se tot apeleaza una pe alta; e ok sa depasesti linia cu cateva caractere).
+
+4)  Nume sugestive la commit-uri
+
+    ex: ASA DA: ``fix trajectory in auto albastru``
+
+    ASA NU: ``cacamaca``
+    ``shsghsfghstfgh``
+
+5)  Fara AI slop. Nu copiati de pe gpt daca nu intelegeti/nu are sens codul.
+
+
+
 ## TeamCode Module
 
 Welcome!
