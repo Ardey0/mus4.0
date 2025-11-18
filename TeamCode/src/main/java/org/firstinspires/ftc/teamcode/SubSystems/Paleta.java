@@ -11,12 +11,18 @@ public class Paleta {
         private AnalogInput encoder = null;
         public static final double
                 COLLECT1 = 0,
-                COLLECT2 = 0,
-                COLLECT3 = 0,
-                LANSEAZA1 = 0,
-                LANSEAZA2 = 0,
-                LANSEAZA3 = 0;
+                COLLECT2 = 0.36,
+                COLLECT3 = 0.71,
+                LAUNCH1 = 0.85,
+                LAUNCH2 = 0.14,
+                LAUNCH3 = 0.5,
+                BLOCAT = 1;
+        public enum State{
+            SHUFFLE,
+            LAUNCH,
+            COLLECT
 
+        }
         public Paleta(@NonNull HardwareMap hardwareMap){
             this.servo = hardwareMap.get(ServoImplEx.class, "paleta");
             this.encoder = hardwareMap.get(AnalogInput.class, "encoder");
@@ -35,6 +41,11 @@ public class Paleta {
             }
         }
 
+        public State getState(){
+            State state;
+            double angle = getPosition();
+            return null;
+        }
         public void disable() {
             if (servo.isPwmEnabled()) {
                 servo.setPwmDisable();

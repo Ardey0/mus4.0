@@ -127,7 +127,6 @@ public class test extends LinearOpMode {
 
             //Paleta
             paleta.setPosition(paletaPos);*/
-
         }
 
     }
