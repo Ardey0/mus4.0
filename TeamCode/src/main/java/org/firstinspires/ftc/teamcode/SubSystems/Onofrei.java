@@ -11,10 +11,8 @@ import org.jetbrains.annotations.NotNull;
 public class Onofrei {
     private Servo onofrei;
     private ServoImplEx servo = null;
-    public enum State {
-        STRANS,
-        EXTINS
-    };
+
+    public static final double CLOSED=1, OPEN=0;
     public Onofrei(@NotNull HardwareMap hardwareMap) {
         this.servo = hardwareMap.get(ServoImplEx.class, "onofrei");
     }
@@ -22,7 +20,14 @@ public class Onofrei {
     public void SetPositon (double position) {
         servo.setPosition(position);
     }
-
-
-
+    public void enable() {
+        if (!servo.isPwmEnabled()) {
+            servo.setPwmEnable();
+        }
+    }
+    public void disable() {
+        if (servo.isPwmEnabled()) {
+            servo.setPwmDisable();
+                    }
+            }
 }
