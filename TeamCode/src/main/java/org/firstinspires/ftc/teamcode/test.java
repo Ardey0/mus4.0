@@ -112,7 +112,7 @@ public class test extends LinearOpMode {
                 onofrei.setPosition(0);
             }
 
-            //Intake
+            //IntakeSubsystem
             if (previousGamepad1.b && !currentGamepad1.b) {
                 intakeState = !intakeState;
             }
