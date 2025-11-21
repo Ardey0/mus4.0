@@ -2,30 +2,34 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.seattlesolvers.solverslib.command.CommandBase;
 
+import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.RoataSubsystem;
 
 public class PlaceBall extends CommandBase {
-    private final RoataSubsystem roata;
+    private final PaleteSubsytem palete;
+    private final OnofreiSubsystem onofrei;
     private final int sector;
 
-    public PlaceBall(RoataSubsystem roataSubsystem, int sector) {
-        this.roata = roataSubsystem;
+    public PlaceBall(PaleteSubsytem paleteSubsytem, OnofreiSubsystem onofreiSubsystem, int sector) {
+        this.palete = paleteSubsytem;
+        this.onofrei = onofreiSubsystem;
         this.sector = sector;
 
-        addRequirements(roata);
+        addRequirements(palete, onofrei);
     }
 
     public void initialize() {
-        roata.setOnofreiPosition(0);
+        onofrei.setPosition(OnofreiSubsystem.IN);
         switch (sector) {
             case 1:
-                roata.setPaletePosition(0);
+                palete.setPosition(PaleteSubsytem.IN_BILA_1);
                 break;
             case 2:
-                roata.setPaletePosition(0.36);
+                palete.setPosition(PaleteSubsytem.IN_BILA_2);
                 break;
             case 3:
-                roata.setPaletePosition(0.71);
+                palete.setPosition(PaleteSubsytem.IN_BILA_3);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid sector: " + sector);

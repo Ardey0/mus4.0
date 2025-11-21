@@ -105,11 +105,11 @@ public class test extends LinearOpMode {
             }
             if (launcherState) {
                 launcher.setPower(0.6);
-                if(time.milliseconds()>=3000)
-                    onofrei.setPosition(1);
+//                if(time.milliseconds()>=3000)
+//                    onofrei.setPosition(1);
             } else {
                 launcher.setPower(0);
-                onofrei.setPosition(0);
+//                onofrei.setPosition(0);
             }
 
             //IntakeSubsystem
@@ -122,11 +122,11 @@ public class test extends LinearOpMode {
                 intake.setPower(0);
             }
 
-            /*//Onofrei
+            //Onofrei
             onofrei.setPosition(onoPos);
 
             //Paleta
-            paleta.setPosition(paletaPos);*/
+            paleta.setPosition(paletaPos);
 
         }
 

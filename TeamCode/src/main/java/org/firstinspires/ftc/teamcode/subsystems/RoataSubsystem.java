@@ -1,23 +1,37 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.seattlesolvers.solverslib.command.SubsystemBase;
-import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
+import java.util.HashMap;
+import java.util.Map;
 
-public class RoataSubsystem extends SubsystemBase {
-    private final ServoEx palete, onofrei;
+public class RoataSubsystem {
+    private static final RoataSubsystem roata = new RoataSubsystem();
 
-    public RoataSubsystem(HardwareMap hwMap) {
-        this.palete = new ServoEx(hwMap, "palete");
-        this.onofrei = new ServoEx(hwMap, "onofrei");
-        /// power catching
+    // vars
+    String[] sector = new String[3];
+
+    private RoataSubsystem() {
+        // def values
     }
 
-    public void setPaletePosition(double pos) {
-        palete.set(pos);
+    public static RoataSubsystem getInstance() {
+        return roata;
     }
 
-    public void setOnofreiPosition(double pos) {
-        onofrei.set(pos);
+    public void setSector(int index, String culoare) {
+        this.sector[index] = culoare;
     }
+
+    public String getSector(int index) {
+        return sector[index];
+    }
+
+    public int getNextFreeSector() {
+        for (int i = 0; i < 3; i++) {
+            if (sector[i] == null) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 }
