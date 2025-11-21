@@ -26,10 +26,10 @@ public class ColorSensorSubsystem extends SubsystemBase {
 
     public String getColorName() {
         float[] HSVColor = getHSVColor();
-        if (HSVColor[0] > 80 && HSVColor[0] < 140) {
+        if (HSVColor[0] > 155 && HSVColor[0] < 185) { /// 80 si 140
             return "GREEN";
         }
-        if (HSVColor[0] > 220 && HSVColor[0] < 330){
+        if (HSVColor[0] > 205 && HSVColor[0] < 255){ /// 220 si 330
             return "PURPLE";
         }
         return null;
