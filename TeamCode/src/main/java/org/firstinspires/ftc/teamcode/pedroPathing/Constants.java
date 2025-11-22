@@ -27,6 +27,16 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE);
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
+    public static PinpointConstants localizerConstants = new PinpointConstants()
+            .forwardPodY(-4.72)/// posibil cu plus
+            .strafePodX(1.57)
+            .distanceUnit(DistanceUnit.INCH)
+            .hardwareMapName("pinpoint")
+            .customEncoderResolution(37.19)/// 37.19 tick/mm; 950.28 tick/inch
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+
+
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
@@ -35,13 +45,5 @@ public class Constants {
                 .build();
     }
 
-    public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-4.72)
-            .strafePodX(1.57)
-            /// posibil de schimbat
-            .distanceUnit(DistanceUnit.INCH)
-            .hardwareMapName("pinpoint")
-            .customEncoderResolution(4096)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
-            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+
 }
