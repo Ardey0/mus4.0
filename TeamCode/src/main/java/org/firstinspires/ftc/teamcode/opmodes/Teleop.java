@@ -13,10 +13,12 @@ import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 import org.firstinspires.ftc.teamcode.commands.ChassisDrive;
 import org.firstinspires.ftc.teamcode.commands.IntakeBall;
 import org.firstinspires.ftc.teamcode.commands.LaunchBall;
+import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ColorSensorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.RoataSubsystem;
@@ -30,11 +32,14 @@ public class Teleop extends CommandOpMode {
     private OnofreiSubsystem onofrei;
     private IntakeSubsystem intake;
     private ColorSensorSubsystem sensor;
+    private RoataSubsystem roata;
+    private LimelightSubsystem limelight;
     private ChassisDrive drive;
     private IntakeBall intakeBall;
     private LaunchBall launchBall;
+    private ReadMotif readMotif;
 
-    private Button intakeButton, launcherButton;
+    private Button intakeButton, launcherButton, scanMotifButton;
 
     @Override
     public void initialize() {
@@ -46,20 +51,27 @@ public class Teleop extends CommandOpMode {
         onofrei = new OnofreiSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
         sensor = new ColorSensorSubsystem(hardwareMap);
+        limelight = new LimelightSubsystem(hardwareMap);
+        roata = new RoataSubsystem();
 
         drive = new ChassisDrive(chassis, gamepad);
-        intakeBall = new IntakeBall(intake, palete, sensor, RoataSubsystem.getInstance(), telemetry);
-        launchBall = new LaunchBall(palete, onofrei, launcher, 1);
+        readMotif = new ReadMotif(limelight);
+        intakeBall = new IntakeBall(intake, palete, sensor, roata, telemetry);
+        launchBall = new LaunchBall(roata, palete, onofrei, launcher, readMotif.tagId);
 
 
         intakeButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.A
+                gamepad, GamepadKeys.Button.CROSS
         );
         launcherButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.B
+                gamepad, GamepadKeys.Button.CIRCLE
+        );
+        scanMotifButton = new GamepadButton(
+                gamepad, GamepadKeys.Button.SHARE
         );
 
         schedule(drive);
+        scanMotifButton.toggleWhenPressed(readMotif);
         intakeButton.toggleWhenPressed(intakeBall);
         launcherButton.toggleWhenPressed(launchBall);
     }

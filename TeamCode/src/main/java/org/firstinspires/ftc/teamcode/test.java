@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.controller.wpilibcontroller.SimpleMotorFeedforward;
 
 import java.util.List;
 
@@ -18,12 +22,14 @@ import java.util.List;
 
 public class test extends LinearOpMode {
 
-    public static double onoPos;
+    public static double onoPos = 0;
     public static double paletaPos;
+    public static double viteza = 1400, acceleratie = 150;
+    public static double kV = 0.000336, kA = 0.0001, kS = 0.085;
 
     @Override
-
     public void runOpMode() throws InterruptedException {
+        Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
         DcMotorEx frontLeft = hardwareMap.get(DcMotorEx.class, "front_left");
         DcMotorEx frontRight = hardwareMap.get(DcMotorEx.class, "front_right");
         DcMotorEx backLeft = hardwareMap.get(DcMotorEx.class, "back_left");
@@ -32,7 +38,7 @@ public class test extends LinearOpMode {
         DcMotorEx intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         ServoImplEx onofrei = hardwareMap.get(ServoImplEx.class, "onofrei");
-        ServoImplEx paleta = hardwareMap.get(ServoImplEx.class, "paleta");
+        ServoImplEx paleta = hardwareMap.get(ServoImplEx.class, "palete");
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -53,9 +59,15 @@ public class test extends LinearOpMode {
         Gamepad previousGamepad1 = new Gamepad();
         Gamepad previousGamepad2 = new Gamepad();
 
+        SimpleMotorFeedforward controller = new SimpleMotorFeedforward(kS, kV, kA);
+
         boolean launcherState = false, intakeState = false;
 
         ElapsedTime time = new ElapsedTime();
+        ElapsedTime acceleratieLansator = new ElapsedTime();
+
+        limelight.start();
+        limelight.pipelineSwitch(9);
 
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -104,9 +116,13 @@ public class test extends LinearOpMode {
                 time.reset();
             }
             if (launcherState) {
-                launcher.setPower(0.6);
+                double power = controller.calculate(viteza, acceleratie);
+                launcher.setPower(power);
+//                launcher.setPower(putereLansator);
 //                if(time.milliseconds()>=3000)
 //                    onofrei.setPosition(1);
+                acceleratieLansator.reset();
+                telemetry.addData("power: ", power);
             } else {
                 launcher.setPower(0);
 //                onofrei.setPosition(0);
@@ -127,6 +143,20 @@ public class test extends LinearOpMode {
 
             //Paleta
             paleta.setPosition(paletaPos);
+
+            LLResult result = limelight.getLatestResult();
+
+            for (LLResultTypes.FiducialResult tag : result.getFiducialResults())
+                telemetry.addData("id", tag.getFiducialId());
+            telemetry.addData("viteza lansator: ", launcher.getVelocity());
+            telemetry.addData("velocity error: ", Math.abs(launcher.getVelocity() - viteza));
+            if (Math.abs(launcher.getVelocity() - viteza) < viteza * 0.02) {
+                telemetry.addData("timp pana ajunge la viteza: ", acceleratieLansator.milliseconds());
+//                launcher.setPower(0);
+                telemetry.update();
+//                sleep(10000);
+            }
+            telemetry.update();
 
         }
 

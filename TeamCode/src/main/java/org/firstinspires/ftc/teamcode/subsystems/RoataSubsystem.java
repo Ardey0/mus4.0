@@ -1,33 +1,38 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 public class RoataSubsystem {
-    private static final RoataSubsystem roata = new RoataSubsystem();
-
     // vars
     String[] sector = new String[3];
 
-    private RoataSubsystem() {
+    public RoataSubsystem() {
         // def values
-    }
-
-    public static RoataSubsystem getInstance() {
-        return roata;
+        sector[0] = null;
+        sector[1] = null;
+        sector[2] = null;
     }
 
     public void setSector(int index, String culoare) {
-        this.sector[index] = culoare;
+        sector[index] = culoare;
     }
 
-    public String getSector(int index) {
+    public String getSectorColor(int index) {
         return sector[index];
     }
 
     public int getNextFreeSector() {
         for (int i = 0; i < 3; i++) {
             if (sector[i] == null) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getNextSectorWithColor(String color) {
+        for (int i = 0; i < 3; i++) {
+            if (sector[i].equals(color)) {
                 return i;
             }
         }

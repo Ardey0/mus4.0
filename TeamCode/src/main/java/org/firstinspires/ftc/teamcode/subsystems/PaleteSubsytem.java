@@ -11,7 +11,8 @@ public class PaleteSubsytem extends SubsystemBase {
                                IN_BILA_3 = 0.23,
                                OUT_BILA_1 = 0.77,
                                OUT_BILA_2 = 0.1,
-                               OUT_BILA_3 = 0.43;
+                               OUT_BILA_3 = 0.43,
+                               LOCK = 0.62;
 
     public PaleteSubsytem(HardwareMap hwMap) {
         this.palete = new ServoEx(hwMap, "palete");

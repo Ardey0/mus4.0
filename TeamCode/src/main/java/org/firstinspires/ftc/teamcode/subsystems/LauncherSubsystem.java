@@ -8,14 +8,14 @@ public class LauncherSubsystem extends SubsystemBase {
     private final Motor flywheel;
 
     public LauncherSubsystem(HardwareMap hwMap) {
-        this.flywheel = new Motor(hwMap, "flywheel");
+        this.flywheel = new Motor(hwMap, "launcher");
         this.flywheel.setInverted(true);
         this.flywheel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         this.flywheel.setRunMode(Motor.RunMode.RawPower);
     }
 
     public void spin() {
-        flywheel.set(1);
+        flywheel.set(0.61);
     }
 
     public void stop() {
