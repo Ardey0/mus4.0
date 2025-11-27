@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -18,8 +17,6 @@ import com.seattlesolvers.solverslib.controller.wpilibcontroller.SimpleMotorFeed
 import java.util.List;
 
 @TeleOp
-@Config
-
 public class test extends LinearOpMode {
 
     public static double onoPos = 0;

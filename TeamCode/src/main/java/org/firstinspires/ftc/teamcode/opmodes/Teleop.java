@@ -1,14 +1,13 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
+import com.seattlesolvers.solverslib.command.FunctionalCommand;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
-import com.seattlesolvers.solverslib.drivebase.MecanumDrive;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
-import com.seattlesolvers.solverslib.hardware.motors.Motor;
-import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 import org.firstinspires.ftc.teamcode.commands.ChassisDrive;
 import org.firstinspires.ftc.teamcode.commands.IntakeBall;
@@ -21,19 +20,23 @@ import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
-import org.firstinspires.ftc.teamcode.subsystems.RoataSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
 @TeleOp
 public class Teleop extends CommandOpMode {
+    private final PanelsTelemetry panelsTelemetry = PanelsTelemetry.INSTANCE;
+
     private GamepadEx gamepad;
+
     private ChassisSubsystem chassis;
     private LauncherSubsystem launcher;
     private PaleteSubsytem palete;
     private OnofreiSubsystem onofrei;
     private IntakeSubsystem intake;
     private ColorSensorSubsystem sensor;
-    private RoataSubsystem roata;
+    private RobotStorage robotStorage;
     private LimelightSubsystem limelight;
+
     private ChassisDrive drive;
     private IntakeBall intakeBall;
     private LaunchBall launchBall;
@@ -52,12 +55,12 @@ public class Teleop extends CommandOpMode {
         intake = new IntakeSubsystem(hardwareMap);
         sensor = new ColorSensorSubsystem(hardwareMap);
         limelight = new LimelightSubsystem(hardwareMap);
-        roata = new RoataSubsystem();
+        robotStorage = new RobotStorage();
 
         drive = new ChassisDrive(chassis, gamepad);
-        readMotif = new ReadMotif(limelight);
-        intakeBall = new IntakeBall(intake, palete, sensor, roata, telemetry);
-        launchBall = new LaunchBall(roata, palete, onofrei, launcher, readMotif.tagId);
+        readMotif = new ReadMotif(robotStorage, panelsTelemetry, limelight);
+        intakeBall = new IntakeBall(robotStorage, panelsTelemetry, intake, palete, sensor);
+        launchBall = new LaunchBall(robotStorage, panelsTelemetry, palete, onofrei, launcher);
 
 
         intakeButton = new GamepadButton(
@@ -71,6 +74,11 @@ public class Teleop extends CommandOpMode {
         );
 
         schedule(drive);
+        schedule(new FunctionalCommand(() -> {panelsTelemetry.getTelemetry().update(telemetry);},
+                () -> {},
+                (isInterrupted) -> {},
+                () -> true
+        )); // nu sunt mandru de asta
         scanMotifButton.toggleWhenPressed(readMotif);
         intakeButton.toggleWhenPressed(intakeBall);
         launcherButton.toggleWhenPressed(launchBall);

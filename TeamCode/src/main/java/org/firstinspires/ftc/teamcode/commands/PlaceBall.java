@@ -4,7 +4,6 @@ import com.seattlesolvers.solverslib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
-import org.firstinspires.ftc.teamcode.subsystems.RoataSubsystem;
 
 public class PlaceBall extends CommandBase {
     private final PaleteSubsytem palete;

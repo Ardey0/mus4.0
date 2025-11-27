@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.util.Timing.Timer;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.ColorSensorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
-import org.firstinspires.ftc.teamcode.subsystems.RoataSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,19 +16,19 @@ public class IntakeBall extends CommandBase {
     private final IntakeSubsystem intake;
     private final PaleteSubsytem palete;
     private final ColorSensorSubsystem sensor;
-    private final RoataSubsystem roata;
-    private final Telemetry telemetry;
+    private final RobotStorage robotStorage;
+    private final PanelsTelemetry telemetry;
     private int sector = -2;
 
-    public IntakeBall(IntakeSubsystem intakeSubsystem, PaleteSubsytem paleteSubsytem,
-                      ColorSensorSubsystem colorSensorSubsystem, RoataSubsystem roataSubsystem, Telemetry telemetry) {
+    public IntakeBall(RobotStorage robotStorage, PanelsTelemetry telemetry, IntakeSubsystem intakeSubsystem, PaleteSubsytem paleteSubsytem,
+                      ColorSensorSubsystem colorSensorSubsystem) {
         this.intake = intakeSubsystem;
         this.palete = paleteSubsytem;
         this.sensor = colorSensorSubsystem;
-        this.roata = roataSubsystem;
+        this.robotStorage = robotStorage;
         this.telemetry = telemetry;
 
-        addRequirements(intake);
+        addRequirements(intake, palete, sensor);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class IntakeBall extends CommandBase {
     @Override
     public void execute() {
         if (timerPalete.done()) {
-            sector = roata.getNextFreeSector();
+            sector = robotStorage.getNextFreeSector();
             switch (sector) {
                 case -1:
                     palete.setPosition(PaleteSubsytem.LOCK);
@@ -55,24 +55,22 @@ public class IntakeBall extends CommandBase {
                     palete.setPosition(PaleteSubsytem.IN_BILA_3);
                     break;
                 default:
-                    telemetry.addData("problema roata; sector:", sector);
-                    telemetry.update();
+                    telemetry.getTelemetry().addData("problema roata; sector:", sector);
             }
             if (sector >= 0 && sector <= 2) {
                 if (sensor.getDistanceMM() < 20) {
-                    roata.setSector(sector, sensor.getColorName());
+                    robotStorage.setSector(sector, sensor.getColor());
                     timerPalete.start();
                 }
             }
         }
-        telemetry.addData("klsdflkgarkljghhkaerg;k: ", sector);
-        telemetry.addData("culoare sector 1: ", roata.getSectorColor(0));
-        telemetry.addData("culoare sector 2: ", roata.getSectorColor(1));
-        telemetry.addData("culoare sector 3: ", roata.getSectorColor(2));
-        telemetry.addData("timer: ", timerPalete.remainingTime());
-        telemetry.addData("timer done? ", timerPalete.done());
-        telemetry.addData("timer on? ", timerPalete.isTimerOn());
-        telemetry.update();
+        telemetry.getTelemetry().addData("sector:", sector);
+        telemetry.getTelemetry().addData("culoare sector 1:", robotStorage.getSectorColor(0));
+        telemetry.getTelemetry().addData("culoare sector 2:", robotStorage.getSectorColor(1));
+        telemetry.getTelemetry().addData("culoare sector 3:", robotStorage.getSectorColor(2));
+        telemetry.getTelemetry().addData("timer:", timerPalete.remainingTime());
+        telemetry.getTelemetry().addData("timer done?", timerPalete.done());
+        telemetry.getTelemetry().addData("timer on?", timerPalete.isTimerOn());
     }
 
     @Override
