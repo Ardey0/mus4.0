@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import com.bylazar.telemetry.PanelsTelemetry;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.util.Timing.Timer;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
@@ -16,14 +16,26 @@ public class LaunchBall extends CommandBase {
     private final PaleteSubsytem palete;
     private final LauncherSubsystem launcher;
     private final RobotStorage robotStorage;
-    private final PanelsTelemetry telemetry;
-    private Timer onofreiTimer = new Timer(1000, TimeUnit.MILLISECONDS),
-                  paleteTimer = new Timer(1000, TimeUnit.MILLISECONDS),
-                  launchTimer = new Timer(1500, TimeUnit.MILLISECONDS);
+    private final Telemetry telemetry;
+    private final Timer onofreiTimer = new Timer(500, TimeUnit.MILLISECONDS);
+    private final Timer paleteTimer = new Timer(500, TimeUnit.MILLISECONDS);
+    private final Timer flywheelTimer = new Timer(4000, TimeUnit.MILLISECONDS);
     private int ball = 0;
     private boolean done = false;
 
-    public LaunchBall(RobotStorage robotStorage, PanelsTelemetry telemetry, PaleteSubsytem paleteSubsytem,
+    // State machine for the launching sequence
+    private enum LaunchStep {
+        SET_PALETE_POSITION,
+        WAIT_FOR_PALETE,
+        MOVE_ONOFREI_OUT,
+        WAIT_FOR_ONOFREI,
+        MOVE_ONOFREI_IN,
+        WAIT_FOR_ONOFREI_RETURN, // Added state for delay
+        INCREMENT_BALL
+    }
+    private LaunchStep currentStep;
+
+    public LaunchBall(RobotStorage robotStorage, Telemetry telemetry, PaleteSubsytem paleteSubsytem,
                       OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
@@ -36,64 +48,89 @@ public class LaunchBall extends CommandBase {
 
     @Override
     public void initialize() {
-        paleteTimer.start();
         launcher.spin();
+        ball = 0;
+        flywheelTimer.start();
+        currentStep = LaunchStep.SET_PALETE_POSITION;
     }
 
     @Override
     public void execute() {
         int sector = robotStorage.getNextSectorWithMotifBall(ball);
-        switch (sector) {
-            case -1:
-                done = true;
-                break;
-            case 0:
-                palete.setPosition(PaleteSubsytem.OUT_BILA_1);
-                if (onofreiTimer.isTimerOn() && onofreiTimer.remainingTime() <= 0) {
-                    onofrei.setPosition(OnofreiSubsystem.IN);
-                    paleteTimer.start();
-                    onofreiTimer.pause();
-                    ball++;
-                }
-                if (paleteTimer.isTimerOn() && paleteTimer.remainingTime() <= 0) {
+
+        if (flywheelTimer.done()) {
+            switch (currentStep) {
+                case SET_PALETE_POSITION:
+                    // End the command if there are no more balls with motifs to launch.
+                    if (sector < 0 || sector > 2) {
+                        done = true;
+                        break;
+                    }
+
+                    switch (sector) {
+                        case 0:
+                            palete.setPosition(PaleteSubsytem.OUT_BILA_1);
+                            break;
+                        case 1:
+                            palete.setPosition(PaleteSubsytem.OUT_BILA_2);
+                            break;
+                        case 2:
+                            palete.setPosition(PaleteSubsytem.OUT_BILA_3);
+                            break;
+                        default:
+                            // Invalid sector, end the command gracefully.
+                            done = true;
+                            break;
+                    }
+                    if (!done) {
+                        paleteTimer.start();
+                        currentStep = LaunchStep.WAIT_FOR_PALETE;
+                    }
+                    break;
+
+                case WAIT_FOR_PALETE:
+                    if (paleteTimer.done()) {
+                        currentStep = LaunchStep.MOVE_ONOFREI_OUT;
+                    }
+                    break;
+
+                case MOVE_ONOFREI_OUT:
                     onofrei.setPosition(OnofreiSubsystem.OUT);
                     onofreiTimer.start();
-                    paleteTimer.pause();
-                }
-                break;
-            case 1:
-                palete.setPosition(PaleteSubsytem.OUT_BILA_2);
-                if (onofreiTimer.isTimerOn() && onofreiTimer.remainingTime() <= 0) {
+                    currentStep = LaunchStep.WAIT_FOR_ONOFREI;
+                    break;
+
+                case WAIT_FOR_ONOFREI:
+                    if (onofreiTimer.done()) {
+                        currentStep = LaunchStep.MOVE_ONOFREI_IN;
+                    }
+                    break;
+
+                case MOVE_ONOFREI_IN:
                     onofrei.setPosition(OnofreiSubsystem.IN);
-                    paleteTimer.start();
-                    onofreiTimer.pause();
+                    onofreiTimer.start(); // Start timer to wait for Onofrei to return
+                    currentStep = LaunchStep.WAIT_FOR_ONOFREI_RETURN;
+                    break;
+
+                case WAIT_FOR_ONOFREI_RETURN: // New state
+                    if (onofreiTimer.done()) {
+                        currentStep = LaunchStep.INCREMENT_BALL;
+                    }
+                    break;
+
+                case INCREMENT_BALL:
+                    robotStorage.setSector(sector, 0);
                     ball++;
-                }
-                if (paleteTimer.isTimerOn() && paleteTimer.remainingTime() <= 0) {
-                    onofrei.setPosition(OnofreiSubsystem.OUT);
-                    onofreiTimer.start();
-                    paleteTimer.pause();
-                }
-                break;
-            case 2:
-                palete.setPosition(PaleteSubsytem.OUT_BILA_3);
-                if (onofreiTimer.isTimerOn() && onofreiTimer.remainingTime() <= 0) {
-                    onofrei.setPosition(OnofreiSubsystem.IN);
-                    paleteTimer.start();
-                    onofreiTimer.pause();
-                    ball++;
-                }
-                if (paleteTimer.isTimerOn() && paleteTimer.remainingTime() <= 0) {
-                    onofrei.setPosition(OnofreiSubsystem.OUT);
-                    onofreiTimer.start();
-                    paleteTimer.pause();
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("esti prea prost " + sector);
+                    // Move to the next ball
+                    currentStep = LaunchStep.SET_PALETE_POSITION;
+                    break;
+            }
         }
-        telemetry.getTelemetry().addData("sector:", sector);
-        telemetry.getTelemetry().addData("ball:", ball);
+
+        telemetry.addData("sector:", sector);
+        telemetry.addData("ball:", ball);
+        telemetry.addData("step:", currentStep.name());
+        telemetry.update();
     }
 
     @Override

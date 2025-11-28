@@ -58,9 +58,9 @@ public class Teleop extends CommandOpMode {
         robotStorage = new RobotStorage();
 
         drive = new ChassisDrive(chassis, gamepad);
-        readMotif = new ReadMotif(robotStorage, panelsTelemetry, limelight);
-        intakeBall = new IntakeBall(robotStorage, panelsTelemetry, intake, palete, sensor);
-        launchBall = new LaunchBall(robotStorage, panelsTelemetry, palete, onofrei, launcher);
+        readMotif = new ReadMotif(robotStorage, telemetry, limelight);
+        intakeBall = new IntakeBall(robotStorage, telemetry, intake, palete, sensor);
+        launchBall = new LaunchBall(robotStorage, telemetry, palete, onofrei, launcher);
 
 
         intakeButton = new GamepadButton(
@@ -74,13 +74,13 @@ public class Teleop extends CommandOpMode {
         );
 
         schedule(drive);
-        schedule(new FunctionalCommand(() -> {panelsTelemetry.getTelemetry().update(telemetry);},
-                () -> {},
-                (isInterrupted) -> {},
-                () -> true
-        )); // nu sunt mandru de asta
-        scanMotifButton.toggleWhenPressed(readMotif);
-        intakeButton.toggleWhenPressed(intakeBall);
-        launcherButton.toggleWhenPressed(launchBall);
+//        schedule(new FunctionalCommand(() -> {panelsTelemetry.getTelemetry().update(telemetry);},
+//                () -> {},
+//                (isInterrupted) -> {},
+//                () -> true
+//        )); // nu sunt mandru de asta
+        scanMotifButton.toggleWhenPressed(new ReadMotif(robotStorage, telemetry, limelight));
+        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetry, intake, palete, sensor));
+        launcherButton.toggleWhenPressed(new LaunchBall(robotStorage, telemetry, palete, onofrei, launcher));
     }
 }

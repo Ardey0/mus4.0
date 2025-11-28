@@ -4,6 +4,7 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.util.Timing.Timer;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.ColorSensorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
@@ -17,10 +18,10 @@ public class IntakeBall extends CommandBase {
     private final PaleteSubsytem palete;
     private final ColorSensorSubsystem sensor;
     private final RobotStorage robotStorage;
-    private final PanelsTelemetry telemetry;
+    private final Telemetry telemetry;
     private int sector = -2;
 
-    public IntakeBall(RobotStorage robotStorage, PanelsTelemetry telemetry, IntakeSubsystem intakeSubsystem, PaleteSubsytem paleteSubsytem,
+    public IntakeBall(RobotStorage robotStorage, Telemetry telemetry, IntakeSubsystem intakeSubsystem, PaleteSubsytem paleteSubsytem,
                       ColorSensorSubsystem colorSensorSubsystem) {
         this.intake = intakeSubsystem;
         this.palete = paleteSubsytem;
@@ -39,8 +40,8 @@ public class IntakeBall extends CommandBase {
 
     @Override
     public void execute() {
+        sector = robotStorage.getNextFreeSector();
         if (timerPalete.done()) {
-            sector = robotStorage.getNextFreeSector();
             switch (sector) {
                 case -1:
                     palete.setPosition(PaleteSubsytem.LOCK);
@@ -55,7 +56,7 @@ public class IntakeBall extends CommandBase {
                     palete.setPosition(PaleteSubsytem.IN_BILA_3);
                     break;
                 default:
-                    telemetry.getTelemetry().addData("problema roata; sector:", sector);
+                    telemetry.addData("problema roata; sector:", sector);
             }
             if (sector >= 0 && sector <= 2) {
                 if (sensor.getDistanceMM() < 20) {
@@ -64,18 +65,20 @@ public class IntakeBall extends CommandBase {
                 }
             }
         }
-        telemetry.getTelemetry().addData("sector:", sector);
-        telemetry.getTelemetry().addData("culoare sector 1:", robotStorage.getSectorColor(0));
-        telemetry.getTelemetry().addData("culoare sector 2:", robotStorage.getSectorColor(1));
-        telemetry.getTelemetry().addData("culoare sector 3:", robotStorage.getSectorColor(2));
-        telemetry.getTelemetry().addData("timer:", timerPalete.remainingTime());
-        telemetry.getTelemetry().addData("timer done?", timerPalete.done());
-        telemetry.getTelemetry().addData("timer on?", timerPalete.isTimerOn());
+        telemetry.addData("sector:", sector);
+        telemetry.addData("culoare sector 0:", robotStorage.getSectorColor(0));
+        telemetry.addData("culoare sector 1:", robotStorage.getSectorColor(1));
+        telemetry.addData("culoare sector 2:", robotStorage.getSectorColor(2));
+        telemetry.addData("timer:", timerPalete.remainingTime());
+        telemetry.addData("timer done?", timerPalete.done());
+        telemetry.addData("timer on?", timerPalete.isTimerOn());
+        telemetry.update();
     }
 
     @Override
     public void end(boolean interrupted) {
         intake.stop();
+        palete.setPosition(0.65);
         // paltete pe o pozitie unde tine bilele sa nu iasa pe nicaieri
     }
 

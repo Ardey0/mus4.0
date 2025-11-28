@@ -47,6 +47,9 @@ public class RobotStorage {
     }
 
     public int getNextSectorWithMotifBall(int motifIndex) {
+        if (motifIndex > 2) {
+            return -1;
+        }
         for (int i = 0; i < 3; i++) {
             if (roata[i] == motif[motifIndex]) {
                 return i;
