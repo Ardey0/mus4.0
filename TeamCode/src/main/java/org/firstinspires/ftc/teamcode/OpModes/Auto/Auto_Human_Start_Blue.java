@@ -108,9 +108,13 @@ public class Auto_Human_Start_Blue extends OpMode {
     {
         switch (pathState) {
             case 0:
-                follower.followPath(preload);
+                follower.followPath(preload, 1, true);
                 setPathState(-1);
                 break;
+
+
+
+
         }
     }
 
