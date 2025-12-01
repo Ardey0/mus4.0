@@ -79,8 +79,8 @@ public class Teleop extends CommandOpMode {
 //                (isInterrupted) -> {},
 //                () -> true
 //        )); // nu sunt mandru de asta
-        scanMotifButton.toggleWhenPressed(new ReadMotif(robotStorage, telemetry, limelight));
-        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetry, intake, palete, sensor));
-        launcherButton.toggleWhenPressed(new LaunchBall(robotStorage, telemetry, palete, onofrei, launcher));
+        scanMotifButton.toggleWhenPressed(readMotif);
+        intakeButton.toggleWhenPressed(intakeBall);
+        launcherButton.toggleWhenPressed(launchBall);
     }
 }

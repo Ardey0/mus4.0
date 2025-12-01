@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -12,17 +13,18 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.controller.PIDFController;
 import com.seattlesolvers.solverslib.controller.wpilibcontroller.SimpleMotorFeedforward;
 
 import java.util.List;
 
 @TeleOp
+@Config
 public class test extends LinearOpMode {
-
     public static double onoPos = 0;
     public static double paletaPos;
-    public static double viteza = 1400, acceleratie = 150;
-    public static double kV = 0.000336, kA = 0.0001, kS = 0.085;
+    public static double viteza = 1450;
+    public static double kP = 0.004, kI = 0, kD = 0.0000007, kF = 0.000375;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -56,12 +58,11 @@ public class test extends LinearOpMode {
         Gamepad previousGamepad1 = new Gamepad();
         Gamepad previousGamepad2 = new Gamepad();
 
-        SimpleMotorFeedforward controller = new SimpleMotorFeedforward(kS, kV, kA);
+        PIDFController controller = new PIDFController(kP, kI, kD, kF);
 
         boolean launcherState = false, intakeState = false;
 
         ElapsedTime time = new ElapsedTime();
-        ElapsedTime acceleratieLansator = new ElapsedTime();
 
         limelight.start();
         limelight.pipelineSwitch(9);
@@ -79,6 +80,8 @@ public class test extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
+            controller.setPIDF(kP, kI, kD, kF);
+            time.reset();
             for (LynxModule hub : allHubs) {
                 hub.clearBulkCache();
             }
@@ -108,25 +111,19 @@ public class test extends LinearOpMode {
             backRight.setPower(backRightPower);
             
             //Lansator
-            if (previousGamepad1.a && !currentGamepad1.a) {
+            if (previousGamepad1.b && !currentGamepad1.b) {
                 launcherState = !launcherState;
-                time.reset();
             }
             if (launcherState) {
-                double power = controller.calculate(viteza, acceleratie);
+                double power = controller.calculate(launcher.getVelocity(), viteza);
+                telemetry.addData("power:", power);
                 launcher.setPower(power);
-//                launcher.setPower(putereLansator);
-//                if(time.milliseconds()>=3000)
-//                    onofrei.setPosition(1);
-                acceleratieLansator.reset();
-                telemetry.addData("power: ", power);
             } else {
                 launcher.setPower(0);
-//                onofrei.setPosition(0);
             }
 
             //IntakeSubsystem
-            if (previousGamepad1.b && !currentGamepad1.b) {
+            if (previousGamepad1.a && !currentGamepad1.a) {
                 intakeState = !intakeState;
             }
             if (intakeState) {
@@ -145,18 +142,10 @@ public class test extends LinearOpMode {
 
             for (LLResultTypes.FiducialResult tag : result.getFiducialResults())
                 telemetry.addData("id", tag.getFiducialId());
+            telemetry.addData("loop time:", time.milliseconds());
             telemetry.addData("viteza lansator: ", launcher.getVelocity());
-            telemetry.addData("velocity error: ", Math.abs(launcher.getVelocity() - viteza));
-            if (Math.abs(launcher.getVelocity() - viteza) < viteza * 0.02) {
-                telemetry.addData("timp pana ajunge la viteza: ", acceleratieLansator.milliseconds());
-//                launcher.setPower(0);
-                telemetry.update();
-//                sleep(10000);
-            }
+            telemetry.addData("launcher on?", launcherState);
             telemetry.update();
-
         }
-
     }
-
 }

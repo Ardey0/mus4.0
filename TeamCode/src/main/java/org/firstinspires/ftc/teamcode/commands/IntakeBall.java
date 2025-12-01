@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import java.util.concurrent.TimeUnit;
 
 public class IntakeBall extends CommandBase {
-    private Timer timerPalete = new Timer(500, TimeUnit.MILLISECONDS);
+    private Timer timerPalete = new Timer(700, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final PaleteSubsytem palete;
     private final ColorSensorSubsystem sensor;
@@ -42,6 +42,7 @@ public class IntakeBall extends CommandBase {
     public void execute() {
         sector = robotStorage.getNextFreeSector();
         if (timerPalete.done()) {
+            intake.suck();
             switch (sector) {
                 case -1:
                     palete.setPosition(PaleteSubsytem.LOCK);
@@ -61,6 +62,7 @@ public class IntakeBall extends CommandBase {
             if (sector >= 0 && sector <= 2) {
                 if (sensor.getDistanceMM() < 20) {
                     robotStorage.setSector(sector, sensor.getColor());
+                    intake.stop();
                     timerPalete.start();
                 }
             }
