@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.Auto;
+package org.firstinspires.ftc.teamcode.opmodes.Auto;
 
 
 import com.pedropathing.follower.Follower;

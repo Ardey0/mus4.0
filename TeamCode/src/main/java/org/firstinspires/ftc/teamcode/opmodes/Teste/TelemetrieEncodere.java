@@ -1,14 +1,10 @@
-package org.firstinspires.ftc.teamcode.OpModes.Teste;
+package org.firstinspires.ftc.teamcode.opmodes.Teste;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.ftc.localization.Encoder;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.seattlesolvers.solverslib.hardware.motors.Motor;
 
 @TeleOp
 @Config
