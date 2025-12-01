@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,20 +13,22 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.controller.PIDFController;
+import com.seattlesolvers.solverslib.controller.wpilibcontroller.SimpleMotorFeedforward;
 
 import java.util.List;
 
 @TeleOp
 @Config
-
 public class test extends LinearOpMode {
-
-    public static double onoPos;
+    public static double onoPos = 0;
     public static double paletaPos;
+    public static double viteza = 1450;
+    public static double kP = 0.004, kI = 0, kD = 0.0000007, kF = 0.000375;
 
     @Override
-
     public void runOpMode() throws InterruptedException {
+        Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
         DcMotorEx frontLeft = hardwareMap.get(DcMotorEx.class, "front_left");
         DcMotorEx frontRight = hardwareMap.get(DcMotorEx.class, "front_right");
         DcMotorEx backLeft = hardwareMap.get(DcMotorEx.class, "back_left");
@@ -32,7 +37,7 @@ public class test extends LinearOpMode {
         DcMotorEx intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         ServoImplEx onofrei = hardwareMap.get(ServoImplEx.class, "onofrei");
-        ServoImplEx paleta = hardwareMap.get(ServoImplEx.class, "paleta");
+        ServoImplEx paleta = hardwareMap.get(ServoImplEx.class, "palete");
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -53,9 +58,14 @@ public class test extends LinearOpMode {
         Gamepad previousGamepad1 = new Gamepad();
         Gamepad previousGamepad2 = new Gamepad();
 
+        PIDFController controller = new PIDFController(kP, kI, kD, kF);
+
         boolean launcherState = false, intakeState = false;
 
         ElapsedTime time = new ElapsedTime();
+
+        limelight.start();
+        limelight.pipelineSwitch(9);
 
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -70,6 +80,8 @@ public class test extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
+            controller.setPIDF(kP, kI, kD, kF);
+            time.reset();
             for (LynxModule hub : allHubs) {
                 hub.clearBulkCache();
             }
@@ -99,21 +111,19 @@ public class test extends LinearOpMode {
             backRight.setPower(backRightPower);
             
             //Lansator
-            if (previousGamepad1.a && !currentGamepad1.a) {
+            if (previousGamepad1.b && !currentGamepad1.b) {
                 launcherState = !launcherState;
-                time.reset();
             }
             if (launcherState) {
-                launcher.setPower(0.6);
-                if(time.milliseconds()>=3000)
-                    onofrei.setPosition(1);
+                double power = controller.calculate(launcher.getVelocity(), viteza);
+                telemetry.addData("power:", power);
+                launcher.setPower(power);
             } else {
                 launcher.setPower(0);
-                onofrei.setPosition(0);
             }
 
-            //Intake
-            if (previousGamepad1.b && !currentGamepad1.b) {
+            //IntakeSubsystem
+            if (previousGamepad1.a && !currentGamepad1.a) {
                 intakeState = !intakeState;
             }
             if (intakeState) {
@@ -122,14 +132,20 @@ public class test extends LinearOpMode {
                 intake.setPower(0);
             }
 
-            /*//Onofrei
+            //Onofrei
             onofrei.setPosition(onoPos);
 
             //Paleta
-            paleta.setPosition(paletaPos);*/
+            paleta.setPosition(paletaPos);
 
+            LLResult result = limelight.getLatestResult();
+
+            for (LLResultTypes.FiducialResult tag : result.getFiducialResults())
+                telemetry.addData("id", tag.getFiducialId());
+            telemetry.addData("loop time:", time.milliseconds());
+            telemetry.addData("viteza lansator: ", launcher.getVelocity());
+            telemetry.addData("launcher on?", launcherState);
+            telemetry.update();
         }
-
     }
-
 }
