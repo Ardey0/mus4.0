@@ -7,7 +7,7 @@ import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 public class LauncherSubsystem extends SubsystemBase {
-    private final double kP = 0.004, kI = 0, kD = 0.0000007, kF = 0.000375, targetSpeed = 1450;
+    private final double kP = 0.004, kI = 0, kD = 0.0000007, kF = 0.000375, targetSpeed = 1350;
     private final MotorEx flywheel;
     private final PIDFController controller = new PIDFController(kP, kI, kD, kF);
 

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import com.bylazar.telemetry.PanelsTelemetry;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.util.Timing.Timer;
 
@@ -13,13 +12,24 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import java.util.concurrent.TimeUnit;
 
 public class IntakeBall extends CommandBase {
-    private Timer timerPalete = new Timer(700, TimeUnit.MILLISECONDS);
+    private final Timer timerPalete = new Timer(700, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final PaleteSubsytem palete;
     private final ColorSensorSubsystem sensor;
     private final RobotStorage robotStorage;
     private final Telemetry telemetry;
+
     private int sector = -2;
+
+    private enum IntakeStep {
+        INITIAL_DELAY,
+        POSITION_PALETE,
+        WAIT_FOR_BALL,
+        STORE_BALL,
+        WAIT_AND_CYCLE,
+        DONE
+    }
+    private IntakeStep currentStep;
 
     public IntakeBall(RobotStorage robotStorage, Telemetry telemetry, IntakeSubsystem intakeSubsystem, PaleteSubsytem paleteSubsytem,
                       ColorSensorSubsystem colorSensorSubsystem) {
@@ -36,44 +46,78 @@ public class IntakeBall extends CommandBase {
     public void initialize() {
         intake.suck();
         timerPalete.start();
+        currentStep = IntakeStep.INITIAL_DELAY;
     }
 
     @Override
     public void execute() {
-        sector = robotStorage.getNextFreeSector();
-        if (timerPalete.done()) {
-            intake.suck();
-            switch (sector) {
-                case -1:
-                    palete.setPosition(PaleteSubsytem.LOCK);
-                    break;
-                case 0:
-                    palete.setPosition(PaleteSubsytem.IN_BILA_1);
-                    break;
-                case 1:
-                    palete.setPosition(PaleteSubsytem.IN_BILA_2);
-                    break;
-                case 2:
-                    palete.setPosition(PaleteSubsytem.IN_BILA_3);
-                    break;
-                default:
-                    telemetry.addData("problema roata; sector:", sector);
-            }
-            if (sector >= 0 && sector <= 2) {
-                if (sensor.getDistanceMM() < 20) {
-                    robotStorage.setSector(sector, sensor.getColor());
-                    intake.stop();
-                    timerPalete.start();
+        switch (currentStep) {
+            case INITIAL_DELAY:
+                if (timerPalete.done()) {
+                    currentStep = IntakeStep.POSITION_PALETE;
                 }
-            }
+                break;
+            case POSITION_PALETE:
+                sector = robotStorage.getNextFreeSector();
+
+                if (sector == -1) {
+                    palete.setPosition(PaleteSubsytem.LOCK);
+                    intake.stop();
+                    currentStep = IntakeStep.DONE;
+                    break;
+                }
+
+                intake.suck(); // Keep intake running
+                switch (sector) {
+                    case 0:
+                        palete.setPosition(PaleteSubsytem.IN_BILA_1);
+                        break;
+                    case 1:
+                        palete.setPosition(PaleteSubsytem.IN_BILA_2);
+                        break;
+                    case 2:
+                        palete.setPosition(PaleteSubsytem.IN_BILA_3);
+                        break;
+                    default:
+                        telemetry.addData("problema roata; sector:", sector);
+                        break;
+                }
+                currentStep = IntakeStep.WAIT_FOR_BALL;
+                break;
+
+            case WAIT_FOR_BALL:
+                if (sensor.getDistanceMM() < 30) {
+                    currentStep = IntakeStep.STORE_BALL;
+                }
+                break;
+
+            case STORE_BALL:
+                robotStorage.setSector(sector, sensor.getColor());
+                intake.stop();
+                timerPalete.start();
+                currentStep = IntakeStep.WAIT_AND_CYCLE;
+                break;
+
+            case WAIT_AND_CYCLE:
+                //noinspection DuplicateBranchesInSwitch
+                if (timerPalete.done()) {
+                    currentStep = IntakeStep.POSITION_PALETE;
+                }
+                break;
+
+            case DONE:
+                // Command will finish.
+                break;
         }
+
         telemetry.addData("sector:", sector);
+        telemetry.addData("culoare:", sensor.getHSVColor()[0]);
+        telemetry.addData("distanta:", sensor.getDistanceMM());
         telemetry.addData("culoare sector 0:", robotStorage.getSectorColor(0));
         telemetry.addData("culoare sector 1:", robotStorage.getSectorColor(1));
         telemetry.addData("culoare sector 2:", robotStorage.getSectorColor(2));
-        telemetry.addData("timer:", timerPalete.remainingTime());
-        telemetry.addData("timer done?", timerPalete.done());
-        telemetry.addData("timer on?", timerPalete.isTimerOn());
+        telemetry.addData("timer remaining:", timerPalete.remainingTime());
+        telemetry.addData("step:", currentStep.name());
         telemetry.update();
     }
 
@@ -81,12 +125,11 @@ public class IntakeBall extends CommandBase {
     public void end(boolean interrupted) {
         intake.stop();
         palete.setPosition(0.65);
-        // paltete pe o pozitie unde tine bilele sa nu iasa pe nicaieri
     }
 
     @Override
     public boolean isFinished() {
-        return sector == -1;
+        return currentStep == IntakeStep.DONE;
     }
 
 }

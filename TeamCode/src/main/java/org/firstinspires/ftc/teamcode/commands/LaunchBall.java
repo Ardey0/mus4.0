@@ -18,7 +18,7 @@ public class LaunchBall extends CommandBase {
     private final RobotStorage robotStorage;
     private final Telemetry telemetry;
     private final Timer onofreiTimer = new Timer(500, TimeUnit.MILLISECONDS);
-    private final Timer paleteTimer = new Timer(500, TimeUnit.MILLISECONDS);
+    private final Timer paleteTimer = new Timer(600, TimeUnit.MILLISECONDS);
     private final Timer flywheelTimer = new Timer(2000, TimeUnit.MILLISECONDS);
     private int ball = 0;
     private boolean done = false;
@@ -48,6 +48,7 @@ public class LaunchBall extends CommandBase {
 
     @Override
     public void initialize() {
+        done = false;
         launcher.spin();
         ball = 0;
         flywheelTimer.start();
@@ -131,6 +132,7 @@ public class LaunchBall extends CommandBase {
         telemetry.addData("sector:", sector);
         telemetry.addData("ball:", ball);
         telemetry.addData("step:", currentStep.name());
+        telemetry.addData("done:", done);
         telemetry.update();
     }
 

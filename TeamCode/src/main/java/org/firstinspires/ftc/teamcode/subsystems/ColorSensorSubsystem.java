@@ -11,6 +11,7 @@ public class ColorSensorSubsystem extends SubsystemBase {
 
     public ColorSensorSubsystem(HardwareMap hwMap){
         this.colorSensor = new SensorRevColorV3(hwMap, "senzor");
+        colorSensor.getColorSensor().setGain(2);
     }
 
     public int[] getRGBColor() {
@@ -26,10 +27,10 @@ public class ColorSensorSubsystem extends SubsystemBase {
 
     public int getColor() { // GREEN = 1    PURPLE = 2
         float[] HSVColor = getHSVColor();
-        if (HSVColor[0] > 155 && HSVColor[0] < 185) { /// 80 si 140
+        if (HSVColor[0] > 110 && HSVColor[0] < 200) { /// 80 si 140
             return 1; // GREEN
         }
-        if (HSVColor[0] > 205 && HSVColor[0] < 255){ /// 220 si 330
+        if (HSVColor[0] > 200 && HSVColor[0] < 260){ /// 220 si 330
             return 2; // PURPLE
         }
         return 0;
