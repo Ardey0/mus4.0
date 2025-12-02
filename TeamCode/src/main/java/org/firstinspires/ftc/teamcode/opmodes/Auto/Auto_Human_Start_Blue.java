@@ -56,7 +56,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         public PathChain LaunchMiddle;
         public PathChain GrabGate;
         public PathChain LaunchGate;
-        private final Pose start = new Pose(55.700, 8.740);
+        private final Pose start = new Pose(55.700, 8.740,Math.toRadians(180));
         private final Pose launchHuman = new Pose(58.540, 23.500);
         private final Pose grabHuman = new Pose(41.96, 37.750);
         private final Pose grabMiddle = new Pose(41.96, 62.5);
@@ -120,11 +120,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
             readMotif.initialize();
         });
     }
-    private  InstantCommand launch() {
-        return new InstantCommand(() -> {
-            launchBall.execute();
-        });
-    }
+
     @Override
     public void initialize() {
         super.reset();
@@ -148,6 +144,10 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         readMotif = new ReadMotif(robotStorage, telemetry, limelight);
 
 
+        robotStorage.setSector(0, 2);
+        robotStorage.setSector(1, 2);
+        robotStorage.setSector(2, 1);
+
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(start);
         buildPaths();
@@ -155,7 +155,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
                 read(),
                 new FollowPathCommand(follower, preload, true, 0.8),
-                launch()
+                launchBall
         );
         schedule(autonomousSequence);
     }
@@ -163,10 +163,11 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     @Override
     public void run() {
         super.run();
-
+        follower.update();
         telemetryData.addData("X", follower.getPose().getX());
         telemetryData.addData("Y", follower.getPose().getY());
         telemetryData.addData("Heading", follower.getPose().getHeading());
         telemetryData.update();
     }
 }
+
