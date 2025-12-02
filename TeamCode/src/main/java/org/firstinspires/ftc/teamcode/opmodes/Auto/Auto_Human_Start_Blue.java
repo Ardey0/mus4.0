@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
 
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.util.TelemetryData;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.seattlesolvers.solverslib.command.CommandOpMode;
+import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.commands.IntakeBall;
 import org.firstinspires.ftc.teamcode.commands.LaunchBall;
@@ -24,7 +28,9 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
 
 @Autonomous
-public class Auto_Human_Start_Blue extends OpMode {
+public class Auto_Human_Start_Blue extends CommandOpMode {
+
+    TelemetryData telemetryData = new TelemetryData(telemetry);
 
     private ChassisSubsystem chassis;
     private LauncherSubsystem launcher;
@@ -109,50 +115,58 @@ public class Auto_Human_Start_Blue extends OpMode {
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-135))
                     .build();
         }
-    public void setPathState(int pState) {
-        pathState = pState;
-        pathTimer.resetTimer();
+    private InstantCommand read() {
+        return new InstantCommand(() -> {
+            readMotif.initialize();
+        });
     }
-
+    private  InstantCommand launch() {
+        return new InstantCommand(() -> {
+            launchBall.execute();
+        });
+    }
     @Override
-    public void init() {
+    public void initialize() {
+        super.reset();
+
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 
+        limelight = new LimelightSubsystem(hardwareMap);
+        robotStorage = new RobotStorage();
+
+        chassis = new ChassisSubsystem(hardwareMap);
+        launcher = new LauncherSubsystem(hardwareMap);
+        palete = new PaleteSubsytem(hardwareMap);
+        onofrei = new OnofreiSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
+        sensor = new ColorSensorSubsystem(hardwareMap);
+        intakeBall = new IntakeBall(robotStorage, telemetry, intake, palete, sensor);
+        launchBall = new LaunchBall(robotStorage, telemetry, palete, onofrei, launcher);
+
+        readMotif = new ReadMotif(robotStorage, telemetry, limelight);
+
+
         follower = Constants.createFollower(hardwareMap);
-        buildPaths();
         follower.setStartingPose(start);
+        buildPaths();
+
+        SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
+                read(),
+                new FollowPathCommand(follower, preload, true, 0.8),
+                launch()
+        );
+        schedule(autonomousSequence);
     }
 
     @Override
-    public void init_loop() {}
+    public void run() {
+        super.run();
 
-    public void autonomousPathUpdate()
-    {
-        switch (pathState) {
-            case 0:
-                follower.followPath(preload, 1, true);
-                setPathState(-1);
-                break;
-
-
-
-
-        }
+        telemetryData.addData("X", follower.getPose().getX());
+        telemetryData.addData("Y", follower.getPose().getY());
+        telemetryData.addData("Heading", follower.getPose().getHeading());
+        telemetryData.update();
     }
-
-    @Override
-    public void loop()
-    {
-        follower.update();
-        autonomousPathUpdate();
-    }
-
-    @Override
-    public void start() {
-        opmodeTimer.resetTimer();
-        setPathState(0);
-    }
-
 }
