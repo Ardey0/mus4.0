@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.Auto;
+package org.firstinspires.ftc.teamcode.OpModes.Auto;
 
 
 import com.pedropathing.follower.Follower;
@@ -9,10 +9,34 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.commands.IntakeBall;
+import org.firstinspires.ftc.teamcode.commands.LaunchBall;
+import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.ChassisSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ColorSensorSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
+import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
+
 
 @Autonomous
 public class Auto_Human_Start_Blue extends OpMode {
+
+    private ChassisSubsystem chassis;
+    private LauncherSubsystem launcher;
+    private PaleteSubsytem palete;
+    private OnofreiSubsystem onofrei;
+    private IntakeSubsystem intake;
+    private ColorSensorSubsystem sensor;
+    private RobotStorage robotStorage;
+    private LimelightSubsystem limelight;
+    private IntakeBall intakeBall;
+    private LaunchBall launchBall;
+    private ReadMotif readMotif;
 
     private int pathState;
     private Timer pathTimer, actionTimer, opmodeTimer;
