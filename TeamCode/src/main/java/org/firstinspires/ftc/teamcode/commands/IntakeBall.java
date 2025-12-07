@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import java.util.concurrent.TimeUnit;
 
 public class IntakeBall extends CommandBase {
-    private final Timer timerPalete = new Timer(700, TimeUnit.MILLISECONDS);
+    private final Timer timerPalete = new Timer(100, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final PaleteSubsytem palete;
     private final ColorSensorSubsystem sensor;
@@ -22,7 +22,6 @@ public class IntakeBall extends CommandBase {
     private int sector = -2;
 
     private enum IntakeStep {
-        INITIAL_DELAY,
         POSITION_PALETE,
         WAIT_FOR_BALL,
         STORE_BALL,
@@ -46,17 +45,12 @@ public class IntakeBall extends CommandBase {
     public void initialize() {
         intake.suck();
         timerPalete.start();
-        currentStep = IntakeStep.INITIAL_DELAY;
+        currentStep = IntakeStep.POSITION_PALETE;
     }
 
     @Override
     public void execute() {
         switch (currentStep) {
-            case INITIAL_DELAY:
-                if (timerPalete.done()) {
-                    currentStep = IntakeStep.POSITION_PALETE;
-                }
-                break;
             case POSITION_PALETE:
                 sector = robotStorage.getNextFreeSector();
 
@@ -94,13 +88,14 @@ public class IntakeBall extends CommandBase {
             case STORE_BALL:
                 robotStorage.setSector(sector, sensor.getColor());
                 intake.stop();
-                timerPalete.start();
-                currentStep = IntakeStep.WAIT_AND_CYCLE;
+                if (sensor.getDistanceMM() > 55) {
+                    timerPalete.start();
+                    currentStep = IntakeStep.WAIT_AND_CYCLE;
+                }
                 break;
 
             case WAIT_AND_CYCLE:
-                //noinspection DuplicateBranchesInSwitch
-                if (timerPalete.done()) {
+                if (timerPalete.done() && sensor.getDistanceMM() > 55) {
                     currentStep = IntakeStep.POSITION_PALETE;
                 }
                 break;
@@ -129,7 +124,7 @@ public class IntakeBall extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return currentStep == IntakeStep.DONE;
+        return currentStep == IntakeStep.DONE && timerPalete.done();
     }
 
 }

@@ -58,4 +58,13 @@ public class RobotStorage {
         return -1;
     }
 
+    public int getNextSectorWithColor(int color) {
+        for (int i = 0; i < 3; i++) {
+            if (roata[i] == color) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 }

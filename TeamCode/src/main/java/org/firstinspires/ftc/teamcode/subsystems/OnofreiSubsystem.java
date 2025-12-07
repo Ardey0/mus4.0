@@ -17,5 +17,4 @@ public class OnofreiSubsystem extends SubsystemBase {
     public void setPosition(double position) {
         onofrei.set(position);
     }
-
 }

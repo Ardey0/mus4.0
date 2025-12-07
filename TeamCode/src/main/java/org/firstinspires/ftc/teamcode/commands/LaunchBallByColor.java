@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.seattlesolvers.solverslib.command.CommandBase;
-import com.seattlesolvers.solverslib.util.Timing.Timer;
+import com.seattlesolvers.solverslib.util.Timing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
@@ -10,17 +10,20 @@ import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
-public class LaunchBall extends CommandBase {
+public class LaunchBallByColor extends CommandBase {
     private final OnofreiSubsystem onofrei;
     private final PaleteSubsytem palete;
     private final LauncherSubsystem launcher;
     private final RobotStorage robotStorage;
     private final Telemetry telemetry;
-    private final Timer onofreiTimer = new Timer(500, TimeUnit.MILLISECONDS);
-    private final Timer paleteTimer = new Timer(600, TimeUnit.MILLISECONDS);
-    private final Timer flywheelTimer = new Timer(2000, TimeUnit.MILLISECONDS);
-    private int ball = 0;
+    private final Timing.Timer onofreiTimer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+    private final Timing.Timer paleteTimer = new Timing.Timer(600, TimeUnit.MILLISECONDS);
+    private final Timing.Timer flywheelTimer = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
+    private final Supplier<Boolean> launchFromFar;
+    private double targetSpeed;
+    private final int color;
     private boolean done = false;
 
     // State machine for the launching sequence
@@ -33,34 +36,40 @@ public class LaunchBall extends CommandBase {
         WAIT_FOR_ONOFREI_RETURN, // Added state for delay
         INCREMENT_BALL
     }
+
     private LaunchStep currentStep;
 
-    public LaunchBall(RobotStorage robotStorage, Telemetry telemetry, PaleteSubsytem paleteSubsytem,
-                      OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem) {
+    public LaunchBallByColor(RobotStorage robotStorage, Telemetry telemetry, PaleteSubsytem paleteSubsytem,
+                             OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem,
+                             Supplier<Boolean> launchFromFar, int color) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
         this.robotStorage = robotStorage;
         this.telemetry = telemetry;
+        this.launchFromFar = launchFromFar;
+        this.color = color;
 
         addRequirements(palete, onofrei, launcher);
     }
 
+    private int sector;
+
     @Override
     public void initialize() {
         done = false;
-        launcher.spin();
-        ball = 0;
+        targetSpeed = launchFromFar.get() ? LauncherSubsystem.FAR_TARGET_SPEED : LauncherSubsystem.NEAR_TARGET_SPEED;
+        launcher.spin(targetSpeed);
         flywheelTimer.start();
         currentStep = LaunchStep.SET_PALETE_POSITION;
+        sector = robotStorage.getNextSectorWithColor(color);
     }
 
     @Override
     public void execute() {
-        launcher.spin();
-        int sector = robotStorage.getNextSectorWithMotifBall(ball);
+        launcher.spin(targetSpeed); // trebuie apelata constant pentru pid
 
-        if (flywheelTimer.done()) {
+        if (launcher.atTargetSpeed()) {
             switch (currentStep) {
                 case SET_PALETE_POSITION:
                     // End the command if there are no more balls with motifs to launch.
@@ -84,6 +93,7 @@ public class LaunchBall extends CommandBase {
                             done = true;
                             break;
                     }
+
                     if (!done) {
                         paleteTimer.start();
                         currentStep = LaunchStep.WAIT_FOR_PALETE;
@@ -122,17 +132,16 @@ public class LaunchBall extends CommandBase {
 
                 case INCREMENT_BALL:
                     robotStorage.setSector(sector, 0);
-                    ball++;
-                    // Move to the next ball
-                    currentStep = LaunchStep.SET_PALETE_POSITION;
+                    done = true;
                     break;
             }
         }
 
         telemetry.addData("sector:", sector);
-        telemetry.addData("ball:", ball);
         telemetry.addData("step:", currentStep.name());
         telemetry.addData("done:", done);
+        telemetry.addData("flywheel speed", launcher.getVelocity());
+        telemetry.addData("flywheel target speed", targetSpeed);
         telemetry.update();
     }
 
