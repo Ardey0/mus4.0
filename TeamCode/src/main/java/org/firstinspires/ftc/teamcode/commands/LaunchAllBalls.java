@@ -21,7 +21,7 @@ public class LaunchAllBalls extends CommandBase {
     private final Timing.Timer onofreiTimer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
     private final Timing.Timer paleteTimer = new Timing.Timer(600, TimeUnit.MILLISECONDS);
     private final Timing.Timer flywheelTimer = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
-    private boolean done = false;
+    private boolean done = false, start = false;
     private final Supplier<Boolean> launchFromFar;
     private double targetSpeed;
 
@@ -54,6 +54,7 @@ public class LaunchAllBalls extends CommandBase {
     @Override
     public void initialize() {
         done = false;
+        start = false;
         targetSpeed = launchFromFar.get() ? LauncherSubsystem.FAR_TARGET_SPEED : LauncherSubsystem.NEAR_TARGET_SPEED;
         launcher.spin(targetSpeed);
         sector = 0;
@@ -74,6 +75,10 @@ public class LaunchAllBalls extends CommandBase {
         }
 
         if (launcher.atTargetSpeed()) {
+            start = true;
+        }
+
+        if (start) {
             switch (currentStep) {
                 case SET_PALETE_POSITION:
                     // End the command if there are no more balls with motifs to launch.

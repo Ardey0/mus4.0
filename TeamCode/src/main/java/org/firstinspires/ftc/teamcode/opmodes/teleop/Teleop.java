@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.TeleOP;
+package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
 import org.firstinspires.ftc.teamcode.commands.LaunchBallByColor;
 import org.firstinspires.ftc.teamcode.commands.LaunchBallBySector;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
-import org.firstinspires.ftc.teamcode.subsystems.ChassisSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ColorSensorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 public class Teleop extends CommandOpMode {
     private GamepadEx gamepad;
 
-    private ChassisSubsystem chassis;
+    private DriveSubsystem chassis;
     private LauncherSubsystem launcher;
     private PaleteSubsytem palete;
     private OnofreiSubsystem onofrei;
@@ -48,7 +48,7 @@ public class Teleop extends CommandOpMode {
     public void initialize() {
         gamepad = new GamepadEx(gamepad1);
 
-        chassis = new ChassisSubsystem(hardwareMap);
+        chassis = new DriveSubsystem(hardwareMap);
         launcher = new LauncherSubsystem(hardwareMap);
         palete = new PaleteSubsytem(hardwareMap);
         onofrei = new OnofreiSubsystem(hardwareMap);

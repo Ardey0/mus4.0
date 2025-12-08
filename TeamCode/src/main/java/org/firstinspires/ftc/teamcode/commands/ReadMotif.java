@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import com.bylazar.telemetry.PanelsTelemetry;
 import com.seattlesolvers.solverslib.command.CommandBase;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -21,7 +20,7 @@ public class ReadMotif extends CommandBase {
 
     @Override
     public void initialize() {
-        tagId = limelight.aprilTagId();
+        tagId = limelight.getAprilTagId();
         robotStorage.setMotif(tagId);
         telemetry.addData("tag id:", tagId);
         telemetry.update();

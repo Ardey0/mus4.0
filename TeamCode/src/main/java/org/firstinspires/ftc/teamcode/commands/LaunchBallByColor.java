@@ -24,7 +24,7 @@ public class LaunchBallByColor extends CommandBase {
     private final Supplier<Boolean> launchFromFar;
     private double targetSpeed;
     private final int color;
-    private boolean done = false;
+    private boolean done = false, start = false;
 
     // State machine for the launching sequence
     private enum LaunchStep {
@@ -58,6 +58,7 @@ public class LaunchBallByColor extends CommandBase {
     @Override
     public void initialize() {
         done = false;
+        start = false;
         targetSpeed = launchFromFar.get() ? LauncherSubsystem.FAR_TARGET_SPEED : LauncherSubsystem.NEAR_TARGET_SPEED;
         launcher.spin(targetSpeed);
         flywheelTimer.start();
@@ -68,8 +69,11 @@ public class LaunchBallByColor extends CommandBase {
     @Override
     public void execute() {
         launcher.spin(targetSpeed); // trebuie apelata constant pentru pid
-
         if (launcher.atTargetSpeed()) {
+            start = true;
+        }
+
+        if (start) {
             switch (currentStep) {
                 case SET_PALETE_POSITION:
                     // End the command if there are no more balls with motifs to launch.

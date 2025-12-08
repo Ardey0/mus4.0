@@ -119,7 +119,7 @@ public class IntakeBall extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         intake.stop();
-        palete.setPosition(0.65);
+        palete.setPosition(PaleteSubsytem.LOCK);
     }
 
     @Override

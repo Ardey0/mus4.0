@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.drivebase.MecanumDrive;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 
-public class ChassisSubsystem extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase {
     private final Motor frontLeft, frontRight, backLeft, backRight;
 
-    public ChassisSubsystem(HardwareMap hwMap) {
+    public DriveSubsystem(HardwareMap hwMap) {
         frontLeft = new Motor(hwMap, "front_left");
         frontRight = new Motor(hwMap, "front_right");
         backLeft = new Motor(hwMap, "back_left");

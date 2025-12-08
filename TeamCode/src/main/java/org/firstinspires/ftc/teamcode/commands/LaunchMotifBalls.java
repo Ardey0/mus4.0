@@ -21,7 +21,7 @@ public class LaunchMotifBalls extends CommandBase {
     private final Timer onofreiTimer = new Timer(450, TimeUnit.MILLISECONDS);
     private final Timer paleteTimer = new Timer(500, TimeUnit.MILLISECONDS);
     private int ball = 0;
-    private boolean done = false;
+    private boolean done = false, start = false;
     private final Supplier<Boolean> launchFromFar;
     private double targetSpeed;
 
@@ -53,6 +53,7 @@ public class LaunchMotifBalls extends CommandBase {
     @Override
     public void initialize() {
         done = false;
+        start = false;
         targetSpeed = launchFromFar.get() ? LauncherSubsystem.FAR_TARGET_SPEED : LauncherSubsystem.NEAR_TARGET_SPEED;
         launcher.spin(targetSpeed);
         ball = 0;
@@ -63,8 +64,11 @@ public class LaunchMotifBalls extends CommandBase {
     public void execute() {
         launcher.spin(targetSpeed); // trebuie apelata constant pentru pid
         int sector = robotStorage.getNextSectorWithMotifBall(ball);
-
         if (launcher.atTargetSpeed()) {
+            start = true;
+        }
+
+        if (start) {
             switch (currentStep) {
                 case SET_PALETE_POSITION:
                     // End the command if there are no more balls with motifs to launch.

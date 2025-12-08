@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode.commands;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 
-import org.firstinspires.ftc.teamcode.subsystems.ChassisSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 public class ChassisDrive extends CommandBase {
-    private final ChassisSubsystem chassis;
+    private final DriveSubsystem chassis;
     private final GamepadEx gamepad;
 
-    public ChassisDrive(ChassisSubsystem chassisSubsystem, GamepadEx gamepad) {
-        this.chassis = chassisSubsystem;
+    public ChassisDrive(DriveSubsystem driveSubsystem, GamepadEx gamepad) {
+        this.chassis = driveSubsystem;
         this.gamepad = gamepad;
 
         addRequirements(chassis);

@@ -15,7 +15,7 @@ public class LauncherSubsystem extends SubsystemBase {
     public LauncherSubsystem(HardwareMap hwMap) {
         this.flywheel = new MotorEx(hwMap, "launcher");
         this.flywheel.setInverted(true);
-        this.flywheel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+//        this.flywheel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         this.flywheel.setRunMode(Motor.RunMode.RawPower);
         controller.setTolerance(20);
     }

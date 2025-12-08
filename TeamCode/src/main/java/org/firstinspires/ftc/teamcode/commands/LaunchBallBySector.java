@@ -24,7 +24,7 @@ public class LaunchBallBySector extends CommandBase {
     private final Supplier<Boolean> launchFromFar;
     private double targetSpeed;
     private final int sector;
-    private boolean done = false;
+    private boolean done = false, start = false;
 
     public LaunchBallBySector(RobotStorage robotStorage, Telemetry telemetry, PaleteSubsytem paleteSubsytem,
                               OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem,
@@ -55,6 +55,7 @@ public class LaunchBallBySector extends CommandBase {
     @Override
     public void initialize() {
         done = false;
+        start = false;
         targetSpeed = launchFromFar.get() ? LauncherSubsystem.FAR_TARGET_SPEED : LauncherSubsystem.NEAR_TARGET_SPEED;
         launcher.spin(targetSpeed);
         flywheelTimer.start();
@@ -64,8 +65,11 @@ public class LaunchBallBySector extends CommandBase {
     @Override
     public void execute() {
         launcher.spin(targetSpeed); // trebuie apelata constant pentru pid
-
         if (launcher.atTargetSpeed()) {
+            start = true;
+        }
+
+        if (start) {
             switch (currentStep) {
                 case SET_PALETE_POSITION:
                     // End the command if there are no more balls with motifs to launch.
