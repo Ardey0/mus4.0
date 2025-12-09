@@ -18,8 +18,8 @@ public class LaunchAllBalls extends CommandBase {
     private final LauncherSubsystem launcher;
     private final RobotStorage robotStorage;
     private final Telemetry telemetry;
-    private final Timing.Timer onofreiTimer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-    private final Timing.Timer paleteTimer = new Timing.Timer(600, TimeUnit.MILLISECONDS);
+    private final Timing.Timer onofreiTimer = new Timing.Timer(400, TimeUnit.MILLISECONDS);
+    private final Timing.Timer paleteTimer = new Timing.Timer(400, TimeUnit.MILLISECONDS);
     private final Timing.Timer flywheelTimer = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
     private boolean done = false, start = false;
     private final Supplier<Boolean> launchFromFar;
@@ -78,73 +78,72 @@ public class LaunchAllBalls extends CommandBase {
             start = true;
         }
 
-        if (start) {
-            switch (currentStep) {
-                case SET_PALETE_POSITION:
-                    // End the command if there are no more balls with motifs to launch.
-                    if (sector < 0 || sector > 2) {
+        switch (currentStep) {
+            case SET_PALETE_POSITION:
+                // End the command if there are no more balls with motifs to launch.
+                if (sector < 0 || sector > 2) {
+                    done = true;
+                    break;
+                }
+
+                switch (sector) {
+                    case 0:
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_1);
+                        break;
+                    case 1:
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_2);
+                        break;
+                    case 2:
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_3);
+                        break;
+                    default:
+                        // Invalid sector, end the command gracefully.
                         done = true;
                         break;
-                    }
+                }
+                if (!done && start) {
+                    paleteTimer.start();
+                    currentStep = LaunchStep.WAIT_FOR_PALETE;
+                }
+                break;
 
-                    switch (sector) {
-                        case 0:
-                            palete.setPosition(PaleteSubsytem.OUT_BILA_1);
-                            break;
-                        case 1:
-                            palete.setPosition(PaleteSubsytem.OUT_BILA_2);
-                            break;
-                        case 2:
-                            palete.setPosition(PaleteSubsytem.OUT_BILA_3);
-                            break;
-                        default:
-                            // Invalid sector, end the command gracefully.
-                            done = true;
-                            break;
-                    }
-                    if (!done) {
-                        paleteTimer.start();
-                        currentStep = LaunchStep.WAIT_FOR_PALETE;
-                    }
-                    break;
+            case WAIT_FOR_PALETE:
+                if (paleteTimer.done()) {
+                    currentStep = LaunchStep.MOVE_ONOFREI_OUT;
+                }
+                break;
 
-                case WAIT_FOR_PALETE:
-                    if (paleteTimer.done()) {
-                        currentStep = LaunchStep.MOVE_ONOFREI_OUT;
-                    }
-                    break;
+            case MOVE_ONOFREI_OUT:
+                onofrei.setPosition(OnofreiSubsystem.OUT);
+                onofreiTimer.start();
+                currentStep = LaunchStep.WAIT_FOR_ONOFREI;
+                break;
 
-                case MOVE_ONOFREI_OUT:
-                    onofrei.setPosition(OnofreiSubsystem.OUT);
-                    onofreiTimer.start();
-                    currentStep = LaunchStep.WAIT_FOR_ONOFREI;
-                    break;
+            case WAIT_FOR_ONOFREI:
+                if (onofreiTimer.done()) {
+                    currentStep = LaunchStep.MOVE_ONOFREI_IN;
+                }
+                break;
 
-                case WAIT_FOR_ONOFREI:
-                    if (onofreiTimer.done()) {
-                        currentStep = LaunchStep.MOVE_ONOFREI_IN;
-                    }
-                    break;
+            case MOVE_ONOFREI_IN:
+                onofrei.setPosition(OnofreiSubsystem.IN);
+                onofreiTimer.start(); // Start timer to wait for Onofrei to return
+                currentStep = LaunchStep.WAIT_FOR_ONOFREI_RETURN;
+                break;
 
-                case MOVE_ONOFREI_IN:
-                    onofrei.setPosition(OnofreiSubsystem.IN);
-                    onofreiTimer.start(); // Start timer to wait for Onofrei to return
-                    currentStep = LaunchStep.WAIT_FOR_ONOFREI_RETURN;
-                    break;
+            case WAIT_FOR_ONOFREI_RETURN: // New state
+                if (onofreiTimer.done()) {
+                    currentStep = LaunchStep.INCREMENT_BALL;
+                }
+                break;
 
-                case WAIT_FOR_ONOFREI_RETURN: // New state
-                    if (onofreiTimer.done()) {
-                        currentStep = LaunchStep.INCREMENT_BALL;
-                    }
-                    break;
-
-                case INCREMENT_BALL:
-                    robotStorage.setSector(sector, 0);
-                    // Move to the next ball
-                    currentStep = LaunchStep.SET_PALETE_POSITION;
-                    break;
-            }
+            case INCREMENT_BALL:
+                robotStorage.setSector(sector, 0);
+                // Move to the next ball
+                currentStep = LaunchStep.SET_PALETE_POSITION;
+                break;
         }
+
 
         telemetry.addData("sector:", sector);
         telemetry.addData("step:", currentStep.name());

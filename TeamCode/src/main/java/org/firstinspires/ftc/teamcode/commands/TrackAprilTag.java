@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 
 public class TrackAprilTag extends CommandBase {
-    private final double kP = 0, kI = 0, kD = 0, kF = 0, kS = 0;
+    private final double kP = 0, kI = 0, kD = 0, kF = 0, kS = 0.16;
     private final GamepadEx gamepad;
     private final DriveSubsystem drive;
     private final LimelightSubsystem limelight;

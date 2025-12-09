@@ -27,7 +27,8 @@ public class test extends LinearOpMode {
     public static double paletaPos;
     public static double viteza = 1450;
 //    public static double kP = 0.004, kI = 0, kD = 0.0000007, kF = 0.000375;  // lansator
-    public static double kP = 0.033, kI = 0, kD = 0.00001, kF = 0, kS = 0;  // camera, de tunat kS
+    public static double kP = 0.033, kI = 0, kD = 0.00001, kF = 0, kS = 0.16;  // camera, de tunat kS
+    public static double motorPower = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -118,10 +119,10 @@ public class test extends LinearOpMode {
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            frontLeft.setPower(frontLeftPower);
-            backLeft.setPower(backLeftPower);
-            frontRight.setPower(frontRightPower);
-            backRight.setPower(backRightPower);
+            frontLeft.setPower(motorPower);
+            backLeft.setPower(motorPower);
+            frontRight.setPower(-motorPower);
+            backRight.setPower(-motorPower);
             
             //Lansator
             if (previousGamepad1.b && !currentGamepad1.b) {

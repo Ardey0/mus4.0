@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.OpModes.Auto;
+package org.firstinspires.ftc.teamcode.opmodes.Auto;
 
-import com.seattlesolvers.solverslib.command.InstantCommand;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -30,13 +30,10 @@ import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
-
 @Autonomous
 public class Auto_Human_Start_Blue extends CommandOpMode {
-
     TelemetryData telemetryData = new TelemetryData(telemetry);
 
-    private DriveSubsystem chassis;
     private LauncherSubsystem launcher;
     private PaleteSubsytem palete;
     private OnofreiSubsystem onofrei;
@@ -44,6 +41,8 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     private ColorSensorSubsystem sensor;
     private RobotStorage robotStorage;
     private LimelightSubsystem limelight;
+
+    private Init init;
     private IntakeBall intakeBall;
     private LaunchAllBalls launchAllBallFar;
     private LaunchAllBalls launchAllBallClose;
@@ -64,12 +63,12 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     public PathChain GrabGate;
     public PathChain LaunchGate;
     private final Pose start = new Pose(55.700, 8.740, Math.toRadians(180));
-    private final Pose launchHuman = new Pose(58.540, 23.500);
-    private final Pose pickupHuman = new Pose(11, 36.5);
-    private final Pose grabHuman = new Pose(35, 36.5);
-    private final Pose grabMiddle = new Pose(38, 62.5);
-    private final Pose pickupMiddle = new Pose(11, 62.5);
-    private final Pose launchMiddle = new Pose(55.700, 8.740);
+    private final Pose launchHuman = new Pose(60.540, 23, Math.toRadians(-157));
+    private final Pose grabHuman = new Pose(35, 36.5, Math.toRadians(180));
+    private final Pose pickupHuman = new Pose(10, 36.5, Math.toRadians(180));
+    private final Pose grabMiddle = new Pose(38, 58.5, Math.toRadians(180));
+    private final Pose pickupMiddle = new Pose(10, 58.5, Math.toRadians(180));
+    private final Pose launchMiddle = new Pose(50.700, 87.40, Math.toRadians(-155));
     private final Pose grabGate = new Pose(38, 87);
     private final Pose launchGate = new Pose(45, 87);
 
@@ -78,48 +77,48 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 .addPath(
                         new BezierLine(start, launchHuman)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-152))
+                .setLinearHeadingInterpolation(Math.toRadians(180), launchHuman.getHeading())
                 .build();
 
         GrabHuman = follower.pathBuilder()
                 .addPath(
                         new BezierLine(launchHuman, grabHuman)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-150), Math.toRadians(180))
+                .setLinearHeadingInterpolation(launchHuman.getHeading(), grabHuman.getHeading())
                 .build();
 
         PickupHuman = follower.pathBuilder()
                 .addPath(
                         new BezierLine(grabHuman, pickupHuman)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(grabHuman.getHeading(), pickupHuman.getHeading())
                 .build();
+
         LaunchHuman = follower.pathBuilder()
                 .addPath(
                         new BezierLine(grabHuman, launchHuman)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-150))
+                .setLinearHeadingInterpolation(Math.toRadians(180), launchHuman.getHeading())
                 .build();
 
         GrabMiddle = follower.pathBuilder()
                 .addPath(
                         new BezierLine(launchHuman, grabMiddle)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-150), Math.toRadians(180))
+                .setLinearHeadingInterpolation(launchHuman.getHeading(), grabMiddle.getHeading())
                 .build();
         PickupMiddle = follower.pathBuilder()
                 .addPath(
                         new BezierLine(grabMiddle, pickupMiddle)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .setLinearHeadingInterpolation(grabMiddle.getHeading(), pickupMiddle.getHeading())
                 .build();
-
 
         LaunchMiddle = follower.pathBuilder()
                 .addPath(
                         new BezierLine(grabMiddle, launchMiddle)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-150))
+                .setLinearHeadingInterpolation(grabMiddle.getHeading(), Math.toRadians(-150))
                 .build();
 
         GrabGate = follower.pathBuilder()
@@ -137,13 +136,6 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 .build();
     }
 
-    private InstantCommand startSpin() {
-        return new InstantCommand(() -> {
-            launcher.spin(1370);
-        });
-    }
-
-    @Override
     public void initialize() {
         super.reset();
 
@@ -154,12 +146,13 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         limelight = new LimelightSubsystem(hardwareMap);
         robotStorage = new RobotStorage();
 
-        chassis = new DriveSubsystem(hardwareMap);
         launcher = new LauncherSubsystem(hardwareMap);
         palete = new PaleteSubsytem(hardwareMap);
         onofrei = new OnofreiSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
         sensor = new ColorSensorSubsystem(hardwareMap);
+
+        init = new Init(palete, onofrei);
         intakeBall = new IntakeBall(robotStorage, telemetry, intake, palete, sensor);
         launchAllBallFar = new LaunchAllBalls(robotStorage, telemetry, palete, onofrei, launcher, () -> true);
         launchAllBallClose = new LaunchAllBalls(robotStorage, telemetry, palete, onofrei, launcher, () -> false);
@@ -176,26 +169,26 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         buildPaths();
 
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
+                init,
                 readMotif,
-                new FollowPathCommand(follower, preload, true, 0.8),
-                launchAllBallFar,
-                new FollowPathCommand(follower, GrabHuman, true, 0.1),
-
+                new FollowPathCommand(follower, preload),
+                new LaunchAllBalls(robotStorage, telemetry, palete, onofrei, launcher, () -> true),
+                new FollowPathCommand(follower, GrabHuman),
                 new ParallelCommandGroup(
-                        intakeBall,
-                        new FollowPathCommand(follower, PickupHuman, true, 0.1)
+                        new IntakeBall(robotStorage, telemetry, intake, palete, sensor),
+                        new FollowPathCommand(follower, PickupHuman, true, 0.2)
                 ),
-                new FollowPathCommand(follower, LaunchHuman, true, 0.8),
-                launchAllBallFar,
-                new FollowPathCommand(follower, GrabMiddle, true, 0.1),
+                new FollowPathCommand(follower, LaunchHuman),
+                new LaunchAllBalls(robotStorage, telemetry, palete, onofrei, launcher, () -> true),
+                new FollowPathCommand(follower, GrabMiddle),
                 new ParallelCommandGroup(
-                        intakeBall,
-                        new FollowPathCommand(follower, PickupMiddle, true, 0.1)
-                )
-//                new FollowPathCommand(follower, LaunchMiddle, true, 0.1),
+                        new IntakeBall(robotStorage, telemetry, intake, palete, sensor),
+                        new FollowPathCommand(follower, PickupMiddle, true, 0.2)
+                ),
+                new FollowPathCommand(follower, LaunchMiddle),
+                new LaunchAllBalls(robotStorage, telemetry, palete, onofrei, launcher, () -> true)
 //                launchAllBallFar
         );
-
         schedule(autonomousSequence);
     }
 
@@ -209,4 +202,3 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         telemetryData.update();
     }
 }
-
