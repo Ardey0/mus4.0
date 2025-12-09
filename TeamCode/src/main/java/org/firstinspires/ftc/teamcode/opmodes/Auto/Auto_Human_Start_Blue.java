@@ -54,88 +54,93 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     private double time;
     private Follower follower;
 
-        public PathChain preload;
-        public PathChain GrabHuman;
-        public PathChain PickupHuman;
-        public PathChain LaunchHuman;
-        public PathChain GrabMiddle;
-        public PathChain LaunchMiddle;
-        public PathChain GrabGate;
-        public PathChain LaunchGate;
-        private final Pose start = new Pose(55.700, 8.740,Math.toRadians(180));
-        private final Pose launchHuman = new Pose(58.540, 23.500);
-        private final Pose pickupHuman = new Pose(24,36);
-        private final Pose grabHuman = new Pose(34, 36);
-        private final Pose grabMiddle = new Pose(38, 62.5);
-        private final Pose launchMiddle = new Pose(55.700, 8.740);
-        private final Pose grabGate = new Pose(38, 87);
-        private final Pose launchGate = new Pose(45, 87);
+    public PathChain preload;
+    public PathChain GrabHuman;
+    public PathChain PickupHuman;
+    public PathChain LaunchHuman;
+    public PathChain GrabMiddle;
+    public PathChain PickupMiddle;
+    public PathChain LaunchMiddle;
+    public PathChain GrabGate;
+    public PathChain LaunchGate;
+    private final Pose start = new Pose(55.700, 8.740, Math.toRadians(180));
+    private final Pose launchHuman = new Pose(58.540, 23.500);
+    private final Pose pickupHuman = new Pose(11, 36.5);
+    private final Pose grabHuman = new Pose(35, 36.5);
+    private final Pose grabMiddle = new Pose(38, 62.5);
+    private final Pose pickupMiddle = new Pose(11, 62.5);
+    private final Pose launchMiddle = new Pose(55.700, 8.740);
+    private final Pose grabGate = new Pose(38, 87);
+    private final Pose launchGate = new Pose(45, 87);
 
-        public void buildPaths()
-        {
-            preload = follower.pathBuilder()
-                    .addPath(
-                            new BezierLine(start, launchHuman)
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-152))
-                    .build();
+    public void buildPaths() {
+        preload = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(start, launchHuman)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-152))
+                .build();
 
-            GrabHuman = follower.pathBuilder()
-                    .addPath(
-                            new BezierLine(launchHuman,grabHuman)
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(-152), Math.toRadians(180))
-                    .build();
-            PickupHuman = follower.pathBuilder()
-                    .addPath(
-                            new BezierLine(grabHuman,pickupHuman)
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(180),Math.toRadians(180))
-                    .build();
-            LaunchHuman = follower.pathBuilder()
-                    .addPath(
-                            new BezierLine(grabHuman,launchHuman)
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-160))
-                    .build();
+        GrabHuman = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(launchHuman, grabHuman)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(-150), Math.toRadians(180))
+                .build();
 
-            GrabMiddle = follower.pathBuilder()
-                    .addPath(
-                            new BezierLine(launchHuman,grabMiddle)
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(-160), Math.toRadians(180))
-                    .build();
+        PickupHuman = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(grabHuman, pickupHuman)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .build();
+        LaunchHuman = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(grabHuman, launchHuman)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-150))
+                .build();
 
-            LaunchMiddle = follower.pathBuilder()
-                    .addPath(
-                            new BezierLine(grabMiddle,launchMiddle)
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-135))
-                    .build();
+        GrabMiddle = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(launchHuman, grabMiddle)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(-150), Math.toRadians(180))
+                .build();
+        PickupMiddle = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(grabMiddle, pickupMiddle)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                .build();
 
-            GrabGate = follower.pathBuilder()
-                    .addPath(
-                            new BezierLine(launchMiddle,grabGate)
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(-135), Math.toRadians(180))
-                    .build();
 
-            LaunchGate = follower.pathBuilder()
-                    .addPath(
-                            new BezierLine(grabGate,launchGate)
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-135))
-                    .build();
-        }
-    private InstantCommand read() {
-        return new InstantCommand(() -> {
-            readMotif.initialize();
-        });
+        LaunchMiddle = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(grabMiddle, launchMiddle)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-150))
+                .build();
+
+        GrabGate = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(launchMiddle, grabGate)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(-150), Math.toRadians(180))
+                .build();
+
+        LaunchGate = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(grabGate, launchGate)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-135))
+                .build();
     }
-        private InstantCommand startSpin() {
-                return new InstantCommand(() -> {
-                    launcher.spin(1370);
-                });
+
+    private InstantCommand startSpin() {
+        return new InstantCommand(() -> {
+            launcher.spin(1370);
+        });
     }
 
     @Override
@@ -171,15 +176,24 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         buildPaths();
 
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
-                startSpin(),
-                read(),
+                readMotif,
                 new FollowPathCommand(follower, preload, true, 0.8),
                 launchAllBallFar,
-                new FollowPathCommand(follower, GrabHuman, true, 0.5),
+                new FollowPathCommand(follower, GrabHuman, true, 0.1),
+
                 new ParallelCommandGroup(
                         intakeBall,
-                        new FollowPathCommand(follower, PickupHuman, true, 0.2)
+                        new FollowPathCommand(follower, PickupHuman, true, 0.1)
+                ),
+                new FollowPathCommand(follower, LaunchHuman, true, 0.8),
+                launchAllBallFar,
+                new FollowPathCommand(follower, GrabMiddle, true, 0.1),
+                new ParallelCommandGroup(
+                        intakeBall,
+                        new FollowPathCommand(follower, PickupMiddle, true, 0.1)
                 )
+//                new FollowPathCommand(follower, LaunchMiddle, true, 0.1),
+//                launchAllBallFar
         );
 
         schedule(autonomousSequence);
