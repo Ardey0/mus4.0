@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.OpModes.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
@@ -37,6 +37,9 @@ public class Teleop extends CommandOpMode {
     private LimelightSubsystem limelight;
 
     private ChassisDrive drive;
+    private IntakeBall intakeBall;
+//    private LaunchBall launchBall;
+    private ReadMotif readMotif;
 
     private Button intakeButton, launchMotifButton, scanMotifButton, launchSector0Button,
             launchSector1Button, launchSector2Button, launchPurpleButton, launchGreenButton, launchAllButton,
@@ -58,6 +61,10 @@ public class Teleop extends CommandOpMode {
         robotStorage = new RobotStorage();
 
         drive = new ChassisDrive(chassis, gamepad);
+        readMotif = new ReadMotif(robotStorage, telemetry, limelight);
+        intakeBall = new IntakeBall(robotStorage, telemetry, intake, palete, sensor);
+//        launchBall = new LaunchBall(robotStorage, telemetry, palete, onofrei, launcher);
+
 
         intakeButton = new GamepadButton(
                 gamepad, GamepadKeys.Button.CROSS

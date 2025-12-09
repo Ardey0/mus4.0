@@ -10,7 +10,7 @@ public class LauncherSubsystem extends SubsystemBase {
     private final double kP = 0.004, kI = 0, kD = 0.0000007, kF = 0.000375;
     private final MotorEx flywheel;
     private final PIDFController controller = new PIDFController(kP, kI, kD, kF);
-    public static final double FAR_TARGET_SPEED = 1700, NEAR_TARGET_SPEED = 1370;
+    public static final double FAR_TARGET_SPEED = 1650, NEAR_TARGET_SPEED = 1370;
 
     public LauncherSubsystem(HardwareMap hwMap) {
         this.flywheel = new MotorEx(hwMap, "launcher");
@@ -28,8 +28,8 @@ public class LauncherSubsystem extends SubsystemBase {
         return flywheel.getVelocity();
     }
 
-    public void spin(double targetSpeed) {
-        double power = controller.calculate(flywheel.getVelocity(), targetSpeed);
+    public void spin(double speed) {
+        double power = controller.calculate(flywheel.getVelocity(), speed);
         flywheel.set(power);
     }
 
