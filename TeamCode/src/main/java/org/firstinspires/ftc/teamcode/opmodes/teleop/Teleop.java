@@ -1,5 +1,7 @@
-package org.firstinspires.ftc.teamcode.OpModes.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.button.Button;
@@ -25,6 +27,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
 @TeleOp
 public class Teleop extends CommandOpMode {
+    private TelemetryManager telemetryM;
     private GamepadEx gamepad;
 
     private DriveSubsystem chassis;
@@ -49,6 +52,9 @@ public class Teleop extends CommandOpMode {
 
     @Override
     public void initialize() {
+        super.reset();
+
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         gamepad = new GamepadEx(gamepad1);
 
         chassis = new DriveSubsystem(hardwareMap);
@@ -59,11 +65,6 @@ public class Teleop extends CommandOpMode {
         sensor = new ColorSensorSubsystem(hardwareMap);
         limelight = new LimelightSubsystem(hardwareMap);
         robotStorage = new RobotStorage();
-
-        drive = new ChassisDrive(chassis, gamepad);
-        readMotif = new ReadMotif(robotStorage, telemetry, limelight);
-        intakeBall = new IntakeBall(robotStorage, telemetry, intake, palete, sensor);
-//        launchBall = new LaunchBall(robotStorage, telemetry, palete, onofrei, launcher);
 
 
         intakeButton = new GamepadButton(
@@ -101,11 +102,11 @@ public class Teleop extends CommandOpMode {
         );
 
 
-        schedule(drive);
+        schedule(new ChassisDrive(chassis, gamepad));
 
-        scanMotifButton.toggleWhenPressed(new ReadMotif(robotStorage, telemetry, limelight));
+        scanMotifButton.toggleWhenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
 
-        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetry, intake, palete, sensor));
+        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetryM, intake, palete, sensor));
 
         setLaunchDistanceFarButton.whenPressed(() -> {
             launchFromFar = true;
@@ -117,12 +118,19 @@ public class Teleop extends CommandOpMode {
             telemetry.addLine("APROAPE");
             telemetry.update();
         });
-        launchMotifButton.toggleWhenPressed(new LaunchMotifBalls(robotStorage, telemetry, palete, onofrei, launcher, () -> launchFromFar));
-        launchAllButton.toggleWhenPressed(new LaunchAllBalls(robotStorage, telemetry, palete, onofrei, launcher, () -> launchFromFar));
-        launchSector0Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetry, palete, onofrei, launcher, () -> launchFromFar, 0));
-        launchSector1Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetry, palete, onofrei, launcher, () -> launchFromFar, 1));
-        launchSector2Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetry, palete, onofrei, launcher, () -> launchFromFar, 2));
-        launchPurpleButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetry, palete, onofrei, launcher, () -> launchFromFar, 2));
-        launchGreenButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetry, palete, onofrei, launcher, () -> launchFromFar, 1));
+        launchMotifButton.toggleWhenPressed(new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, () -> launchFromFar));
+        launchAllButton.toggleWhenPressed(new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, () -> launchFromFar));
+        launchSector0Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, palete, onofrei, launcher, () -> launchFromFar, 0));
+        launchSector1Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, palete, onofrei, launcher, () -> launchFromFar, 1));
+        launchSector2Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, palete, onofrei, launcher, () -> launchFromFar, 2));
+        launchPurpleButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetryM, palete, onofrei, launcher, () -> launchFromFar, 2));
+        launchGreenButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetryM, palete, onofrei, launcher, () -> launchFromFar, 1));
+    }
+
+    @Override
+    public void run() {
+        super.run();
+        telemetryM.addData("launcher target", launchFromFar ? "departe" : "aproape");
+        telemetryM.update(telemetry);
     }
 }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import com.bylazar.telemetry.TelemetryManager;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.util.Timing;
 
@@ -17,7 +18,7 @@ public class LaunchAllBalls extends CommandBase {
     private final PaleteSubsytem palete;
     private final LauncherSubsystem launcher;
     private final RobotStorage robotStorage;
-    private final Telemetry telemetry;
+    private final TelemetryManager telemetry;
     private final Timing.Timer onofreiTimer = new Timing.Timer(400, TimeUnit.MILLISECONDS);
     private final Timing.Timer paleteTimer = new Timing.Timer(400, TimeUnit.MILLISECONDS);
     private final Timing.Timer flywheelTimer = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
@@ -37,7 +38,7 @@ public class LaunchAllBalls extends CommandBase {
 
     private LaunchStep currentStep;
 
-    public LaunchAllBalls(RobotStorage robotStorage, Telemetry telemetry, PaleteSubsytem paleteSubsytem,
+    public LaunchAllBalls(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
                           OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, Supplier<Boolean> launchFromFar) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
@@ -150,7 +151,6 @@ public class LaunchAllBalls extends CommandBase {
         telemetry.addData("done:", done);
         telemetry.addData("flywheel speed", launcher.getVelocity());
         telemetry.addData("flywheel target speed", targetSpeed);
-        telemetry.update();
     }
 
     @Override

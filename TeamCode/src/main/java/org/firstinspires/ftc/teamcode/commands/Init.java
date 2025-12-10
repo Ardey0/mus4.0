@@ -16,8 +16,8 @@ public class Init extends CommandBase {
 
     @Override
     public void initialize() {
-        palete.setPosition(PaleteSubsytem.LOCK);
         onofrei.setPosition(OnofreiSubsystem.IN);
+        palete.setPosition(PaleteSubsytem.LOCK);
     }
 
     @Override

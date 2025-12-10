@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.opmodes.Debug;
+package org.firstinspires.ftc.teamcode.opmodes.debug;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -14,20 +13,18 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.controller.PIDFController;
-import com.seattlesolvers.solverslib.controller.wpilibcontroller.SimpleMotorFeedforward;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
 
 @TeleOp
-@Config
 public class test extends LinearOpMode {
     public static double onoPos = 0;
     public static double paletaPos;
     public static double viteza = 1450;
 //    public static double kP = 0.004, kI = 0, kD = 0.0000007, kF = 0.000375;  // lansator
-    public static double kP = 0.033, kI = 0, kD = 0.00001, kF = 0, kS = 0.16;  // camera, de tunat kS
+    public static double kP = 0.025, kI = 0, kD = 0.00001, kF = 0, kS = 0.16;  // camera, de tunat kS
     public static double motorPower = 0;
 
     @Override

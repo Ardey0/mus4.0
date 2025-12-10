@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import com.bylazar.telemetry.TelemetryManager;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.util.Timing.Timer;
 
@@ -17,7 +18,7 @@ public class IntakeBall extends CommandBase {
     private final PaleteSubsytem palete;
     private final ColorSensorSubsystem sensor;
     private final RobotStorage robotStorage;
-    private final Telemetry telemetry;
+    private final TelemetryManager telemetry;
 
     private int sector = -2;
 
@@ -30,7 +31,7 @@ public class IntakeBall extends CommandBase {
     }
     private IntakeStep currentStep;
 
-    public IntakeBall(RobotStorage robotStorage, Telemetry telemetry, IntakeSubsystem intakeSubsystem, PaleteSubsytem paleteSubsytem,
+    public IntakeBall(RobotStorage robotStorage, TelemetryManager telemetry, IntakeSubsystem intakeSubsystem, PaleteSubsytem paleteSubsytem,
                       ColorSensorSubsystem colorSensorSubsystem) {
         this.intake = intakeSubsystem;
         this.palete = paleteSubsytem;
@@ -113,7 +114,6 @@ public class IntakeBall extends CommandBase {
         telemetry.addData("culoare sector 2:", robotStorage.getSectorColor(2));
         telemetry.addData("timer remaining:", timerPalete.remainingTime());
         telemetry.addData("step:", currentStep.name());
-        telemetry.update();
     }
 
     @Override

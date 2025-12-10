@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode.opmodes.Auto;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
-import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import com.seattlesolvers.solverslib.util.TelemetryData;
@@ -18,11 +18,9 @@ import com.seattlesolvers.solverslib.util.TelemetryData;
 import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.IntakeBall;
 import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
-import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.ColorSensorSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
@@ -32,6 +30,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
 @Autonomous
 public class Auto_Human_Start_Blue extends CommandOpMode {
+    private TelemetryManager telemetryM;
     TelemetryData telemetryData = new TelemetryData(telemetry);
 
     private LauncherSubsystem launcher;
@@ -48,7 +47,6 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     private LaunchAllBalls launchAllBallClose;
     private ReadMotif readMotif;
 
-    private int pathState;
     private Timer pathTimer, actionTimer, opmodeTimer;
     private double time;
     private Follower follower;
@@ -139,6 +137,8 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     public void initialize() {
         super.reset();
 
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
@@ -153,11 +153,8 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         sensor = new ColorSensorSubsystem(hardwareMap);
 
         init = new Init(palete, onofrei);
-        intakeBall = new IntakeBall(robotStorage, telemetry, intake, palete, sensor);
-        launchAllBallFar = new LaunchAllBalls(robotStorage, telemetry, palete, onofrei, launcher, () -> true);
-        launchAllBallClose = new LaunchAllBalls(robotStorage, telemetry, palete, onofrei, launcher, () -> false);
 
-        readMotif = new ReadMotif(robotStorage, telemetry, limelight);
+        readMotif = new ReadMotif(robotStorage, telemetryM, limelight);
 
 
         robotStorage.setSector(0, 2);
@@ -172,21 +169,21 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 init,
                 readMotif,
                 new FollowPathCommand(follower, preload),
-                new LaunchAllBalls(robotStorage, telemetry, palete, onofrei, launcher, () -> true),
+                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, () -> true),
                 new FollowPathCommand(follower, GrabHuman),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetry, intake, palete, sensor),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, sensor),
                         new FollowPathCommand(follower, PickupHuman, true, 0.2)
                 ),
                 new FollowPathCommand(follower, LaunchHuman),
-                new LaunchAllBalls(robotStorage, telemetry, palete, onofrei, launcher, () -> true),
+                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, () -> true),
                 new FollowPathCommand(follower, GrabMiddle),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetry, intake, palete, sensor),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, sensor),
                         new FollowPathCommand(follower, PickupMiddle, true, 0.2)
                 ),
                 new FollowPathCommand(follower, LaunchMiddle),
-                new LaunchAllBalls(robotStorage, telemetry, palete, onofrei, launcher, () -> true)
+                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, () -> true)
 //                launchAllBallFar
         );
         schedule(autonomousSequence);
@@ -196,9 +193,9 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     public void run() {
         super.run();
         follower.update();
-        telemetryData.addData("X", follower.getPose().getX());
-        telemetryData.addData("Y", follower.getPose().getY());
-        telemetryData.addData("Heading", follower.getPose().getHeading());
-        telemetryData.update();
+        telemetryM.addData("X", follower.getPose().getX());
+        telemetryM.addData("Y", follower.getPose().getY());
+        telemetryM.addData("Heading", follower.getPose().getHeading());
+        telemetryM.update(telemetry);
     }
 }
