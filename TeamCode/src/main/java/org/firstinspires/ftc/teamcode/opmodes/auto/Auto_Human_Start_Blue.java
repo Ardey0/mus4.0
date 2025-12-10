@@ -143,7 +143,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 
-        limelight = new LimelightSubsystem(hardwareMap);
+        limelight = new LimelightSubsystem(hardwareMap, LimelightSubsystem.BLUE_APRILTAG_PIPELINE);
         robotStorage = new RobotStorage();
 
         launcher = new LauncherSubsystem(hardwareMap);
@@ -169,21 +169,21 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 init,
                 readMotif,
                 new FollowPathCommand(follower, preload),
-                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, () -> true),
+                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight),
                 new FollowPathCommand(follower, GrabHuman),
                 new ParallelCommandGroup(
                         new IntakeBall(robotStorage, telemetryM, intake, palete, sensor),
                         new FollowPathCommand(follower, PickupHuman, true, 0.2)
                 ),
                 new FollowPathCommand(follower, LaunchHuman),
-                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, () -> true),
+                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight),
                 new FollowPathCommand(follower, GrabMiddle),
                 new ParallelCommandGroup(
                         new IntakeBall(robotStorage, telemetryM, intake, palete, sensor),
                         new FollowPathCommand(follower, PickupMiddle, true, 0.2)
                 ),
                 new FollowPathCommand(follower, LaunchMiddle),
-                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, () -> true)
+                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight)
 //                launchAllBallFar
         );
         schedule(autonomousSequence);

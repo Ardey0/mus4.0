@@ -10,19 +10,22 @@ import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 
 public class TrackAprilTag extends CommandBase {
     private final TelemetryManager telemetry;
-    private final double kP = 0.025, kI = 0, kD = 0.00001, kF = 0, kS = 0.16;
+    private final double kP = 0.025, kI = 0, kD = 0.00001, kF = 0;
     private final GamepadEx gamepad;
     private final DriveSubsystem drive;
     private final LimelightSubsystem limelight;
-    private final PIDFController controller = new PIDFController(kP, kI, kD, kF);
+    private final PIDFController controller;
 
     public TrackAprilTag(GamepadEx gamepad, TelemetryManager telemetry, DriveSubsystem driveSubsystem, LimelightSubsystem limelightSubsystem) {
         this.drive = driveSubsystem;
         this.limelight = limelightSubsystem;
         this.gamepad = gamepad;
         this.telemetry = telemetry;
+        this.controller = new PIDFController(kP, kI, kD, kF);
+        this.controller.setTolerance(0.25);
+        this.controller.setMinimumOutput(0.1);
 
-        addRequirements(limelight); // de testat cum se comporta robotul cand nu dam require la drive
+        addRequirements(drive, limelight); // de testat cum se comporta robotul cand nu dam require la drive
     }
 
     @Override
@@ -32,9 +35,12 @@ public class TrackAprilTag extends CommandBase {
 
     @Override
     public void execute() {
-        double output = controller.calculate(limelight.getTx(), 0);
-        output = output + kS * Math.signum(output);
-        drive.drive(gamepad.getLeftX() * 1.1, gamepad.getLeftY(), output);
+        double output = controller.calculate(-limelight.getTx(), 0);
+        if (!controller.atSetPoint()) {
+            drive.drive(gamepad.getLeftX() * 1.1, gamepad.getLeftY(), output);
+        } else {
+            drive.drive(gamepad.getLeftX() * 1.1, gamepad.getLeftY(), gamepad.getRightX());
+        }
         telemetry.addData("limelight tx:", limelight.getTx());
         telemetry.addData("power", output);
     }
@@ -43,4 +49,9 @@ public class TrackAprilTag extends CommandBase {
     public void end(boolean interrupted) {
 
     }
+
+//    @Override
+//    public boolean isFinished() {
+//        return controller.atSetPoint();
+//    }
 }

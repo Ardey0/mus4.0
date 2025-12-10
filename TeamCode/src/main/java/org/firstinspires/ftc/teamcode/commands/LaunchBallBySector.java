@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.bylazar.telemetry.TelemetryManager;
 import com.seattlesolvers.solverslib.command.CommandBase;
+import com.seattlesolvers.solverslib.util.InterpLUT;
 import com.seattlesolvers.solverslib.util.Timing;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
@@ -17,28 +19,40 @@ public class LaunchBallBySector extends CommandBase {
     private final OnofreiSubsystem onofrei;
     private final PaleteSubsytem palete;
     private final LauncherSubsystem launcher;
+    private final LimelightSubsystem limelight;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
     private final Timing.Timer onofreiTimer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
     private final Timing.Timer paleteTimer = new Timing.Timer(600, TimeUnit.MILLISECONDS);
     private final Timing.Timer flywheelTimer = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
-    private final Supplier<Boolean> launchFromFar;
     private double targetSpeed;
     private final int sector;
     private boolean done = false, start = false;
+    private final InterpLUT lut = new InterpLUT() {{
+        add(1.670, 1340);
+        add(1.800, 1370);
+        add(2.270, 1450);
+        add(2.500, 1490);
+        add(2.700, 1540);
+        add(3.180, 1550);
+        add(3.540, 1670);
+        add(3.910, 1700);
+        add(4.520, 1810);
+    }};
 
     public LaunchBallBySector(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
                               OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem,
-                              Supplier<Boolean> launchFromFar, int sector) {
+                              LimelightSubsystem limelightSubsystem, int sector) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
         this.robotStorage = robotStorage;
         this.telemetry = telemetry;
-        this.launchFromFar = launchFromFar;
+        this.limelight = limelightSubsystem;
         this.sector = sector;
+        lut.createLUT();
 
-        addRequirements(palete, onofrei, launcher);
+        addRequirements(palete, onofrei, launcher, limelight);
     }
 
     private enum LaunchStep {
@@ -57,7 +71,7 @@ public class LaunchBallBySector extends CommandBase {
     public void initialize() {
         done = false;
         start = false;
-        targetSpeed = launchFromFar.get() ? LauncherSubsystem.FAR_TARGET_SPEED : LauncherSubsystem.NEAR_TARGET_SPEED;
+        targetSpeed = lut.get(limelight.getDistanceToDepot());
         launcher.spin(targetSpeed);
         flywheelTimer.start();
         currentStep = LaunchStep.SET_PALETE_POSITION;

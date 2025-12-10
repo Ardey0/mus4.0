@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.debug;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -13,19 +14,24 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.controller.PIDFController;
+import com.seattlesolvers.solverslib.util.InterpLUT;
+import com.seattlesolvers.solverslib.util.LUT;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
 
 @TeleOp
+@Config
 public class test extends LinearOpMode {
     public static double onoPos = 0;
     public static double paletaPos;
-    public static double viteza = 1450;
-//    public static double kP = 0.004, kI = 0, kD = 0.0000007, kF = 0.000375;  // lansator
-    public static double kP = 0.025, kI = 0, kD = 0.00001, kF = 0, kS = 0.16;  // camera, de tunat kS
+    public static double viteza = 0;
+    public static double kP = 0.004, kI = 0, kD = 0.0000007, kF = 0.000375;  // lansator
+//    public static double kP = 0.025, kI = 0, kD = 0.00001, kF = 0, kS = 0.16;  // camera, de tunat kS
     public static double motorPower = 0;
+
+    double straightLineDistance;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -65,8 +71,22 @@ public class test extends LinearOpMode {
 
         ElapsedTime time = new ElapsedTime();
 
+        InterpLUT lut = new InterpLUT()
+        {{
+            add(1.670, 1340);
+            add(1.800, 1370);
+            add(2.270, 1450);
+            add(2.500, 1490);
+            add(2.700, 1540);
+            add(3.180, 1550);
+            add(3.540, 1670);
+            add(3.910, 1700);
+            add(4.520, 1810);
+        }};
+        lut.createLUT();
+
         limelight.start();
-        limelight.pipelineSwitch(9);
+        limelight.pipelineSwitch(8);
 
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -90,7 +110,7 @@ public class test extends LinearOpMode {
             // Store gamepad values from the previous loop iteration
             previousGamepad1.copy(currentGamepad1);
             previousGamepad2.copy(currentGamepad2);
-            
+
             // Store gamepad values from this loop iteration
             currentGamepad1.copy(gamepad1);
             currentGamepad2.copy(gamepad2);
@@ -98,35 +118,45 @@ public class test extends LinearOpMode {
             //sistem de miscare
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double rx;
+            double rx = gamepad1.right_stick_x;
 
-            if (previousGamepad1.y && !currentGamepad1.y) {
-                trackingAprilTag = !trackingAprilTag;
-            }
-            if (trackingAprilTag) {
-                double power = controller.calculate(-limelight.getLatestResult().getTx(), 0);
-                rx = power + kS * Math.signum(power);
 
-            } else {
-                rx = gamepad1.right_stick_x;
-            }
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double frontLeftPower = (y + x + rx) / denominator;
             double backLeftPower = (y - x + rx) / denominator;
             double frontRightPower = (y - x - rx) / denominator;
             double backRightPower = (y + x - rx) / denominator;
 
-            frontLeft.setPower(motorPower);
-            backLeft.setPower(motorPower);
-            frontRight.setPower(-motorPower);
-            backRight.setPower(-motorPower);
-            
+            frontLeft.setPower(frontLeftPower);
+            backLeft.setPower(backLeftPower);
+            frontRight.setPower(frontRightPower);
+            backRight.setPower(backRightPower);
+
+            LLResult result = limelight.getLatestResult();
+
+            for (LLResultTypes.FiducialResult tag : result.getFiducialResults()) {
+                Pose3D targetPose = tag.getTargetPoseCameraSpace();
+                double xCam = targetPose.getPosition().x;
+                double yCam = targetPose.getPosition().y;
+                double zCam = targetPose.getPosition().z;
+
+                straightLineDistance = Math.sqrt(
+                        Math.pow(xCam, 2) +
+                        Math.pow(yCam, 2) +
+                        Math.pow(zCam, 2)
+                );
+                telemetry.addData("straightLineDistance", straightLineDistance);
+                telemetry.addData("camera", tag.getTargetPoseCameraSpace());
+            }
+
             //Lansator
             if (previousGamepad1.b && !currentGamepad1.b) {
                 launcherState = !launcherState;
             }
             if (launcherState) {
+                viteza = lut.get(straightLineDistance);
                 double power = controller.calculate(launcher.getVelocity(), viteza);
+                telemetry.addData("viteza target:", viteza);
                 telemetry.addData("power:", power);
                 launcher.setPower(power);
             } else {
@@ -149,22 +179,6 @@ public class test extends LinearOpMode {
             //Paleta
             paleta.setPosition(paletaPos);
 
-            LLResult result = limelight.getLatestResult();
-
-            for (LLResultTypes.FiducialResult tag : result.getFiducialResults()) {
-                Pose3D targetPose = tag.getTargetPoseCameraSpace();
-                double xCam = targetPose.getPosition().x;
-                double yCam = targetPose.getPosition().y;
-                double zCam = targetPose.getPosition().z;
-
-                double straightLineDistance = Math.sqrt(
-                        Math.pow(xCam, 2) +
-                        Math.pow(yCam, 2) +
-                        Math.pow(zCam, 2)
-                );
-                telemetry.addData("straightLineDistance", straightLineDistance);
-                telemetry.addData("camera", tag.getTargetPoseCameraSpace());
-            }
             telemetry.addData("tx:", limelight.getLatestResult().getTx());
             telemetry.addData("rx", rx);
             telemetry.addData("loop time:", time.milliseconds());
