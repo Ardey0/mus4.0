@@ -8,8 +8,10 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
@@ -136,6 +138,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
 
     public void initialize() {
         super.reset();
+        CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
