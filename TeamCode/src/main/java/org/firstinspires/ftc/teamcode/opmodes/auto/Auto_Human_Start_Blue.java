@@ -7,15 +7,16 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
-import com.pedropathing.util.Timer;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
-import com.seattlesolvers.solverslib.util.TelemetryData;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.IntakeBall;
@@ -33,7 +34,6 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 @Autonomous
 public class Auto_Human_Start_Blue extends CommandOpMode {
     private TelemetryManager telemetryM;
-    TelemetryData telemetryData = new TelemetryData(telemetry);
 
     private LauncherSubsystem launcher;
     private PaleteSubsytem palete;
@@ -44,13 +44,9 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     private LimelightSubsystem limelight;
 
     private Init init;
-    private IntakeBall intakeBall;
-    private LaunchAllBalls launchAllBallFar;
-    private LaunchAllBalls launchAllBallClose;
     private ReadMotif readMotif;
 
-    private Timer pathTimer, actionTimer, opmodeTimer;
-    private double time;
+    private ElapsedTime loopTime;
     private Follower follower;
 
     public PathChain preload;
@@ -142,9 +138,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
 
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
-        pathTimer = new Timer();
-        opmodeTimer = new Timer();
-        opmodeTimer.resetTimer();
+        loopTime = new ElapsedTime();
 
         limelight = new LimelightSubsystem(hardwareMap, LimelightSubsystem.BLUE_APRILTAG_PIPELINE);
         robotStorage = new RobotStorage();
@@ -187,7 +181,6 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 ),
                 new FollowPathCommand(follower, LaunchMiddle),
                 new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight)
-//                launchAllBallFar
         );
         schedule(autonomousSequence);
     }
@@ -196,9 +189,13 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     public void run() {
         super.run();
         follower.update();
-        telemetryM.addData("X", follower.getPose().getX());
-        telemetryM.addData("Y", follower.getPose().getY());
-        telemetryM.addData("Heading", follower.getPose().getHeading());
+
+        telemetryM.addData("Loop Time:", loopTime.milliseconds());
+        telemetryM.addData("X:", follower.getPose().getX());
+        telemetryM.addData("Y:", follower.getPose().getY());
+        telemetryM.addData("Heading:", follower.getPose().getHeading());
         telemetryM.update(telemetry);
+
+        loopTime.reset();
     }
 }
