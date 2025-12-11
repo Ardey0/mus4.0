@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto;
+package org.firstinspires.ftc.teamcode.OpModes.auto;
 
 
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -12,6 +12,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
@@ -20,6 +21,7 @@ import com.seattlesolvers.solverslib.util.TelemetryData;
 import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.IntakeBall;
 import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
+import org.firstinspires.ftc.teamcode.commands.LaunchAllBallsSetPower;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.ColorSensorSubsystem;
@@ -63,14 +65,17 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     public PathChain GrabGate;
     public PathChain LaunchGate;
     private final Pose start = new Pose(55.700, 8.740, Math.toRadians(180));
-    private final Pose launchHuman = new Pose(60.540, 23, Math.toRadians(-157));
+    private final Pose launchHuman = new Pose(60.540, 23, Math.toRadians(-155));
+    private final Pose launchHuman2 = new Pose(60.540, 23, Math.toRadians(-156.5));
     private final Pose grabHuman = new Pose(35, 36.5, Math.toRadians(180));
-    private final Pose pickupHuman = new Pose(10, 36.5, Math.toRadians(180));
+    private final Pose pickupHuman = new Pose(9.5, 36.5, Math.toRadians(180));
     private final Pose grabMiddle = new Pose(38, 58.5, Math.toRadians(180));
-    private final Pose pickupMiddle = new Pose(10, 58.5, Math.toRadians(180));
-    private final Pose launchMiddle = new Pose(50.700, 87.40, Math.toRadians(-155));
+    private final Pose pickupMiddle = new Pose(9, 58.5, Math.toRadians(180));
+    private final Pose launchMiddle = new Pose(50.700, 87.40, Math.toRadians(-153));
     private final Pose grabGate = new Pose(38, 87);
     private final Pose launchGate = new Pose(45, 87);
+    private double farL = 1750;
+    private double nearL = 1500;
 
     public void buildPaths() {
         preload = follower.pathBuilder()
@@ -78,6 +83,9 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                         new BezierLine(start, launchHuman)
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), launchHuman.getHeading())
+                .addParametricCallback(0.00001, () -> {
+                    launcher.spin(farL);
+                })
                 .build();
 
         GrabHuman = follower.pathBuilder()
@@ -98,14 +106,17 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 .addPath(
                         new BezierLine(grabHuman, launchHuman)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), launchHuman.getHeading())
+                .setLinearHeadingInterpolation(pickupHuman.getHeading(), launchHuman2.getHeading())
+                .addParametricCallback(0.00001, () -> {
+                    launcher.spin(farL);
+                })
                 .build();
 
         GrabMiddle = follower.pathBuilder()
                 .addPath(
                         new BezierLine(launchHuman, grabMiddle)
                 )
-                .setLinearHeadingInterpolation(launchHuman.getHeading(), grabMiddle.getHeading())
+                .setLinearHeadingInterpolation(launchHuman2.getHeading(), grabMiddle.getHeading())
                 .build();
         PickupMiddle = follower.pathBuilder()
                 .addPath(
@@ -118,7 +129,10 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 .addPath(
                         new BezierLine(grabMiddle, launchMiddle)
                 )
-                .setLinearHeadingInterpolation(grabMiddle.getHeading(), Math.toRadians(-150))
+                .setLinearHeadingInterpolation(grabMiddle.getHeading(), Math.toRadians(-143))
+                .addParametricCallback(0.00001, () -> {
+                    launcher.spin(nearL);
+                })
                 .build();
 
         GrabGate = follower.pathBuilder()
@@ -171,23 +185,25 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
                 init,
                 readMotif,
-                new FollowPathCommand(follower, preload),
-                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight),
-                new FollowPathCommand(follower, GrabHuman),
+                new FollowPathCommand(follower, preload, true, 1),
+                new LaunchAllBallsSetPower(robotStorage, telemetryM, palete, onofrei, launcher,  () -> true),
+                new FollowPathCommand(follower, GrabHuman, true,0.9),
                 new ParallelCommandGroup(
                         new IntakeBall(robotStorage, telemetryM, intake, palete, sensor),
-                        new FollowPathCommand(follower, PickupHuman, true, 0.2)
+                        new FollowPathCommand(follower, PickupHuman, true, 0.17)
                 ),
-                new FollowPathCommand(follower, LaunchHuman),
-                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight),
-                new FollowPathCommand(follower, GrabMiddle),
+                new FollowPathCommand(follower, LaunchHuman,true, 1),
+                new LaunchAllBallsSetPower(robotStorage, telemetryM, palete, onofrei, launcher, () -> true),
+                new FollowPathCommand(follower, GrabMiddle,true, 1),
                 new ParallelCommandGroup(
                         new IntakeBall(robotStorage, telemetryM, intake, palete, sensor),
-                        new FollowPathCommand(follower, PickupMiddle, true, 0.2)
+                        new FollowPathCommand(follower, PickupMiddle, true, 0.17)
                 ),
-                new FollowPathCommand(follower, LaunchMiddle),
-                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight)
-//                launchAllBallFar
+                new FollowPathCommand(follower, LaunchMiddle,true,1),
+                new LaunchAllBallsSetPower(robotStorage, telemetryM, palete, onofrei, launcher, () -> false),
+                new InstantCommand(() -> {
+                    launcher.spin(0);
+                })
         );
         schedule(autonomousSequence);
     }
