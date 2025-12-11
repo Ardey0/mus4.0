@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.bylazar.telemetry.TelemetryManager;
 import com.seattlesolvers.solverslib.command.CommandBase;
-import com.seattlesolvers.solverslib.util.Timing;
+import com.seattlesolvers.solverslib.util.Timing.Timer;
 
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
@@ -19,9 +19,9 @@ public class LaunchAllBalls extends CommandBase {
     private final RobotStorage robotStorage;
     private final LimelightSubsystem limelight;
     private final TelemetryManager telemetry;
-    private final Timing.Timer onofreiTimer = new Timing.Timer(400, TimeUnit.MILLISECONDS);
-    private final Timing.Timer paleteTimer = new Timing.Timer(400, TimeUnit.MILLISECONDS);
-    private final Timing.Timer flywheelTimer = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
+    private final Timer onofreiTimer = new Timer(400, TimeUnit.MILLISECONDS);
+    private final Timer paleteTimer = new Timer(400, TimeUnit.MILLISECONDS);
+    private final Timer flywheelTimer = new Timer(2000, TimeUnit.MILLISECONDS);
     private boolean done = false, start = false;
     private double launcherSpeed;
 
@@ -69,7 +69,13 @@ public class LaunchAllBalls extends CommandBase {
         done = false;
         start = false;
         if (limelight != null) {
-            launcherSpeed = robotStorage.getLauncherSpeedForDistance(limelight.getDistanceToDepot());
+            double distance = limelight.getDistanceToDepot();
+            if (distance == -1) {
+                launcherSpeed = 1370;
+                telemetry.addLine("NO APRIL TAG DETECTED, FALLBACK POWER");
+            } else {
+                launcherSpeed = robotStorage.getLauncherSpeedForDistance(distance);
+            }
         }
         launcher.spin(launcherSpeed);
         sector = 0;

@@ -68,7 +68,13 @@ public class LaunchMotifBalls extends CommandBase {
         done = false;
         start = false;
         if (limelight != null) {
-            launcherSpeed = robotStorage.getLauncherSpeedForDistance(limelight.getDistanceToDepot());
+            double distance = limelight.getDistanceToDepot();
+            if (distance == -1) {
+                launcherSpeed = 1370;
+                telemetry.addLine("NO APRIL TAG DETECTED, FALLBACK POWER");
+            } else {
+                launcherSpeed = robotStorage.getLauncherSpeedForDistance(distance);
+            }
         }
         launcher.spin(launcherSpeed);
         ball = 0;
