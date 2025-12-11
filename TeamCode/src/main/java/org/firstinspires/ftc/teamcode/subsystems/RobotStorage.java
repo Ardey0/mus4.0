@@ -1,9 +1,23 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.seattlesolvers.solverslib.util.InterpLUT;
+
 public class RobotStorage {
     private int[] roata = new int[3], motif = new int[3];
+    private final InterpLUT distanceToLauncherSpeed = new InterpLUT() {{
+        add(1.670, 1340);
+        add(1.800, 1370);
+        add(2.270, 1450);
+        add(2.500, 1490);
+        add(2.700, 1540);
+        add(3.180, 1550);
+        add(3.540, 1670);
+        add(3.910, 1700);
+        add(4.520, 1810);
+    }};
 
     public RobotStorage() {
+        distanceToLauncherSpeed.createLUT();
         roata[0] = 0;
         roata[1] = 0;
         roata[2] = 0;
@@ -65,6 +79,12 @@ public class RobotStorage {
             }
         }
         return -1;
+    }
+
+    public double getLauncherSpeedForDistance(double distance) {
+        if (distance > 1.67 && distance < 4.52) {
+            return distanceToLauncherSpeed.get(distance);
+        } else return 0;
     }
 
 }

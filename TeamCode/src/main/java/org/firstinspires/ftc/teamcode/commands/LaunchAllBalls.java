@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import com.bylazar.telemetry.TelemetryManager;
 import com.seattlesolvers.solverslib.command.CommandBase;
-import com.seattlesolvers.solverslib.util.InterpLUT;
 import com.seattlesolvers.solverslib.util.Timing;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
@@ -13,7 +11,6 @@ import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 public class LaunchAllBalls extends CommandBase {
     private final OnofreiSubsystem onofrei;
@@ -26,18 +23,7 @@ public class LaunchAllBalls extends CommandBase {
     private final Timing.Timer paleteTimer = new Timing.Timer(400, TimeUnit.MILLISECONDS);
     private final Timing.Timer flywheelTimer = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
     private boolean done = false, start = false;
-    private double targetSpeed;
-    private final InterpLUT lut = new InterpLUT() {{
-        add(1.670, 1340);
-        add(1.800, 1370);
-        add(2.270, 1450);
-        add(2.500, 1490);
-        add(2.700, 1540);
-        add(3.180, 1550);
-        add(3.540, 1670);
-        add(3.910, 1700);
-        add(4.520, 1810);
-    }};
+    private double launcherSpeed;
 
     private enum LaunchStep {
         SET_PALETE_POSITION,
@@ -59,9 +45,21 @@ public class LaunchAllBalls extends CommandBase {
         this.robotStorage = robotStorage;
         this.telemetry = telemetry;
         this.limelight = limelightSubsystem;
-        this.lut.createLUT();
 
         addRequirements(palete, onofrei, launcher, limelight);
+    }
+
+    public LaunchAllBalls(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, double launcherSpeed) {
+        this.palete = paleteSubsytem;
+        this.onofrei = onofreiSubsystem;
+        this.launcher = launcherSubsystem;
+        this.robotStorage = robotStorage;
+        this.telemetry = telemetry;
+        this.limelight = null;
+        this.launcherSpeed = launcherSpeed;
+
+        addRequirements(palete, onofrei, launcher);
     }
 
     private int sector;
@@ -70,8 +68,10 @@ public class LaunchAllBalls extends CommandBase {
     public void initialize() {
         done = false;
         start = false;
-        targetSpeed = lut.get(limelight.getDistanceToDepot());
-        launcher.spin(targetSpeed);
+        if (limelight != null) {
+            launcherSpeed = robotStorage.getLauncherSpeedForDistance(limelight.getDistanceToDepot());
+        }
+        launcher.spin(launcherSpeed);
         sector = 0;
         flywheelTimer.start();
         currentStep = LaunchStep.SET_PALETE_POSITION;
@@ -79,7 +79,8 @@ public class LaunchAllBalls extends CommandBase {
 
     @Override
     public void execute() {
-        launcher.spin(targetSpeed); // trebuie apelata constant pentru pid
+        launcher.spin(launcherSpeed); // trebuie apelata constant pentru pid
+
         if (sector > 2) {
             done = true;
             return;
@@ -164,7 +165,7 @@ public class LaunchAllBalls extends CommandBase {
         telemetry.addData("step:", currentStep.name());
         telemetry.addData("done:", done);
         telemetry.addData("flywheel speed", launcher.getVelocity());
-        telemetry.addData("flywheel target speed", targetSpeed);
+        telemetry.addData("flywheel target speed", launcherSpeed);
     }
 
     @Override
