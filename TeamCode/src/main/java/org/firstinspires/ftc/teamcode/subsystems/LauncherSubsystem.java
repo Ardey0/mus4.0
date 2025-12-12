@@ -17,7 +17,6 @@ public class LauncherSubsystem extends SubsystemBase {
         this.flywheel.setInverted(true);
 //        this.flywheel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         this.flywheel.setRunMode(Motor.RunMode.RawPower);
-        this.flywheel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         controller.setTolerance(20);
     }
 

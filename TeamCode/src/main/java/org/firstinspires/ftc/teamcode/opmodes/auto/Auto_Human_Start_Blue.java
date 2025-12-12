@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.auto;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -10,6 +10,7 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -51,9 +52,10 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     private LaunchAllBalls launchAllBallClose;
     private ReadMotif readMotif;
 
-    private Timer pathTimer, actionTimer, opmodeTimer;
-    private double time;
+    private ElapsedTime loopTime;
+
     private Follower follower;
+
 
     public PathChain preload;
     public PathChain GrabHuman;
@@ -154,11 +156,9 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         super.reset();
         CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
-        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+        loopTime = new ElapsedTime();
 
-        pathTimer = new Timer();
-        opmodeTimer = new Timer();
-        opmodeTimer.resetTimer();
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
         limelight = new LimelightSubsystem(hardwareMap, LimelightSubsystem.BLUE_APRILTAG_PIPELINE);
         robotStorage = new RobotStorage();
@@ -186,24 +186,21 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 init,
                 readMotif,
                 new FollowPathCommand(follower, preload, true, 1),
-                new LaunchAllBallsSetPower(robotStorage, telemetryM, palete, onofrei, launcher,  () -> true),
+                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight),
                 new FollowPathCommand(follower, GrabHuman, true,0.9),
                 new ParallelCommandGroup(
                         new IntakeBall(robotStorage, telemetryM, intake, palete, sensor),
                         new FollowPathCommand(follower, PickupHuman, true, 0.17)
                 ),
                 new FollowPathCommand(follower, LaunchHuman,true, 1),
-                new LaunchAllBallsSetPower(robotStorage, telemetryM, palete, onofrei, launcher, () -> true),
+                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight),
                 new FollowPathCommand(follower, GrabMiddle,true, 1),
                 new ParallelCommandGroup(
                         new IntakeBall(robotStorage, telemetryM, intake, palete, sensor),
                         new FollowPathCommand(follower, PickupMiddle, true, 0.17)
                 ),
                 new FollowPathCommand(follower, LaunchMiddle,true,1),
-                new LaunchAllBallsSetPower(robotStorage, telemetryM, palete, onofrei, launcher, () -> false),
-                new InstantCommand(() -> {
-                    launcher.spin(0);
-                })
+                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight)
         );
         schedule(autonomousSequence);
     }
@@ -212,9 +209,13 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     public void run() {
         super.run();
         follower.update();
-        telemetryM.addData("X", follower.getPose().getX());
-        telemetryM.addData("Y", follower.getPose().getY());
-        telemetryM.addData("Heading", follower.getPose().getHeading());
+
+        telemetryM.addData("Loop Time:", loopTime.milliseconds());
+        telemetryM.addData("X:", follower.getPose().getX());
+        telemetryM.addData("Y:", follower.getPose().getY());
+        telemetryM.addData("Heading:", follower.getPose().getHeading());
         telemetryM.update(telemetry);
+
+        loopTime.reset();
     }
 }

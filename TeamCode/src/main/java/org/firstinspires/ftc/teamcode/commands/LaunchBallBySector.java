@@ -74,7 +74,7 @@ public class LaunchBallBySector extends CommandBase {
         if (limelight != null) {
             double distance = limelight.getDistanceToDepot();
             if (distance == -1) {
-                launcherSpeed = 1370;
+                launcherSpeed = 1350;
                 telemetry.addLine("NO APRIL TAG DETECTED, FALLBACK POWER");
             } else {
                 launcherSpeed = robotStorage.getLauncherSpeedForDistance(distance);
@@ -122,7 +122,7 @@ public class LaunchBallBySector extends CommandBase {
                 break;
 
             case WAIT_FOR_PALETE:
-                if (paleteTimer.done()) {
+                if (paleteTimer.done() && launcher.atTargetSpeed()) {
                     currentStep = LaunchStep.MOVE_ONOFREI_OUT;
                 }
                 break;
