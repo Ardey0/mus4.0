@@ -19,8 +19,8 @@ public class LaunchBallByColor extends CommandBase {
     private final RobotStorage robotStorage;
     private final LimelightSubsystem limelight;
     private final TelemetryManager telemetry;
-    private final Timing.Timer onofreiTimer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-    private final Timing.Timer paleteTimer = new Timing.Timer(600, TimeUnit.MILLISECONDS);
+    private final Timing.Timer onofreiTimer = new Timing.Timer(350, TimeUnit.MILLISECONDS);
+    private final Timing.Timer paleteTimer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
     private final Timing.Timer flywheelTimer = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
     private double launcherSpeed;
     private final int color;

@@ -19,7 +19,7 @@ public class LaunchMotifBalls extends CommandBase {
     private final LimelightSubsystem limelight;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timer onofreiTimer = new Timer(450, TimeUnit.MILLISECONDS);
+    private final Timer onofreiTimer = new Timer(400, TimeUnit.MILLISECONDS);
     private final Timer paleteTimer = new Timer(500, TimeUnit.MILLISECONDS);
     private int ball = 0;
     private boolean done = false, start = false;
@@ -133,7 +133,7 @@ public class LaunchMotifBalls extends CommandBase {
                 break;
 
             case WAIT_FOR_ONOFREI:
-                if (onofreiTimer.done()) {
+                if (onofreiTimer.done() && launcher.atTargetSpeed()) {
                     currentStep = LaunchStep.MOVE_ONOFREI_IN;
                 }
                 break;

@@ -27,10 +27,10 @@ public class ColorSensorSubsystem extends SubsystemBase {
 
     public int getColor() { // GREEN = 1    PURPLE = 2
         float[] HSVColor = getHSVColor();
-        if (HSVColor[0] > 100 && HSVColor[0] < 180) { /// 80 si 140
+        if (HSVColor[0] > 100 && HSVColor[0] < 170) { /// 80 si 140
             return 1; // GREEN
         }
-        if (HSVColor[0] > 180 && HSVColor[0] < 270){ /// 220 si 330
+        if (HSVColor[0] > 170 && HSVColor[0] < 270){ /// 220 si 330
             return 2; // PURPLE
         }
         return 0;
