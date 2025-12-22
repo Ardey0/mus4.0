@@ -30,7 +30,7 @@ public class LaunchAllBalls extends CommandBase {
         MOVE_ONOFREI_OUT,
         WAIT_FOR_ONOFREI,
         MOVE_ONOFREI_IN,
-        WAIT_FOR_ONOFREI_RETURN, // Added state for delay
+        WAIT_FOR_ONOFREI_RETURN,
         INCREMENT_BALL
     }
 
@@ -168,10 +168,10 @@ public class LaunchAllBalls extends CommandBase {
         }
 
 
-        telemetry.addData("sector:", sector);
-        telemetry.addData("step:", currentStep.name());
-        telemetry.addData("done:", done);
-        telemetry.addData("start:", start);
+        telemetry.addData("sector", sector);
+        telemetry.addData("step", currentStep.name());
+        telemetry.addData("done", done);
+        telemetry.addData("start", start);
         telemetry.addData("flywheel speed", launcher.getVelocity());
         telemetry.addData("flywheel target speed", launcherSpeed);
     }

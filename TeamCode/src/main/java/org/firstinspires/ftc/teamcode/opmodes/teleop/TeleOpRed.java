@@ -125,7 +125,7 @@ public class TeleOpRed extends CommandOpMode {
             telemetry.addLine("APROAPE");
             telemetry.update();
         });
-        trackAprilTagButton.toggleWhenPressed(new TrackAprilTag(gamepad, telemetryM, chassis, limelight));
+        trackAprilTagButton.toggleWhenPressed(new TrackAprilTag(telemetryM, gamepad, chassis, limelight));
 
         launchMotifButton.toggleWhenPressed(new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight));
         launchAllButton.toggleWhenPressed(new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight));

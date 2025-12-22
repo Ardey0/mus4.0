@@ -12,7 +12,7 @@ public class UpdatePose extends CommandBase {
     private final LimelightSubsystem limelight;
     private final Follower follower;
 
-    public UpdatePose(LimelightSubsystem limelightSubsystem, Follower follower) {
+    public UpdatePose(Follower follower, LimelightSubsystem limelightSubsystem) {
         this.limelight = limelightSubsystem;
         this.follower = follower;
 

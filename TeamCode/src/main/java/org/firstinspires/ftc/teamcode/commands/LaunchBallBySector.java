@@ -105,7 +105,6 @@ public class LaunchBallBySector extends CommandBase {
                         break;
                     default:
                         // Invalid sector, end the command gracefully.
-                        throw new IllegalArgumentException("esti prea prost " + sector);
                 }
                 if (!done && start) {
                     paleteTimer.start();
@@ -151,9 +150,9 @@ public class LaunchBallBySector extends CommandBase {
                 break;
         }
 
-        telemetry.addData("sector:", sector);
-        telemetry.addData("step:", currentStep.name());
-        telemetry.addData("done:", done);
+        telemetry.addData("sector", sector);
+        telemetry.addData("step", currentStep.name());
+        telemetry.addData("done", done);
         telemetry.addData("flywheel speed", launcher.getVelocity());
         telemetry.addData("flywheel target speed", launcherSpeed);
     }

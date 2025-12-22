@@ -16,7 +16,7 @@ public class TrackAprilTag extends CommandBase {
     private final LimelightSubsystem limelight;
     private final PIDFController controller;
 
-    public TrackAprilTag(GamepadEx gamepad, TelemetryManager telemetry, DriveSubsystem driveSubsystem, LimelightSubsystem limelightSubsystem) {
+    public TrackAprilTag(TelemetryManager telemetry, GamepadEx gamepad, DriveSubsystem driveSubsystem, LimelightSubsystem limelightSubsystem) {
         this.drive = driveSubsystem;
         this.limelight = limelightSubsystem;
         this.gamepad = gamepad;

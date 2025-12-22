@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLResultTypes.FiducialResult;
@@ -11,8 +10,8 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 public class LimelightSubsystem extends SubsystemBase {
-    public static final int RED_APRILTAG_PIPELINE = 9,
-                      BLUE_APRILTAG_PIPELINE = 8;
+    public static final int RED_APRILTAG_PIPELINE = 8,
+                      BLUE_APRILTAG_PIPELINE = 9;
     private final Limelight3A limelight;
 
     public LimelightSubsystem(HardwareMap hwMap, int pipeline){

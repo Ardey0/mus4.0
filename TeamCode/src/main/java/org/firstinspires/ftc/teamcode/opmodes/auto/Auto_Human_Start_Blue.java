@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 
-import androidx.lifecycle.PausingDispatcher;
-
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
@@ -53,9 +51,6 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     private LimelightSubsystem limelight;
 
     private Init init;
-    private IntakeBall intakeBalls1;
-    private LaunchAllBalls launchAllBallFar;
-    private LaunchAllBalls launchAllBallClose;
     private ReadMotif readMotif;
 
     private ElapsedTime loopTime;
@@ -100,9 +95,6 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                         new BezierLine(start, launchHuman)
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), launchHuman.getHeading())
-//                .addParametricCallback(0.00001, () -> {
-//                    launcher.spin(farL);
-//                })
                 .build();
 
         Grab1 = follower.pathBuilder()
@@ -229,8 +221,6 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
 
         readMotif = new ReadMotif(robotStorage, telemetryM, limelight);
 
-        intakeBalls1 = new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura);
-
         robotStorage.setSector(0, 2);
         robotStorage.setSector(1, 2);
         robotStorage.setSector(2, 1);
@@ -301,10 +291,10 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         super.run();
         follower.update();
 
-        telemetryM.addData("Loop Time:", loopTime.milliseconds());
-        telemetryM.addData("X:", follower.getPose().getX());
-        telemetryM.addData("Y:", follower.getPose().getY());
-        telemetryM.addData("Heading:", follower.getPose().getHeading());
+        telemetryM.addData("Loop Time", loopTime.milliseconds());
+        telemetryM.addData("X", follower.getPose().getX());
+        telemetryM.addData("Y", follower.getPose().getY());
+        telemetryM.addData("Heading", follower.getPose().getHeading());
         telemetryM.update(telemetry);
 
         loopTime.reset();

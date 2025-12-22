@@ -76,7 +76,7 @@ public class IntakeBall extends CommandBase {
                         palete.setPosition(PaleteSubsytem.IN_BILA_2);
                         break;
                     default:
-                        telemetry.addData("problema roata; sector:", sector);
+                        telemetry.addData("problema roata; sector", sector);
                         break;
                 }
                 currentStep = IntakeStep.WAIT_FOR_BALL;
@@ -116,15 +116,15 @@ public class IntakeBall extends CommandBase {
                 break;
         }
 
-        telemetry.addData("sector:", sector);
-        telemetry.addData("culoare:", senzorGaura.getHSVColor()[0]);
-        telemetry.addData("distanta tavan:", senzorTavan.getDistanceMM());
-        telemetry.addData("distanta gaura:", senzorGaura.getDistanceMM());
-        telemetry.addData("culoare sector 0:", robotStorage.getSectorColor(0));
-        telemetry.addData("culoare sector 1:", robotStorage.getSectorColor(1));
-        telemetry.addData("culoare sector 2:", robotStorage.getSectorColor(2));
-        telemetry.addData("timer remaining:", timerPalete.remainingTime());
-        telemetry.addData("step:", currentStep.name());
+        telemetry.addData("sector", sector);
+        telemetry.addData("culoare", senzorGaura.getHSVColor()[0]);
+        telemetry.addData("distanta tavan", senzorTavan.getDistanceMM());
+        telemetry.addData("distanta gaura", senzorGaura.getDistanceMM());
+        telemetry.addData("culoare sector 0", robotStorage.getSectorColor(0));
+        telemetry.addData("culoare sector 1", robotStorage.getSectorColor(1));
+        telemetry.addData("culoare sector 2", robotStorage.getSectorColor(2));
+        telemetry.addData("timer remaining", timerPalete.remainingTime());
+        telemetry.addData("step", currentStep.name());
     }
 
     @Override

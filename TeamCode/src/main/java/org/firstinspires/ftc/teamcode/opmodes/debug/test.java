@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes.debug;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -35,7 +34,6 @@ public class test extends LinearOpMode {
     public static double paletaPos;
     public static double viteza = 0;
     public static double kP = 0.0054, kI = 0, kD = 0.0000015, kF = 0.00036;  // lansator
-//    public static double kP = 0.025, kI = 0, kD = 0.00001, kF = 0, kS = 0.16;  // camera, de tunat kS
     public static double motorPower = 0;
 
     public static InterpLUT lut = new InterpLUT()

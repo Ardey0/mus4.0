@@ -161,9 +161,9 @@ public class LaunchBallByColor extends CommandBase {
                 break;
         }
 
-        telemetry.addData("sector:", sector);
-        telemetry.addData("step:", currentStep.name());
-        telemetry.addData("done:", done);
+        telemetry.addData("sector", sector);
+        telemetry.addData("step", currentStep.name());
+        telemetry.addData("done", done);
         telemetry.addData("flywheel speed", launcher.getVelocity());
         telemetry.addData("flywheel target speed", launcherSpeed);
     }

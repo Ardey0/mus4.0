@@ -50,9 +50,6 @@ public class Auto_Human_Start_Red extends CommandOpMode {
     private LimelightSubsystem limelight;
 
     private Init init;
-    private IntakeBall intakeBall;
-    private LaunchAllBalls launchAllBallFar;
-    private LaunchAllBalls launchAllBallClose;
     private ReadMotif readMotif;
 
     private ElapsedTime loopTime;
@@ -279,10 +276,10 @@ public class Auto_Human_Start_Red extends CommandOpMode {
         super.run();
         follower.update();
 
-        telemetryM.addData("Loop Time:", loopTime.milliseconds());
-        telemetryM.addData("X:", follower.getPose().getX());
-        telemetryM.addData("Y:", follower.getPose().getY());
-        telemetryM.addData("Heading:", follower.getPose().getHeading());
+        telemetryM.addData("Loop Time", loopTime.milliseconds());
+        telemetryM.addData("X", follower.getPose().getX());
+        telemetryM.addData("Y", follower.getPose().getY());
+        telemetryM.addData("Heading", follower.getPose().getHeading());
         telemetryM.update(telemetry);
 
         loopTime.reset();
