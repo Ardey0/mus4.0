@@ -6,11 +6,11 @@ import com.seattlesolvers.solverslib.hardware.SensorRevColorV3;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-public class ColorSensorSubsystem extends SubsystemBase {
+public class SenzorTavanSubsystem extends SubsystemBase {
     private final SensorRevColorV3 colorSensor;
 
-    public ColorSensorSubsystem(HardwareMap hwMap){
-        this.colorSensor = new SensorRevColorV3(hwMap, "senzor");
+    public SenzorTavanSubsystem(HardwareMap hwMap){
+        this.colorSensor = new SensorRevColorV3(hwMap, "senzor_tavan");
         colorSensor.getColorSensor().setGain(2);
     }
 
@@ -27,10 +27,10 @@ public class ColorSensorSubsystem extends SubsystemBase {
 
     public int getColor() { // GREEN = 1    PURPLE = 2
         float[] HSVColor = getHSVColor();
-        if (HSVColor[0] > 100 && HSVColor[0] < 170) { /// 80 si 140
+        if (HSVColor[0] > 20 && HSVColor[0] < 175) { /// 80 si 140
             return 1; // GREEN
         }
-        if (HSVColor[0] > 170 && HSVColor[0] < 270){ /// 220 si 330
+        if (HSVColor[0] >= 175 && HSVColor[0] < 350){ /// 220 si 330
             return 2; // PURPLE
         }
         return 0;

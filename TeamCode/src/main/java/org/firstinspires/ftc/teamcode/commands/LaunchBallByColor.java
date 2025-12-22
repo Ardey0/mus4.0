@@ -20,8 +20,7 @@ public class LaunchBallByColor extends CommandBase {
     private final LimelightSubsystem limelight;
     private final TelemetryManager telemetry;
     private final Timing.Timer onofreiTimer = new Timing.Timer(350, TimeUnit.MILLISECONDS);
-    private final Timing.Timer paleteTimer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-    private final Timing.Timer flywheelTimer = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
+    private final Timing.Timer paleteTimer = new Timing.Timer(400, TimeUnit.MILLISECONDS);
     private double launcherSpeed;
     private final int color;
     private boolean done = false, start = false;
@@ -84,7 +83,6 @@ public class LaunchBallByColor extends CommandBase {
             }
         }
         launcher.spin(launcherSpeed);
-        flywheelTimer.start();
         currentStep = LaunchStep.SET_PALETE_POSITION;
         sector = robotStorage.getNextSectorWithColor(color);
     }
@@ -107,13 +105,13 @@ public class LaunchBallByColor extends CommandBase {
 
                 switch (sector) {
                     case 0:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_1);
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_0);
                         break;
                     case 1:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_2);
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_1);
                         break;
                     case 2:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_3);
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_2);
                         break;
                     default:
                         // Invalid sector, end the command gracefully.

@@ -5,15 +5,18 @@ import com.seattlesolvers.solverslib.util.InterpLUT;
 public class RobotStorage {
     private int[] roata = new int[3], motif = new int[3];
     private final InterpLUT distanceToLauncherSpeed = new InterpLUT() {{
-        add(1.670, 1340);
-        add(1.800, 1370);
-        add(2.270, 1450);
-        add(2.500, 1490);
-        add(2.700, 1540);
-        add(3.180, 1550);
-        add(3.540, 1670);
-        add(3.910, 1700);
-        add(4.520, 1810);
+        add(1.000, 1390); // orice unghi
+        add(1.450, 1450);
+        add(1.670, 1480); //
+        add(1.800, 1530); // 2.5 deg
+        add(2.200, 1610); // 2.5 deg
+        add(2.455, 1670); /// 1.2 deg 90
+        add(2.760, 1710); //
+        add(3.210, 1800); // 3.1 deg
+        add(3.730, 1950); // 4.4 deg
+        add(3.910, 1970); // 5.8 deg
+        add(4.200, 1990); // 5.4 deg
+        add(4.420, 2020); // 1.6 deg
     }};
 
     public RobotStorage() {
@@ -60,6 +63,15 @@ public class RobotStorage {
         return -1;
     }
 
+    public int getCurrentSector() {
+        for (int i = 2; i >= 0; i--) {
+            if (roata[i] != 0) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
     public int getNextSectorWithMotifBall(int motifIndex) {
         if (motifIndex > 2) {
             return -1;
@@ -82,7 +94,7 @@ public class RobotStorage {
     }
 
     public double getLauncherSpeedForDistance(double distance) {
-        if (distance > 1.67 && distance < 4.52) {
+        if (distance > 1 && distance < 4.52) {
             return distanceToLauncherSpeed.get(distance);
         } else return 0;
     }

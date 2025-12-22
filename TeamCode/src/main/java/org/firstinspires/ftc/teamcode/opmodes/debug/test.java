@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmodes.debug;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -10,26 +13,45 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.controller.PIDFController;
 import com.seattlesolvers.solverslib.util.InterpLUT;
 import com.seattlesolvers.solverslib.util.LUT;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
 
 @TeleOp
-@Config
+@Configurable
 public class test extends LinearOpMode {
+    TelemetryManager telemetryM;
     public static double onoPos = 0;
     public static double paletaPos;
     public static double viteza = 0;
-    public static double kP = 0.004, kI = 0, kD = 0.0000007, kF = 0.000375;  // lansator
+    public static double kP = 0.0054, kI = 0, kD = 0.0000015, kF = 0.00036;  // lansator
 //    public static double kP = 0.025, kI = 0, kD = 0.00001, kF = 0, kS = 0.16;  // camera, de tunat kS
     public static double motorPower = 0;
+
+    public static InterpLUT lut = new InterpLUT()
+    {{
+        add(1.000, 1350); // orice unghi
+        add(1.670, 1530); //
+        add(1.800, 1570); // 2.5 deg
+        add(2.100, 1600); // 2.5 deg
+        add(2.455, 1670); /// 1.2 deg 90
+        add(2.740, 1710); //
+        add(3.210, 1800); // 3.1 deg
+        add(3.730, 1900); // 4.4 deg
+        add(3.910, 1920); // 5.8 deg
+        add(4.200, 2030); // 5.4 deg
+        add(4.420, 2100); // 1.6 deg
+    }};
 
     double straightLineDistance;
 
@@ -45,6 +67,9 @@ public class test extends LinearOpMode {
 
         ServoImplEx onofrei = hardwareMap.get(ServoImplEx.class, "onofrei");
         ServoImplEx paleta = hardwareMap.get(ServoImplEx.class, "palete");
+
+        NormalizedColorSensor senzorTavan = hardwareMap.get(NormalizedColorSensor.class, "senzor_tavan");
+        NormalizedColorSensor senzorGaura = hardwareMap.get(NormalizedColorSensor.class, "senzor_gaura");
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -71,19 +96,7 @@ public class test extends LinearOpMode {
 
         ElapsedTime time = new ElapsedTime();
 
-        InterpLUT lut = new InterpLUT()
-        {{
-            add(1.670, 1340);
-            add(1.800, 1370);
-            add(2.270, 1450);
-            add(2.500, 1490);
-            add(2.700, 1540);
-            add(3.180, 1550);
-            add(3.540, 1670);
-            add(3.910, 1700);
-            add(4.520, 1810);
-        }};
-        lut.createLUT();
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
         limelight.start();
         limelight.pipelineSwitch(8);
@@ -95,12 +108,13 @@ public class test extends LinearOpMode {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
-        telemetry.addLine("Initialized! Waiting for start...");
-        telemetry.update();
+        telemetryM.addLine("Initialized! Waiting for start...");
+        telemetryM.update(telemetry);
 
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
+            lut.createLUT();
             controller.setPIDF(kP, kI, kD, kF);
             time.reset();
             for (LynxModule hub : allHubs) {
@@ -145,8 +159,8 @@ public class test extends LinearOpMode {
                         Math.pow(yCam, 2) +
                         Math.pow(zCam, 2)
                 );
-                telemetry.addData("straightLineDistance", straightLineDistance);
-                telemetry.addData("camera", tag.getTargetPoseCameraSpace());
+                telemetryM.addData("straightLineDistance", straightLineDistance);
+                telemetryM.addData("camera", tag.getTargetPoseCameraSpace());
             }
 
             //Lansator
@@ -154,10 +168,9 @@ public class test extends LinearOpMode {
                 launcherState = !launcherState;
             }
             if (launcherState) {
-                viteza = lut.get(straightLineDistance);
                 double power = controller.calculate(launcher.getVelocity(), viteza);
-                telemetry.addData("viteza target:", viteza);
-                telemetry.addData("power:", power);
+                telemetryM.addData("viteza target:", viteza);
+                telemetryM.addData("power:", power);
                 launcher.setPower(power);
             } else {
                 launcher.setPower(0);
@@ -179,12 +192,14 @@ public class test extends LinearOpMode {
             //Paleta
             paleta.setPosition(paletaPos);
 
-            telemetry.addData("tx:", limelight.getLatestResult().getTx());
-            telemetry.addData("rx", rx);
-            telemetry.addData("loop time:", time.milliseconds());
-            telemetry.addData("viteza lansator: ", launcher.getVelocity());
-            telemetry.addData("launcher on?", launcherState);
-            telemetry.update();
+            telemetryM.addData("senzor tavan:", ((DistanceSensor) senzorTavan).getDistance(DistanceUnit.CM));
+            telemetryM.addData("senzor gaura:", ((DistanceSensor) senzorGaura).getDistance(DistanceUnit.CM));
+            telemetryM.addData("tx:", limelight.getLatestResult().getTx());
+            telemetryM.addData("rx", rx);
+            telemetryM.addData("loop time:", time.milliseconds());
+            telemetryM.addData("viteza lansator: ", launcher.getVelocity());
+            telemetryM.addData("launcher on?", launcherState);
+            telemetryM.update(telemetry);
         }
     }
 }

@@ -19,9 +19,8 @@ public class LaunchBallBySector extends CommandBase {
     private final LimelightSubsystem limelight;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timing.Timer onofreiTimer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-    private final Timing.Timer paleteTimer = new Timing.Timer(600, TimeUnit.MILLISECONDS);
-    private final Timing.Timer flywheelTimer = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
+    private final Timing.Timer onofreiTimer = new Timing.Timer(350, TimeUnit.MILLISECONDS);
+    private final Timing.Timer paleteTimer = new Timing.Timer(400, TimeUnit.MILLISECONDS);
     private double launcherSpeed;
     private final int sector;
     private boolean done = false, start = false;
@@ -81,7 +80,6 @@ public class LaunchBallBySector extends CommandBase {
             }
         }
         launcher.spin(launcherSpeed);
-        flywheelTimer.start();
         currentStep = LaunchStep.SET_PALETE_POSITION;
     }
 
@@ -95,21 +93,15 @@ public class LaunchBallBySector extends CommandBase {
 
         switch (currentStep) {
             case SET_PALETE_POSITION:
-                // End the command if there are no more balls with motifs to launch.
-                if (robotStorage.getSectorColor(sector) == 0) {
-                    done = true;
-                    break;
-                }
-
                 switch (sector) {
                     case 0:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_1);
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_0);
                         break;
                     case 1:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_2);
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_1);
                         break;
                     case 2:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_3);
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_2);
                         break;
                     default:
                         // Invalid sector, end the command gracefully.
@@ -153,7 +145,8 @@ public class LaunchBallBySector extends CommandBase {
 
             case INCREMENT_BALL:
                 robotStorage.setSector(sector, 0);
-                // Move to the next ball
+                // End command
+                done = true;
                 currentStep = LaunchStep.SET_PALETE_POSITION;
                 break;
         }

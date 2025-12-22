@@ -20,8 +20,7 @@ public class LaunchAllBalls extends CommandBase {
     private final LimelightSubsystem limelight;
     private final TelemetryManager telemetry;
     private final Timer onofreiTimer = new Timer(400, TimeUnit.MILLISECONDS);
-    private final Timer paleteTimer = new Timer(400, TimeUnit.MILLISECONDS);
-    private final Timer flywheelTimer = new Timer(2000, TimeUnit.MILLISECONDS);
+    private final Timer paleteTimer = new Timer(500, TimeUnit.MILLISECONDS);
     private boolean done = false, start = false;
     private double launcherSpeed;
 
@@ -70,7 +69,7 @@ public class LaunchAllBalls extends CommandBase {
         start = false;
         if (limelight != null) {
             double distance = limelight.getDistanceToDepot();
-            if (distance == -1) {
+            if (distance <= 0) {
                 launcherSpeed = 1350;
                 telemetry.addLine("NO APRIL TAG DETECTED, FALLBACK POWER");
             } else {
@@ -79,7 +78,6 @@ public class LaunchAllBalls extends CommandBase {
         }
         launcher.spin(launcherSpeed);
         sector = 0;
-        flywheelTimer.start();
         currentStep = LaunchStep.SET_PALETE_POSITION;
     }
 
@@ -91,10 +89,11 @@ public class LaunchAllBalls extends CommandBase {
             done = true;
             return;
         }
-        if (robotStorage.getSectorColor(sector) == 0) {
-            sector++;
-            return;
-        }
+
+//        if (robotStorage.getSectorColor(sector) == 0) {
+//            sector++;
+//            return;
+//        }
 
         if (launcher.atTargetSpeed()) {
             start = true;
@@ -102,7 +101,7 @@ public class LaunchAllBalls extends CommandBase {
 
         switch (currentStep) {
             case SET_PALETE_POSITION:
-                // End the command if there are no more balls with motifs to launch.
+                // End the command if there are no more balls to launch.
                 if (sector < 0 || sector > 2) {
                     done = true;
                     break;
@@ -110,13 +109,13 @@ public class LaunchAllBalls extends CommandBase {
 
                 switch (sector) {
                     case 0:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_1);
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_0);
                         break;
                     case 1:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_2);
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_1);
                         break;
                     case 2:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_3);
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_2);
                         break;
                     default:
                         // Invalid sector, end the command gracefully.
@@ -137,6 +136,7 @@ public class LaunchAllBalls extends CommandBase {
 
             case MOVE_ONOFREI_OUT:
                 onofrei.setPosition(OnofreiSubsystem.OUT);
+                telemetry.addLine("ONOFREI OUT");
                 onofreiTimer.start();
                 currentStep = LaunchStep.WAIT_FOR_ONOFREI;
                 break;
@@ -161,6 +161,7 @@ public class LaunchAllBalls extends CommandBase {
 
             case INCREMENT_BALL:
                 robotStorage.setSector(sector, 0);
+                sector++;
                 // Move to the next ball
                 currentStep = LaunchStep.SET_PALETE_POSITION;
                 break;
@@ -170,6 +171,7 @@ public class LaunchAllBalls extends CommandBase {
         telemetry.addData("sector:", sector);
         telemetry.addData("step:", currentStep.name());
         telemetry.addData("done:", done);
+        telemetry.addData("start:", start);
         telemetry.addData("flywheel speed", launcher.getVelocity());
         telemetry.addData("flywheel target speed", launcherSpeed);
     }

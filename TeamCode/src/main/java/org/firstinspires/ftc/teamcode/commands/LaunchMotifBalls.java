@@ -19,8 +19,8 @@ public class LaunchMotifBalls extends CommandBase {
     private final LimelightSubsystem limelight;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timer onofreiTimer = new Timer(400, TimeUnit.MILLISECONDS);
-    private final Timer paleteTimer = new Timer(500, TimeUnit.MILLISECONDS);
+    private final Timer onofreiTimer = new Timer(350, TimeUnit.MILLISECONDS);
+    private final Timer paleteTimer = new Timer(400, TimeUnit.MILLISECONDS);
     private int ball = 0;
     private boolean done = false, start = false;
     private double launcherSpeed;
@@ -100,13 +100,13 @@ public class LaunchMotifBalls extends CommandBase {
 
                 switch (sector) {
                     case 0:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_1);
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_0);
                         break;
                     case 1:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_2);
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_1);
                         break;
                     case 2:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_3);
+                        palete.setPosition(PaleteSubsytem.OUT_BILA_2);
                         break;
                     default:
                         // Invalid sector, end the command gracefully.
@@ -128,6 +128,7 @@ public class LaunchMotifBalls extends CommandBase {
 
             case MOVE_ONOFREI_OUT:
                 onofrei.setPosition(OnofreiSubsystem.OUT);
+                telemetry.addLine("ONOFREI OUT");
                 onofreiTimer.start();
                 currentStep = LaunchStep.WAIT_FOR_ONOFREI;
                 break;
@@ -161,6 +162,7 @@ public class LaunchMotifBalls extends CommandBase {
         telemetry.addData("sector:", sector);
         telemetry.addData("ball:", ball);
         telemetry.addData("step:", currentStep.name());
+        telemetry.addData("start:", start);
         telemetry.addData("done:", done);
         telemetry.addData("flywheel speed", launcher.getVelocity());
         telemetry.addData("flywheel target speed", launcherSpeed);

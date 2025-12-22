@@ -4,8 +4,8 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.util.Timing.Timer;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.ColorSensorSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
@@ -13,10 +13,11 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import java.util.concurrent.TimeUnit;
 
 public class IntakeBall extends CommandBase {
-    private final Timer timerPalete = new Timer(100, TimeUnit.MILLISECONDS);
+    private final Timer timerPalete = new Timer(500, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final PaleteSubsytem palete;
-    private final ColorSensorSubsystem sensor;
+    private final SenzorTavanSubsystem senzorTavan;
+    private final SenzorGauraSubsystem senzorGaura;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
 
@@ -29,23 +30,26 @@ public class IntakeBall extends CommandBase {
         WAIT_AND_CYCLE,
         DONE
     }
+
     private IntakeStep currentStep;
 
     public IntakeBall(RobotStorage robotStorage, TelemetryManager telemetry, IntakeSubsystem intakeSubsystem, PaleteSubsytem paleteSubsytem,
-                      ColorSensorSubsystem colorSensorSubsystem) {
+                      SenzorTavanSubsystem senzorTavanSubsystem, SenzorGauraSubsystem senzorGauraSubsystem) {
         this.intake = intakeSubsystem;
         this.palete = paleteSubsytem;
-        this.sensor = colorSensorSubsystem;
+        this.senzorTavan = senzorTavanSubsystem;
+        this.senzorGaura = senzorGauraSubsystem;
         this.robotStorage = robotStorage;
         this.telemetry = telemetry;
 
-        addRequirements(intake, palete, sensor);
+        addRequirements(intake, palete, senzorTavan);
     }
 
     @Override
     public void initialize() {
         intake.suck();
         timerPalete.start();
+        sector = robotStorage.getNextFreeSector();
         currentStep = IntakeStep.POSITION_PALETE;
     }
 
@@ -53,8 +57,6 @@ public class IntakeBall extends CommandBase {
     public void execute() {
         switch (currentStep) {
             case POSITION_PALETE:
-                sector = robotStorage.getNextFreeSector();
-
                 if (sector == -1) {
                     palete.setPosition(PaleteSubsytem.LOCK);
                     intake.stop();
@@ -62,16 +64,16 @@ public class IntakeBall extends CommandBase {
                     break;
                 }
 
-                intake.suck(); // Keep intake running
+                // Keep intake running
                 switch (sector) {
                     case 0:
-                        palete.setPosition(PaleteSubsytem.IN_BILA_1);
+                        palete.setPosition(PaleteSubsytem.IN_BILA_0);
                         break;
                     case 1:
-                        palete.setPosition(PaleteSubsytem.IN_BILA_2);
+                        palete.setPosition(PaleteSubsytem.IN_BILA_1);
                         break;
                     case 2:
-                        palete.setPosition(PaleteSubsytem.IN_BILA_3);
+                        palete.setPosition(PaleteSubsytem.IN_BILA_2);
                         break;
                     default:
                         telemetry.addData("problema roata; sector:", sector);
@@ -81,22 +83,30 @@ public class IntakeBall extends CommandBase {
                 break;
 
             case WAIT_FOR_BALL:
-                if (sensor.getDistanceMM() < 30) {
+                if (timerPalete.done()) {
+                    intake.suck();
+                }
+
+                if (senzorTavan.getDistanceMM() < 30 && senzorGaura.getDistanceMM() > 40) {
+//                    robotStorage.setSector(sector, senzorGaura.getColor());
                     currentStep = IntakeStep.STORE_BALL;
                 }
                 break;
 
             case STORE_BALL:
-                robotStorage.setSector(sector, sensor.getColor());
                 intake.stop();
-                if (sensor.getDistanceMM() > 55) {
+                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30
+                        && senzorTavan.getDistanceMM() > 60) {
+                    robotStorage.setSector(sector, senzorGaura.getColor());
                     timerPalete.start();
                     currentStep = IntakeStep.WAIT_AND_CYCLE;
                 }
                 break;
 
             case WAIT_AND_CYCLE:
-                if (timerPalete.done() && sensor.getDistanceMM() > 55) {
+                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30
+                        && senzorTavan.getDistanceMM() > 60) {
+                    sector = robotStorage.getNextFreeSector();
                     currentStep = IntakeStep.POSITION_PALETE;
                 }
                 break;
@@ -107,8 +117,9 @@ public class IntakeBall extends CommandBase {
         }
 
         telemetry.addData("sector:", sector);
-        telemetry.addData("culoare:", sensor.getHSVColor()[0]);
-        telemetry.addData("distanta:", sensor.getDistanceMM());
+        telemetry.addData("culoare:", senzorGaura.getHSVColor()[0]);
+        telemetry.addData("distanta tavan:", senzorTavan.getDistanceMM());
+        telemetry.addData("distanta gaura:", senzorGaura.getDistanceMM());
         telemetry.addData("culoare sector 0:", robotStorage.getSectorColor(0));
         telemetry.addData("culoare sector 1:", robotStorage.getSectorColor(1));
         telemetry.addData("culoare sector 2:", robotStorage.getSectorColor(2));

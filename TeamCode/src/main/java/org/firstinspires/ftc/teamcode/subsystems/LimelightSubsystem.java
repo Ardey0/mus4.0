@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLResultTypes.FiducialResult;
@@ -13,6 +14,7 @@ public class LimelightSubsystem extends SubsystemBase {
     public static final int RED_APRILTAG_PIPELINE = 9,
                       BLUE_APRILTAG_PIPELINE = 8;
     private final Limelight3A limelight;
+
     public LimelightSubsystem(HardwareMap hwMap, int pipeline){
         this.limelight = hwMap.get(Limelight3A.class, "limelight");
         this.limelight.start();
@@ -21,11 +23,9 @@ public class LimelightSubsystem extends SubsystemBase {
 
     public int getAprilTagId() {
         LLResult llResult = limelight.getLatestResult();
-        if (llResult.isValid()) {
             for (FiducialResult tag : llResult.getFiducialResults()) {
                 return tag.getFiducialId();
             }
-        }
         return 0;
     }
 
@@ -56,5 +56,9 @@ public class LimelightSubsystem extends SubsystemBase {
         }
 
         return straightLineDistance;
+    }
+
+    public Pose3D getMegaTagPose() {
+        return limelight.getLatestResult().getBotpose_MT2();
     }
 }

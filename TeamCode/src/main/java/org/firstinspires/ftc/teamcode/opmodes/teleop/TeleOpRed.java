@@ -21,7 +21,8 @@ import org.firstinspires.ftc.teamcode.commands.LaunchBallBySector;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.commands.TrackAprilTag;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ColorSensorSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
@@ -40,7 +41,8 @@ public class TeleOpRed extends CommandOpMode {
     private PaleteSubsytem palete;
     private OnofreiSubsystem onofrei;
     private IntakeSubsystem intake;
-    private ColorSensorSubsystem sensor;
+    private SenzorTavanSubsystem senzorTavan;
+    private SenzorGauraSubsystem senzorGaura;
     private RobotStorage robotStorage;
     private LimelightSubsystem limelight;
 
@@ -63,7 +65,8 @@ public class TeleOpRed extends CommandOpMode {
         palete = new PaleteSubsytem(hardwareMap);
         onofrei = new OnofreiSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
-        sensor = new ColorSensorSubsystem(hardwareMap);
+        senzorTavan = new SenzorTavanSubsystem(hardwareMap);
+        senzorGaura = new SenzorGauraSubsystem(hardwareMap);
         limelight = new LimelightSubsystem(hardwareMap, LimelightSubsystem.RED_APRILTAG_PIPELINE);
         robotStorage = new RobotStorage();
 
@@ -110,7 +113,7 @@ public class TeleOpRed extends CommandOpMode {
 
         readMotifButton.toggleWhenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
 
-        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetryM, intake, palete, sensor));
+        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura));
 
         setLaunchDistanceFarButton.whenPressed(() -> {
             launchFromFar = true;

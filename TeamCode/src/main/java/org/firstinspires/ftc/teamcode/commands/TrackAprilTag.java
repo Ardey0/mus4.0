@@ -23,7 +23,7 @@ public class TrackAprilTag extends CommandBase {
         this.telemetry = telemetry;
         this.controller = new PIDFController(kP, kI, kD, kF);
         this.controller.setTolerance(0.25);
-        this.controller.setMinimumOutput(0.1);
+        this.controller.setMinimumOutput(0.11);
 
         addRequirements(drive, limelight); // de testat cum se comporta robotul cand nu dam require la drive
     }
@@ -35,13 +35,18 @@ public class TrackAprilTag extends CommandBase {
 
     @Override
     public void execute() {
-        double output = controller.calculate(-limelight.getTx(), 0);
+        double distanceToDepot = limelight.getDistanceToDepot(), distanceFromCameraToRamp = 0.2;
+        double output = controller.calculate(-limelight.getTx(),
+                -Math.toDegrees(Math.atan(distanceFromCameraToRamp / distanceToDepot)));
+
         if (!controller.atSetPoint()) {
             drive.drive(gamepad.getLeftX() * 1.1, gamepad.getLeftY(), output);
         } else {
             drive.drive(gamepad.getLeftX() * 1.1, gamepad.getLeftY(), gamepad.getRightX());
         }
         telemetry.addData("limelight tx:", limelight.getTx());
+        telemetry.addData("limelight distance to depot:", limelight.getDistanceToDepot());
+        telemetry.addData("correction:", -Math.atan(distanceFromCameraToRamp / distanceToDepot));
         telemetry.addData("power", output);
     }
 

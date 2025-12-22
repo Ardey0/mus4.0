@@ -2,15 +2,19 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.RunCommand;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.commands.ChassisDrive;
+import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.IntakeBall;
 import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
 import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
@@ -18,8 +22,11 @@ import org.firstinspires.ftc.teamcode.commands.LaunchBallByColor;
 import org.firstinspires.ftc.teamcode.commands.LaunchBallBySector;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.commands.TrackAprilTag;
+import org.firstinspires.ftc.teamcode.commands.UpdatePose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.ColorSensorSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
@@ -31,36 +38,42 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 public class TeleOp extends CommandOpMode {
     private TelemetryManager telemetryM;
     private GamepadEx gamepad;
+    private Follower follower;
+
+    private final Pose start = new Pose(55.700, 8.740, Math.toRadians(180));
 
     private DriveSubsystem chassis;
     private LauncherSubsystem launcher;
     private PaleteSubsytem palete;
     private OnofreiSubsystem onofrei;
     private IntakeSubsystem intake;
-    private ColorSensorSubsystem sensor;
+    private SenzorTavanSubsystem senzorTavan;
+    private SenzorGauraSubsystem senzorGaura;
     private RobotStorage robotStorage;
     private LimelightSubsystem limelight;
 
     private Button intakeButton, launchMotifButton, readMotifButton, launchSector0Button,
             launchSector1Button, launchSector2Button, launchPurpleButton, launchGreenButton, launchAllButton,
-            setLaunchDistanceFarButton, setLaunchDistanceNearButton, trackAprilTagButton;
-
-    private boolean launchFromFar = false; // cititi asta ca pe o intrebare
+            trackAprilTagButton, ballUnlockButton, updatePoseButton;
 
     @Override
     public void initialize() {
+//        schedule(new Init(palete, onofrei));
         super.reset();
         CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         gamepad = new GamepadEx(gamepad1);
+        follower = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(start);
 
         chassis = new DriveSubsystem(hardwareMap);
         launcher = new LauncherSubsystem(hardwareMap);
         palete = new PaleteSubsytem(hardwareMap);
         onofrei = new OnofreiSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
-        sensor = new ColorSensorSubsystem(hardwareMap);
+        senzorTavan = new SenzorTavanSubsystem(hardwareMap);
+        senzorGaura = new SenzorGauraSubsystem(hardwareMap);
         limelight = new LimelightSubsystem(hardwareMap, LimelightSubsystem.BLUE_APRILTAG_PIPELINE);
         robotStorage = new RobotStorage();
 
@@ -95,31 +108,44 @@ public class TeleOp extends CommandOpMode {
         launchGreenButton = new GamepadButton(
                 gamepad, GamepadKeys.Button.RIGHT_BUMPER
         );
-        setLaunchDistanceFarButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.RIGHT_STICK_BUTTON
+        ballUnlockButton = new GamepadButton(
+                gamepad, GamepadKeys.Button.OPTIONS
         );
-        setLaunchDistanceNearButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.LEFT_STICK_BUTTON
+        updatePoseButton = new GamepadButton(
+                gamepad, GamepadKeys.Button.TOUCHPAD
         );
+
 
 
         chassis.setDefaultCommand(new ChassisDrive(chassis, gamepad));
 
-        readMotifButton.toggleWhenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
+        readMotifButton.whenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
 
-        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetryM, intake, palete, sensor));
+        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura));
 
-        setLaunchDistanceFarButton.whenPressed(() -> {
-            launchFromFar = true;
-            telemetry.addLine("DEPARTE");
-            telemetry.update();
-        });
-        setLaunchDistanceNearButton.whenPressed(() -> {
-            launchFromFar = false;
-            telemetry.addLine("APROAPE");
-            telemetry.update();
-        });
+        updatePoseButton.whenPressed(new UpdatePose(limelight, follower));
+
+        limelight.setDefaultCommand(new RunCommand(
+                () -> {
+                    telemetryM.addData("dist:", limelight.getDistanceToDepot());
+                }, limelight
+        ));
+
+        palete.setDefaultCommand(new RunCommand(
+                () -> {
+                    palete.setPosition(palete.getTargetPosition() - gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) / 750
+                            + gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) / 750);
+                    telemetryM.addData("palete pos:", palete.getTargetPosition());
+                }, palete
+        ));
+
         trackAprilTagButton.toggleWhenPressed(new TrackAprilTag(gamepad, telemetryM, chassis, limelight));
+
+        ballUnlockButton.toggleWhenPressed(new RunCommand(
+                () -> {
+                    intake.spit();
+                }, intake
+        ));
 
         launchMotifButton.toggleWhenPressed(new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight));
         launchAllButton.toggleWhenPressed(new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight));
