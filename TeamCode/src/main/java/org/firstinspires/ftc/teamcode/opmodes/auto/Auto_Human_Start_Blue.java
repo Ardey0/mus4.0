@@ -39,7 +39,6 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 @Autonomous
 public class Auto_Human_Start_Blue extends CommandOpMode {
     private TelemetryManager telemetryM;
-    TelemetryData telemetryData = new TelemetryData(telemetry);
 
     private LauncherSubsystem launcher;
     private PaleteSubsytem palete;

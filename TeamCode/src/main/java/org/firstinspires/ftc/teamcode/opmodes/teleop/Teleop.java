@@ -4,6 +4,7 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
@@ -37,12 +38,13 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
 @TeleOp
 public class Teleop extends CommandOpMode {
-    private final int triggerMultiplier = 750;
+    private final double triggerMultiplier = 0.00134;
     private final Pose start = new Pose(55.700, 8.740, Math.toRadians(180));
 
     private TelemetryManager telemetryM;
     private GamepadEx gamepad;
     private Follower follower;
+    private GoBildaPinpointDriver pinpoint;
 
     private DriveSubsystem chassis;
     private LauncherSubsystem launcher;
@@ -66,6 +68,7 @@ public class Teleop extends CommandOpMode {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         gamepad = new GamepadEx(gamepad1);
         follower = Constants.createFollower(hardwareMap);
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         follower.setStartingPose(start);
 
@@ -129,7 +132,7 @@ public class Teleop extends CommandOpMode {
 
         intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura));
 
-        updatePoseButton.whenPressed(new UpdatePose(follower, limelight));
+        updatePoseButton.whenPressed(new UpdatePose(follower, pinpoint, limelight));
 
         limelight.setDefaultCommand(new RunCommand(
                 () -> {
@@ -139,8 +142,8 @@ public class Teleop extends CommandOpMode {
 
         palete.setDefaultCommand(new RunCommand(
                 () -> {
-                    palete.setPosition(palete.getTargetPosition() - gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) / triggerMultiplier
-                            + gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) / triggerMultiplier);
+                    palete.setPosition(palete.getTargetPosition() - gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) * triggerMultiplier
+                            + gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) * triggerMultiplier);
                     telemetryM.addData("palete pos", palete.getTargetPosition());
                 }, palete
         ));

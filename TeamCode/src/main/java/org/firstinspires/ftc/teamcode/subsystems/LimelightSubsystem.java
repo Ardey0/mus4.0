@@ -57,7 +57,12 @@ public class LimelightSubsystem extends SubsystemBase {
         return straightLineDistance;
     }
 
+    public void updateRobotHeading(double headingDegrees) {
+        limelight.updateRobotOrientation(headingDegrees);
+    } // mereu apelam asta inainte de getMegaTagPose()
+
     public Pose3D getMegaTagPose() {
         return limelight.getLatestResult().getBotpose_MT2();
     }
+
 }
