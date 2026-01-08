@@ -23,8 +23,8 @@ public class LaunchBallBySector extends CommandBase {
     private final RampaSubsystem rampa;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timing.Timer onofreiTimer = new Timing.Timer(200, TimeUnit.MILLISECONDS);
-    private final Timing.Timer paleteTimer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+    private final Timing.Timer onofreiTimer = new Timing.Timer(150, TimeUnit.MILLISECONDS);
+    private final Timing.Timer paleteTimer = new Timing.Timer(400, TimeUnit.MILLISECONDS);
     private final int sector;
     private boolean done = false, start = false;
 
