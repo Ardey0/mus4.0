@@ -19,13 +19,13 @@ public class PedroDrive extends CommandBase {
 
     @Override
     public void initialize() {
-        follower.startTeleOpDrive();
+        follower.startTeleOpDrive(true);
     }
 
     @Override
     public void execute() {
         follower.setTeleOpDrive(
-                -gamepad.getLeftY(),
+                gamepad.getLeftY(),
                 -gamepad.getLeftX(),
                 -gamepad.getRightX(),
                 true
@@ -33,7 +33,6 @@ public class PedroDrive extends CommandBase {
 
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
-        telemetry.addData("Heading", follower.getPose().getHeading());
+        telemetry.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));
     }
-
 }

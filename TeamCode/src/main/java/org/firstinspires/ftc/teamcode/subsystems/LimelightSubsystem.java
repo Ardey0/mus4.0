@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLResultTypes.FiducialResult;
@@ -10,8 +11,8 @@ import com.seattlesolvers.solverslib.command.SubsystemBase;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 public class LimelightSubsystem extends SubsystemBase {
-    public static final int RED_APRILTAG_PIPELINE = 8,
-                      BLUE_APRILTAG_PIPELINE = 9;
+    public static final int RED_APRILTAG_PIPELINE = 1,
+                      BLUE_APRILTAG_PIPELINE = 0;
     private final Limelight3A limelight;
 
     public LimelightSubsystem(HardwareMap hwMap, int pipeline){
@@ -20,11 +21,18 @@ public class LimelightSubsystem extends SubsystemBase {
         this.limelight.pipelineSwitch(pipeline);
     }
 
+    public void switchPipeline(int pipelineIndex) {
+        limelight.pipelineSwitch(pipelineIndex);
+    }
+
     public int getAprilTagId() {
         LLResult llResult = limelight.getLatestResult();
+        if (llResult.isValid()) {
             for (FiducialResult tag : llResult.getFiducialResults()) {
-                return tag.getFiducialId();
+                if (tag.getFiducialId() == 21 || tag.getFiducialId() == 22 || tag.getFiducialId() == 23)
+                    return tag.getFiducialId();
             }
+        }
         return 0;
     }
 
@@ -59,10 +67,24 @@ public class LimelightSubsystem extends SubsystemBase {
 
     public void updateRobotHeading(double headingDegrees) {
         limelight.updateRobotOrientation(headingDegrees);
-    } // mereu apelam asta inainte de getMegaTagPose()
+    } // mereu apelam asta inainte de getMegaTag2Pose()
 
-    public Pose3D getMegaTagPose() {
-        return limelight.getLatestResult().getBotpose_MT2();
+    public Pose3D getMegaTag1Pose() {
+        LLResult llResult = limelight.getLatestResult();
+        if (llResult.isValid()) {
+            return limelight.getLatestResult().getBotpose();
+        } else {
+            return null;
+        }
+    }
+
+    public Pose3D getMegaTag2Pose() {
+        LLResult llResult = limelight.getLatestResult();
+        if (llResult.isValid()) {
+            return limelight.getLatestResult().getBotpose_MT2();
+        } else {
+            return null;
+        }
     }
 
 }

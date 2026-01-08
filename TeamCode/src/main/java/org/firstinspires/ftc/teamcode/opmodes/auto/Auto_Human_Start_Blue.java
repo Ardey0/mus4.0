@@ -27,6 +27,8 @@ import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
 import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
@@ -44,6 +46,8 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     private PaleteSubsytem palete;
     private OnofreiSubsystem onofrei;
     private IntakeSubsystem intake;
+    private IntakeKickerSubsystem intakeKicker;
+    private RampaSubsystem rampa;
     private SenzorTavanSubsystem senzorTavan;
     private SenzorGauraSubsystem senzorGaura;
     private RobotStorage robotStorage;
@@ -213,10 +217,12 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         palete = new PaleteSubsytem(hardwareMap);
         onofrei = new OnofreiSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
+        intakeKicker = new IntakeKickerSubsystem(hardwareMap);
+        rampa = new RampaSubsystem(hardwareMap);
         senzorTavan = new SenzorTavanSubsystem(hardwareMap);
         senzorGaura = new SenzorGauraSubsystem(hardwareMap);
 
-        init = new Init(palete, onofrei);
+        init = new Init(palete, onofrei, rampa, intakeKicker);
 
         readMotif = new ReadMotif(robotStorage, telemetryM, limelight);
 
@@ -232,7 +238,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 init,
                 readMotif,
                 new ParallelCommandGroup(
-                        new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, 1910),
+                        new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, 0),
                         new FollowPathCommand(follower, preload, true, 1)
                 ),
                 new FollowPathCommand(follower,Exit,true,0.8),
@@ -245,8 +251,8 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
 //                        )
 //                ),
 //                new ConditionalCommand(
-//                        new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, 1910),
-//                        new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, 1910),
+//                        new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1910, 0),
+//                        new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1910, 0),
 //                        () -> {
 //                            int verzi = 0, mov = 0;
 //                            for (int i = 0; i <= 2; i++) {
@@ -256,7 +262,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
 //                            return verzi == 1 && mov == 2;
 //                        }
 //                ),
-////                new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, 1910),
+////                new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1910, 0),
 //                new FollowPathCommand(follower, Grab2, true, 1),
 //                new ParallelCommandGroup(
 //                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura).withTimeout(6700),
@@ -266,8 +272,8 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
 //                        )
 //                ),
 //                new ConditionalCommand(
-//                        new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, 1910),
-//                        new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, 1910),
+//                        new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1910, 0),
+//                        new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1910, 0),
 //                        () -> {
 //                            int verzi = 0, mov = 0;
 //                            for (int i = 0; i <= 2; i++) {
@@ -277,7 +283,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
 //                            return verzi == 1 && mov == 2;
 //                        }
 //                ),
-//                new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, 1910),
+//                new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1910, 0),
                 new InstantCommand(
                         () -> launcher.brake()
                 )

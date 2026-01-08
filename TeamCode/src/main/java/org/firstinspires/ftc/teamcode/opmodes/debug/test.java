@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.debug;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -19,8 +20,8 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.controller.PIDFController;
 import com.seattlesolvers.solverslib.util.InterpLUT;
-import com.seattlesolvers.solverslib.util.LUT;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
@@ -31,24 +32,21 @@ import java.util.List;
 public class test extends LinearOpMode {
     TelemetryManager telemetryM;
     public static double onoPos = 0;
-    public static double paletaPos;
+    public static double paletaPos = 0;
+    public static double intakePos = 0;
+    public static double rampaPos = 0;
     public static double viteza = 0;
-    public static double kP = 0.0054, kI = 0, kD = 0.0000015, kF = 0.00036;  // lansator
+    public static double kP = 0.0054, kI = 0, kD = 0.0000015, kF = 0.000335;  // lansator
     public static double motorPower = 0;
 
     public static InterpLUT lut = new InterpLUT()
     {{
-        add(1.000, 1350); // orice unghi
-        add(1.670, 1530); //
-        add(1.800, 1570); // 2.5 deg
-        add(2.100, 1600); // 2.5 deg
-        add(2.455, 1670); /// 1.2 deg 90
-        add(2.740, 1710); //
-        add(3.210, 1800); // 3.1 deg
-        add(3.730, 1900); // 4.4 deg
-        add(3.910, 1920); // 5.8 deg
-        add(4.200, 2030); // 5.4 deg
-        add(4.420, 2100); // 1.6 deg
+        add(0.85, 0.225);
+        add(1.31,0.44);
+        add(2.03,0.48);
+        add(2.16,0.49);
+        add(2.32,0.5);
+        add(3.07,0.5);
     }};
 
     double straightLineDistance;
@@ -65,9 +63,13 @@ public class test extends LinearOpMode {
 
         ServoImplEx onofrei = hardwareMap.get(ServoImplEx.class, "onofrei");
         ServoImplEx paleta = hardwareMap.get(ServoImplEx.class, "palete");
+        ServoImplEx servoIntake = hardwareMap.get(ServoImplEx.class, "servo_intake");
+        ServoImplEx servoRampa = hardwareMap.get(ServoImplEx.class, "rampa");
 
         NormalizedColorSensor senzorTavan = hardwareMap.get(NormalizedColorSensor.class, "senzor_tavan");
         NormalizedColorSensor senzorGaura = hardwareMap.get(NormalizedColorSensor.class, "senzor_gaura");
+
+        GoBildaPinpointDriver pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -97,8 +99,11 @@ public class test extends LinearOpMode {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
         limelight.start();
-        limelight.pipelineSwitch(8);
+        limelight.pipelineSwitch(0);
 
+        pinpoint.resetPosAndIMU();
+
+        lut.createLUT();
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -112,7 +117,6 @@ public class test extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            lut.createLUT();
             controller.setPIDF(kP, kI, kD, kF);
             time.reset();
             for (LynxModule hub : allHubs) {
@@ -144,7 +148,19 @@ public class test extends LinearOpMode {
             frontRight.setPower(frontRightPower);
             backRight.setPower(backRightPower);
 
+            limelight.updateRobotOrientation(pinpoint.getHeading(AngleUnit.DEGREES));
             LLResult result = limelight.getLatestResult();
+//
+//            if (previousGamepad1.y && !currentGamepad1.y) {
+//                pinpoint.setHeading(result.getBotpose().getOrientation().getYaw(AngleUnit.DEGREES), AngleUnit.DEGREES);
+//            }
+//
+//            telemetryM.addData("MT2 X", result.getBotpose_MT2().getPosition().x * 39.37007874 + 72);
+//            telemetryM.addData("MT2 Y", result.getBotpose_MT2().getPosition().y * 39.37007874 + 72);
+//            telemetryM.addData("MT2 HEADING", result.getBotpose_MT2().getOrientation().getYaw());
+//            telemetryM.addData("MT1 X", result.getBotpose().getPosition().x * 39.37007874 + 72);
+//            telemetryM.addData("MT1 Y", result.getBotpose().getPosition().y * 39.37007874 + 72);
+//            telemetryM.addData("MT1 HEADING", result.getBotpose().getOrientation().getYaw());
 
             for (LLResultTypes.FiducialResult tag : result.getFiducialResults()) {
                 Pose3D targetPose = tag.getTargetPoseCameraSpace();
@@ -190,6 +206,11 @@ public class test extends LinearOpMode {
             //Paleta
             paleta.setPosition(paletaPos);
 
+            servoIntake.setPosition(intakePos);
+
+            rampaPos = lut.get(straightLineDistance);
+            servoRampa.setPosition(rampaPos);
+
             telemetryM.addData("senzor tavan:", ((DistanceSensor) senzorTavan).getDistance(DistanceUnit.CM));
             telemetryM.addData("senzor gaura:", ((DistanceSensor) senzorGaura).getDistance(DistanceUnit.CM));
             telemetryM.addData("tx:", limelight.getLatestResult().getTx());
@@ -197,6 +218,7 @@ public class test extends LinearOpMode {
             telemetryM.addData("loop time:", time.milliseconds());
             telemetryM.addData("viteza lansator: ", launcher.getVelocity());
             telemetryM.addData("launcher on?", launcherState);
+            telemetryM.addData("pinpoint heading", pinpoint.getHeading(AngleUnit.DEGREES));
             telemetryM.update(telemetry);
         }
     }

@@ -1,28 +1,34 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
 import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.util.Timing.Timer;
 
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
+import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.DoubleSupplier;
 
 public class LaunchAllBalls extends CommandBase {
+    private final int alliance; // 0 - albastru, 1 - rosu
+    private final Follower follower;
     private final OnofreiSubsystem onofrei;
     private final PaleteSubsytem palete;
     private final LauncherSubsystem launcher;
+    private final RampaSubsystem rampa;
     private final RobotStorage robotStorage;
-    private final LimelightSubsystem limelight;
     private final TelemetryManager telemetry;
-    private final Timer onofreiTimer = new Timer(400, TimeUnit.MILLISECONDS);
+    private final Timer onofreiTimer = new Timer(200, TimeUnit.MILLISECONDS);
     private final Timer paleteTimer = new Timer(500, TimeUnit.MILLISECONDS);
     private boolean done = false, start = false;
-    private double launcherSpeed;
+
+    private final DoubleSupplier launcherSpeedSupplier;
+    private final DoubleSupplier rampAngleSupplier;
 
     private enum LaunchStep {
         SET_PALETE_POSITION,
@@ -36,29 +42,55 @@ public class LaunchAllBalls extends CommandBase {
 
     private LaunchStep currentStep;
 
-    public LaunchAllBalls(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
-                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, LimelightSubsystem limelightSubsystem) {
+    public LaunchAllBalls(RobotStorage robotStorage, TelemetryManager telemetry, Follower follower, PaleteSubsytem paleteSubsytem,
+                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                          int alliance) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
+        this.rampa = rampaSubsystem;
         this.robotStorage = robotStorage;
         this.telemetry = telemetry;
-        this.limelight = limelightSubsystem;
+        this.alliance = alliance;
+        this.follower = follower;
+        this.launcherSpeedSupplier = () -> 0; // Should not be used because follower is not null
+        this.rampAngleSupplier = () -> 0; // Should not be used because follower is not null
 
-        addRequirements(palete, onofrei, launcher, limelight);
+        addRequirements(palete, onofrei, launcher, rampa);
     }
 
     public LaunchAllBalls(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
-                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, double launcherSpeed) {
+                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                          double launcherSpeed, double rampAngle, int alliance) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
+        this.rampa = rampaSubsystem;
         this.robotStorage = robotStorage;
         this.telemetry = telemetry;
-        this.limelight = null;
-        this.launcherSpeed = launcherSpeed;
+        this.launcherSpeedSupplier = () -> launcherSpeed;
+        this.rampAngleSupplier = () -> rampAngle;
+        this.alliance = alliance;
+        this.follower = null;
 
-        addRequirements(palete, onofrei, launcher);
+        addRequirements(palete, onofrei, launcher, rampa);
+    }
+
+    public LaunchAllBalls(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                          DoubleSupplier launcherSpeed, DoubleSupplier rampAngleSupplier, int alliance) {
+        this.palete = paleteSubsytem;
+        this.onofrei = onofreiSubsystem;
+        this.launcher = launcherSubsystem;
+        this.rampa = rampaSubsystem;
+        this.robotStorage = robotStorage;
+        this.telemetry = telemetry;
+        this.launcherSpeedSupplier = launcherSpeed;
+        this.rampAngleSupplier = rampAngleSupplier;
+        this.alliance = alliance;
+        this.follower = null;
+
+        addRequirements(palete, onofrei, launcher, rampa);
     }
 
     private int sector;
@@ -67,23 +99,39 @@ public class LaunchAllBalls extends CommandBase {
     public void initialize() {
         done = false;
         start = false;
-        if (limelight != null) {
-            double distance = limelight.getDistanceToDepot();
-            if (distance <= 0) {
-                launcherSpeed = 1350;
-                telemetry.addLine("NO APRIL TAG DETECTED, FALLBACK POWER");
-            } else {
-                launcherSpeed = robotStorage.getLauncherSpeedForDistance(distance);
-            }
-        }
-        launcher.spin(launcherSpeed);
+        launcher.spin(getLauncherSpeed());
         sector = 0;
         currentStep = LaunchStep.SET_PALETE_POSITION;
     }
 
+    private double getLauncherSpeed() {
+        if (follower == null) {
+            return launcherSpeedSupplier.getAsDouble();
+        }
+
+        if (alliance == 0) {
+            return robotStorage.getLauncherSpeedForCoordsBlue(follower.getPose().getX(), follower.getPose().getY());
+        } else {
+            return robotStorage.getLauncherSpeedForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
+        }
+    }
+
+    private double getRampAngle() {
+        if (follower == null) {
+            return rampAngleSupplier.getAsDouble();
+        }
+
+        if (alliance == 0) {
+            return robotStorage.getRampAngleForCoordsBlue(follower.getPose().getX(), follower.getPose().getY());
+        } else {
+            return robotStorage.getRampAngleForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
+        }
+    }
+
     @Override
     public void execute() {
-        launcher.spin(launcherSpeed); // trebuie apelata constant pentru pid
+        launcher.spin(getLauncherSpeed());
+        rampa.setPosition(getRampAngle());
 
         if (sector > 2) {
             done = true;
@@ -173,7 +221,8 @@ public class LaunchAllBalls extends CommandBase {
         telemetry.addData("done", done);
         telemetry.addData("start", start);
         telemetry.addData("flywheel speed", launcher.getVelocity());
-        telemetry.addData("flywheel target speed", launcherSpeed);
+        telemetry.addData("flywheel target speed", getLauncherSpeed());
+        telemetry.addData("ramp angle", getRampAngle());
     }
 
     @Override

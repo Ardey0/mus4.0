@@ -1,26 +1,34 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.RunCommand;
 import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
-import org.firstinspires.ftc.teamcode.commands.ChassisDrive;
+import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.IntakeBall;
 import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
 import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
 import org.firstinspires.ftc.teamcode.commands.LaunchBallByColor;
 import org.firstinspires.ftc.teamcode.commands.LaunchBallBySector;
+import org.firstinspires.ftc.teamcode.commands.PedroDrive;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
-import org.firstinspires.ftc.teamcode.commands.TrackAprilTag;
-import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.commands.SpitBalls;
+import org.firstinspires.ftc.teamcode.commands.TurnToGoalRed;
+import org.firstinspires.ftc.teamcode.commands.UpdatePose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
@@ -31,16 +39,20 @@ import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
 @TeleOp
-@Disabled
 public class TeleOpRed extends CommandOpMode {
+    private final double triggerMultiplier = 0.0014;
+    private final Pose start = new Pose(55.700, 8.740, Math.toRadians(180));
+
     private TelemetryManager telemetryM;
     private GamepadEx gamepad;
+    private Follower follower;
 
-    private DriveSubsystem chassis;
     private LauncherSubsystem launcher;
     private PaleteSubsytem palete;
     private OnofreiSubsystem onofrei;
     private IntakeSubsystem intake;
+    private IntakeKickerSubsystem intakeKicker;
+    private RampaSubsystem rampa;
     private SenzorTavanSubsystem senzorTavan;
     private SenzorGauraSubsystem senzorGaura;
     private RobotStorage robotStorage;
@@ -48,98 +60,114 @@ public class TeleOpRed extends CommandOpMode {
 
     private Button intakeButton, launchMotifButton, readMotifButton, launchSector0Button,
             launchSector1Button, launchSector2Button, launchPurpleButton, launchGreenButton, launchAllButton,
-            setLaunchDistanceFarButton, setLaunchDistanceNearButton, trackAprilTagButton;
-
-    private boolean launchFromFar = false; // cititi asta ca pe o intrebare
+            turnToGoalButton, spitButton, updatePoseButton;
 
     @Override
     public void initialize() {
         super.reset();
-        CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         gamepad = new GamepadEx(gamepad1);
+        follower = Constants.createFollower(hardwareMap);
 
-        chassis = new DriveSubsystem(hardwareMap);
-        launcher = new LauncherSubsystem(hardwareMap);
-        palete = new PaleteSubsytem(hardwareMap);
-        onofrei = new OnofreiSubsystem(hardwareMap);
-        intake = new IntakeSubsystem(hardwareMap);
-        senzorTavan = new SenzorTavanSubsystem(hardwareMap);
-        senzorGaura = new SenzorGauraSubsystem(hardwareMap);
-        limelight = new LimelightSubsystem(hardwareMap, LimelightSubsystem.RED_APRILTAG_PIPELINE);
-        robotStorage = new RobotStorage();
+        follower.setStartingPose(start);
+
+        // Subsystems
+        {
+            launcher = new LauncherSubsystem(hardwareMap);
+            palete = new PaleteSubsytem(hardwareMap);
+            onofrei = new OnofreiSubsystem(hardwareMap);
+            intake = new IntakeSubsystem(hardwareMap);
+            intakeKicker = new IntakeKickerSubsystem(hardwareMap);
+            rampa = new RampaSubsystem(hardwareMap);
+            senzorTavan = new SenzorTavanSubsystem(hardwareMap);
+            senzorGaura = new SenzorGauraSubsystem(hardwareMap);
+            limelight = new LimelightSubsystem(hardwareMap, LimelightSubsystem.BLUE_APRILTAG_PIPELINE);
+            robotStorage = new RobotStorage();
+        }
+
+        // Buttons
+        {
+            intakeButton = new GamepadButton(
+                    gamepad, GamepadKeys.Button.CROSS
+            );
+            launchMotifButton = new GamepadButton(
+                    gamepad, GamepadKeys.Button.CIRCLE
+            );
+            readMotifButton = new GamepadButton(
+                    gamepad, GamepadKeys.Button.SHARE
+            );
+            turnToGoalButton = new GamepadButton(
+                    gamepad, GamepadKeys.Button.TRIANGLE
+            );
+            launchSector0Button = new GamepadButton(
+                    gamepad, GamepadKeys.Button.DPAD_RIGHT
+            );
+            launchSector1Button = new GamepadButton(
+                    gamepad, GamepadKeys.Button.DPAD_DOWN
+            );
+            launchSector2Button = new GamepadButton(
+                    gamepad, GamepadKeys.Button.DPAD_LEFT
+            );
+            launchAllButton = new GamepadButton(
+                    gamepad, GamepadKeys.Button.DPAD_UP
+            );
+            launchPurpleButton = new GamepadButton(
+                    gamepad, GamepadKeys.Button.LEFT_BUMPER
+            );
+            launchGreenButton = new GamepadButton(
+                    gamepad, GamepadKeys.Button.RIGHT_BUMPER
+            );
+            spitButton = new GamepadButton(
+                    gamepad, GamepadKeys.Button.OPTIONS
+            );
+            updatePoseButton = new GamepadButton(
+                    gamepad, GamepadKeys.Button.TOUCHPAD
+            );
+        }
+
+        CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
+        schedule(new Init(palete, onofrei, rampa, intakeKicker));
+
+        schedule(new PedroDrive(telemetryM, gamepad, follower));
+        readMotifButton.whenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
+
+        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker));
 
 
-        intakeButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.CROSS
-        );
-        launchMotifButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.CIRCLE
-        );
-        readMotifButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.SHARE
-        );
-        trackAprilTagButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.TRIANGLE
-        );
-        launchSector0Button = new GamepadButton(
-                gamepad, GamepadKeys.Button.DPAD_RIGHT
-        );
-        launchSector1Button = new GamepadButton(
-                gamepad, GamepadKeys.Button.DPAD_DOWN
-        );
-        launchSector2Button = new GamepadButton(
-                gamepad, GamepadKeys.Button.DPAD_LEFT
-        );
-        launchAllButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.DPAD_UP
-        );
-        launchPurpleButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.LEFT_BUMPER
-        );
-        launchGreenButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.RIGHT_BUMPER
-        );
-        setLaunchDistanceFarButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.RIGHT_STICK_BUTTON
-        );
-        setLaunchDistanceNearButton = new GamepadButton(
-                gamepad, GamepadKeys.Button.LEFT_STICK_BUTTON
-        );
+        limelight.setDefaultCommand(new RunCommand(
+                () -> {
+                    telemetryM.addData("dist", limelight.getDistanceToDepot());
+                }, limelight
+        ));
 
+        palete.setDefaultCommand(new RunCommand(
+                () -> {
+                    palete.setPosition(palete.getTargetPosition() - gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) * triggerMultiplier
+                            + gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) * triggerMultiplier);
+                    telemetryM.addData("palete pos", palete.getTargetPosition());
+                }, palete
+        ));
 
-        chassis.setDefaultCommand(new ChassisDrive(chassis, gamepad));
+        updatePoseButton.whenPressed(new UpdatePose(telemetryM, follower, limelight));
 
-        readMotifButton.toggleWhenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
+        turnToGoalButton.toggleWhenPressed(new TurnToGoalRed(follower));
 
-        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura));
+        spitButton.toggleWhenPressed(new SpitBalls(intake));
 
-        setLaunchDistanceFarButton.whenPressed(() -> {
-            launchFromFar = true;
-            telemetry.addLine("DEPARTE");
-            telemetry.update();
-        });
-        setLaunchDistanceNearButton.whenPressed(() -> {
-            launchFromFar = false;
-            telemetry.addLine("APROAPE");
-            telemetry.update();
-        });
-        trackAprilTagButton.toggleWhenPressed(new TrackAprilTag(telemetryM, gamepad, chassis, limelight));
-
-        launchMotifButton.toggleWhenPressed(new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight));
-        launchAllButton.toggleWhenPressed(new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, limelight));
-        launchSector0Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, palete, onofrei, launcher, limelight, 0));
-        launchSector1Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, palete, onofrei, launcher, limelight, 1));
-        launchSector2Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, palete, onofrei, launcher, limelight, 2));
-        launchPurpleButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetryM, palete, onofrei, launcher, limelight, 2));
-        launchGreenButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetryM, palete, onofrei, launcher, limelight, 1));
+        launchMotifButton.toggleWhenPressed(new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, 1));
+        launchAllButton.toggleWhenPressed(new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, 1));
+        launchSector0Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, 1, 0));
+        launchSector1Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, 1, 1));
+        launchSector2Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, 1, 2));
+        launchPurpleButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, 1, 2));
+        launchGreenButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, 1, 1));
     }
 
     @Override
     public void run() {
         super.run();
-        telemetryM.addData("launcher target", launchFromFar ? "departe" : "aproape");
+        follower.update();
         telemetryM.update(telemetry);
     }
 }

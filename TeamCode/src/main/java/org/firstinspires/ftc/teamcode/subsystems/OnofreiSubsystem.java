@@ -6,12 +6,12 @@ import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 
 public class OnofreiSubsystem extends SubsystemBase {
     private final ServoEx onofrei;
-    public static final double OUT = 0.3,
+    public static final double OUT = 1,
                                IN = 0;
 
     public OnofreiSubsystem(HardwareMap hwMap) {
         this.onofrei = new ServoEx(hwMap, "onofrei");
-        // power catching
+//        this.onofrei.setCachingTolerance(0.0001);
     }
 
     public void setPosition(double position) {
