@@ -200,7 +200,7 @@ public class LaunchBallByColor extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return done;
+        return done && onofreiTimer.done();
     }
 
     private double getLauncherSpeed() {

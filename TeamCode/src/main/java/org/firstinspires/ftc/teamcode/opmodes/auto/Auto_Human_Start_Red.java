@@ -25,6 +25,7 @@ import org.firstinspires.ftc.teamcode.commands.IntakeBall;
 import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
 import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
+import org.firstinspires.ftc.teamcode.commands.SpitBalls;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
@@ -39,6 +40,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
 @Autonomous
 public class Auto_Human_Start_Red extends CommandOpMode {
+    private final int ALLIANCE = 1; // RED
     private TelemetryManager telemetryM;
 
     private LauncherSubsystem launcher;
@@ -72,22 +74,23 @@ public class Auto_Human_Start_Red extends CommandOpMode {
     public PathChain GrabHuman;
     public PathChain PickupHuman;
     public PathChain HumanToLaunch;
-
+    private PathChain Exit;
     public PathChain LaunchHuman2;
 
 
     private final Pose start = new Pose(88, 8.740, Math.toRadians(180));
-    private final Pose launchHuman = new Pose(83.16, 23, Math.toRadians(156.5));
-    private final Pose launchHuman2 = new Pose(83.16, 23, Math.toRadians(154));
+    private final Pose launchHuman = new Pose(87.5, 20, Math.toRadians(157));
+    private final Pose launchHuman2 = new Pose(84, 22, Math.toRadians(154));
     private final Pose grab1 = new Pose(107, 36.5, Math.toRadians(0));
-    private final Pose pickup1 = new Pose(134.5, 36.5, Math.toRadians(0));
+    private final Pose pickup1 = new Pose(133, 36.5, Math.toRadians(0));
     private final Pose grab2 = new Pose(105.7, 58, Math.toRadians(0));
-    private final Pose pickup2 = new Pose(134.5, 58, Math.toRadians(0));
+    private final Pose pickup2 = new Pose(133, 58, Math.toRadians(0));
     private final Pose launchMiddle = new Pose(93.7, 87.40, Math.toRadians(150));
     private final Pose grabHuman = new Pose(111.7, 11.5, Math.toRadians(0));
     private final Pose pickupHuman = new Pose(134.7, 11.5, Math.toRadians(0));
     private final Pose grabGate = new Pose(38, 87);
     private final Pose launchGate = new Pose(45, 87);
+    private final Pose exit = new Pose(115, 13, Math.toRadians(135));
 
     public void buildPaths() {
         preload = follower.pathBuilder()
@@ -122,7 +125,7 @@ public class Auto_Human_Start_Red extends CommandOpMode {
                 .addPath(
                         new BezierLine(launchHuman, grab2)
                 )
-                .setLinearHeadingInterpolation(launchHuman2.getHeading(), grab2.getHeading())
+                .setLinearHeadingInterpolation(launchHuman.getHeading(), grab2.getHeading())
                 .build();
         Pickup2 = follower.pathBuilder()
                 .addPath(
@@ -185,6 +188,12 @@ public class Auto_Human_Start_Red extends CommandOpMode {
                 )
                 .setLinearHeadingInterpolation(pickupHuman.getHeading(), launchHuman2.getHeading())
                 .build();
+        Exit = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(launchHuman, exit)
+                )
+                .setLinearHeadingInterpolation(launchHuman.getHeading(), exit.getHeading())
+                .build();
     }
 
     public void initialize() {
@@ -224,7 +233,7 @@ public class Auto_Human_Start_Red extends CommandOpMode {
                 init,
                 readMotif,
                 new ParallelCommandGroup(
-                        new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, 1),
+                        new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1760, 0.48, ALLIANCE),
                         new FollowPathCommand(follower, preload, true, 1)
                 ),
                 new FollowPathCommand(follower, Grab1, true, 1),
@@ -235,19 +244,21 @@ public class Auto_Human_Start_Red extends CommandOpMode {
                                 new FollowPathCommand(follower, LaunchHuman, true, 0.7)
                         )
                 ),
-                new ConditionalCommand(
-                        new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, 1),
-                        new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1900, 0.4, 1),
-                        () -> {
-                            int verzi = 0, mov = 0;
-                            for (int i = 0; i <= 2; i++) {
-                                if (robotStorage.getSectorColor(i) == 1) verzi++;
-                                if (robotStorage.getSectorColor(i) == 2) mov++;
-                            }
-                            return verzi == 1 && mov == 2;
-                        }
+                new ParallelCommandGroup(
+                        new ConditionalCommand(
+                                new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1760, 0.48, ALLIANCE),
+                                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1760, 0.48, ALLIANCE),
+                                () -> {
+                                    int verzi = 0, mov = 0;
+                                    for (int i = 0; i <= 2; i++) {
+                                        if (robotStorage.getSectorColor(i) == 1) verzi++;
+                                        if (robotStorage.getSectorColor(i) == 2) mov++;
+                                    }
+                                    return verzi == 1 && mov == 2;
+                                }
+                        ),
+                        new SpitBalls(intake).withTimeout(1000)
                 ),
-//                new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1910, 1),
                 new FollowPathCommand(follower, Grab2, true, 1),
                 new ParallelCommandGroup(
                         new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(6700),
@@ -256,21 +267,27 @@ public class Auto_Human_Start_Red extends CommandOpMode {
                                 new FollowPathCommand(follower, LaunchHuman2, true, 0.7)
                         )
                 ),
-                new ConditionalCommand(
-                        new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, 1),
-                        new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1900, 0.4, 1),
-                        () -> {
-                            int verzi = 0, mov = 0;
-                            for (int i = 0; i <= 2; i++) {
-                                if (robotStorage.getSectorColor(i) == 1) verzi++;
-                                if (robotStorage.getSectorColor(i) == 2) mov++;
-                            }
-                            return verzi == 1 && mov == 2;
-                        }
+                new ParallelCommandGroup(
+                        new ConditionalCommand(
+                                new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1760, 0.48, ALLIANCE),
+                                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1760, 0.48, ALLIANCE),
+                                () -> {
+                                    int verzi = 0, mov = 0;
+                                    for (int i = 0; i <= 2; i++) {
+                                        if (robotStorage.getSectorColor(i) == 1) verzi++;
+                                        if (robotStorage.getSectorColor(i) == 2) mov++;
+                                    }
+                                    return verzi == 1 && mov == 2;
+                                }
+                        ),
+                        new SpitBalls(intake).withTimeout(1000)
                 ),
-//                new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1910, 1),
+                new FollowPathCommand(follower, Exit, true),
                 new InstantCommand(
-                        () -> launcher.brake()
+                        () -> {
+                            launcher.brake();
+                            robotStorage.setAutoEndPose(follower.getPose());
+                        }
                 )
         );
         schedule(autonomousSequence);

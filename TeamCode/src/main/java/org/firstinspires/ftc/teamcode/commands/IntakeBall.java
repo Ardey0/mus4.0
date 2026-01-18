@@ -145,6 +145,7 @@ public class IntakeBall extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         intake.stop();
+        kicker.setPosition(IntakeKickerSubsystem.IN);
         palete.setPosition(PaleteSubsytem.LOCK);
     }
 

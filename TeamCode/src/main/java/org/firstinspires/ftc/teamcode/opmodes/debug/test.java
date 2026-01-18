@@ -36,18 +36,18 @@ public class test extends LinearOpMode {
     public static double intakePos = 0;
     public static double rampaPos = 0;
     public static double viteza = 0;
-    public static double kP = 0.0054, kI = 0, kD = 0.0000015, kF = 0.000335;  // lansator
+    public static double kP = 0.004, kI = 0, kD = 0.0000015, kF = 0.00035;  // lansator
     public static double motorPower = 0;
 
-    public static InterpLUT lut = new InterpLUT()
-    {{
-        add(0.85, 0.225);
-        add(1.31,0.44);
-        add(2.03,0.48);
-        add(2.16,0.49);
-        add(2.32,0.5);
-        add(3.07,0.5);
-    }};
+//    public static InterpLUT lut = new InterpLUT()
+//    {{
+//        add(0.85, 0.225);
+//        add(1.31,0.44);
+//        add(2.03,0.48);
+//        add(2.16,0.49);
+//        add(2.32,0.5);
+//        add(3.07,0.5);
+//    }};
 
     double straightLineDistance;
 
@@ -59,6 +59,7 @@ public class test extends LinearOpMode {
         DcMotorEx backLeft = hardwareMap.get(DcMotorEx.class, "back_left");
         DcMotorEx backRight = hardwareMap.get(DcMotorEx.class, "back_right");
         DcMotorEx launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        DcMotorEx launcher2 = hardwareMap.get(DcMotorEx.class, "launcher2");
         DcMotorEx intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         ServoImplEx onofrei = hardwareMap.get(ServoImplEx.class, "onofrei");
@@ -76,12 +77,14 @@ public class test extends LinearOpMode {
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         launcher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        launcher2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
+//        launcher2.setDirection(DcMotorSimple.Direction.REVERSE);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         Gamepad currentGamepad1 = new Gamepad();
@@ -103,7 +106,7 @@ public class test extends LinearOpMode {
 
         pinpoint.resetPosAndIMU();
 
-        lut.createLUT();
+//        lut.createLUT();
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -162,20 +165,20 @@ public class test extends LinearOpMode {
 //            telemetryM.addData("MT1 Y", result.getBotpose().getPosition().y * 39.37007874 + 72);
 //            telemetryM.addData("MT1 HEADING", result.getBotpose().getOrientation().getYaw());
 
-            for (LLResultTypes.FiducialResult tag : result.getFiducialResults()) {
-                Pose3D targetPose = tag.getTargetPoseCameraSpace();
-                double xCam = targetPose.getPosition().x;
-                double yCam = targetPose.getPosition().y;
-                double zCam = targetPose.getPosition().z;
-
-                straightLineDistance = Math.sqrt(
-                        Math.pow(xCam, 2) +
-                        Math.pow(yCam, 2) +
-                        Math.pow(zCam, 2)
-                );
-                telemetryM.addData("straightLineDistance", straightLineDistance);
-                telemetryM.addData("camera", tag.getTargetPoseCameraSpace());
-            }
+//            for (LLResultTypes.FiducialResult tag : result.getFiducialResults()) {
+//                Pose3D targetPose = tag.getTargetPoseCameraSpace();
+//                double xCam = targetPose.getPosition().x;
+//                double yCam = targetPose.getPosition().y;
+//                double zCam = targetPose.getPosition().z;
+//
+//                straightLineDistance = Math.sqrt(
+//                        Math.pow(xCam, 2) +
+//                        Math.pow(yCam, 2) +
+//                        Math.pow(zCam, 2)
+//                );
+//                telemetryM.addData("straightLineDistance", straightLineDistance);
+//                telemetryM.addData("camera", tag.getTargetPoseCameraSpace());
+//            }
 
             //Lansator
             if (previousGamepad1.b && !currentGamepad1.b) {
@@ -186,8 +189,10 @@ public class test extends LinearOpMode {
                 telemetryM.addData("viteza target:", viteza);
                 telemetryM.addData("power:", power);
                 launcher.setPower(power);
+                launcher2.setPower(power);
             } else {
                 launcher.setPower(0);
+                launcher2.setPower(0);
             }
 
             //IntakeSubsystem
@@ -208,17 +213,17 @@ public class test extends LinearOpMode {
 
             servoIntake.setPosition(intakePos);
 
-            rampaPos = lut.get(straightLineDistance);
+//            rampaPos = lut.get(straightLineDistance);
             servoRampa.setPosition(rampaPos);
 
-            telemetryM.addData("senzor tavan:", ((DistanceSensor) senzorTavan).getDistance(DistanceUnit.CM));
-            telemetryM.addData("senzor gaura:", ((DistanceSensor) senzorGaura).getDistance(DistanceUnit.CM));
-            telemetryM.addData("tx:", limelight.getLatestResult().getTx());
-            telemetryM.addData("rx", rx);
+//            telemetryM.addData("senzor tavan:", ((DistanceSensor) senzorTavan).getDistance(DistanceUnit.CM));
+//            telemetryM.addData("senzor gaura:", ((DistanceSensor) senzorGaura).getDistance(DistanceUnit.CM));
+//            telemetryM.addData("tx:", limelight.getLatestResult().getTx());
+//            telemetryM.addData("rx", rx);
             telemetryM.addData("loop time:", time.milliseconds());
             telemetryM.addData("viteza lansator: ", launcher.getVelocity());
             telemetryM.addData("launcher on?", launcherState);
-            telemetryM.addData("pinpoint heading", pinpoint.getHeading(AngleUnit.DEGREES));
+//            telemetryM.addData("pinpoint heading", pinpoint.getHeading(AngleUnit.DEGREES));
             telemetryM.update(telemetry);
         }
     }

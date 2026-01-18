@@ -7,15 +7,18 @@ import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 public class LauncherSubsystem extends SubsystemBase {
-    private final double kP = 0.0054, kI = 0, kD = 0.0000015, kF = 0.000335;
-    private final MotorEx flywheel;
+    private final double kP = 0.004, kI = 0, kD = 0.0000015, kF = 0.00035;
+    private final MotorEx flywheel1, flywheel2;
     private final PIDFController controller = new PIDFController(kP, kI, kD, kF);
 
     public LauncherSubsystem(HardwareMap hwMap) {
-        this.flywheel = new MotorEx(hwMap, "launcher", 112, 6000);
-        this.flywheel.setInverted(true);
-        this.flywheel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
-        this.flywheel.setRunMode(Motor.RunMode.RawPower);
+        this.flywheel1 = new MotorEx(hwMap, "launcher");
+        this.flywheel2 = new MotorEx(hwMap, "launcher2");
+        this.flywheel1.setInverted(true);
+        this.flywheel1.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
+        this.flywheel1.setRunMode(Motor.RunMode.RawPower);
+        this.flywheel2.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
+        this.flywheel2.setRunMode(Motor.RunMode.RawPower);
         controller.setTolerance(11);
     }
 
@@ -24,7 +27,7 @@ public class LauncherSubsystem extends SubsystemBase {
     }
 
     public double getVelocity() {
-        return flywheel.getVelocity();
+        return flywheel1.getVelocity();
     }
 
     public void spin(double speed) {
@@ -33,15 +36,17 @@ public class LauncherSubsystem extends SubsystemBase {
         } else {
             controller.setPIDF(kP, kI, kD, kF);
         }
-        double power = controller.calculate(flywheel.getVelocity(), speed);
-        flywheel.set(power);
+        double power = controller.calculate(flywheel1.getVelocity(), speed);
+        flywheel1.set(power);
     }
 
     public void stop() {
-        flywheel.set(0);
+        flywheel1.set(0);
+        flywheel2.set(0);
     }
 
     public void brake() {
-        this.flywheel.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        this.flywheel1.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        this.flywheel2.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
     }
 }

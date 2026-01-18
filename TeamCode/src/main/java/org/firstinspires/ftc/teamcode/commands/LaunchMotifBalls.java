@@ -23,7 +23,7 @@ public class LaunchMotifBalls extends CommandBase {
     private final RampaSubsystem rampa;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timer onofreiTimer = new Timer(150, TimeUnit.MILLISECONDS);
+    private final Timer onofreiTimer = new Timer(200, TimeUnit.MILLISECONDS);
     private final Timer paleteTimer = new Timer(400, TimeUnit.MILLISECONDS);
     private int ball = 0;
     private boolean done = false, start = false;
@@ -202,7 +202,7 @@ public class LaunchMotifBalls extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return done;
+        return done && onofreiTimer.done();
     }
 
 
