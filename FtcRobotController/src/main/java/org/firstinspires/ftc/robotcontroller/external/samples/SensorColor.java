@@ -96,6 +96,7 @@ public class SensorColor extends LinearOpMode {
     // color of the Robot Controller app to match the hue detected by the RGB sensor.
     int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
     relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
+    telemetry.setMsTransmissionInterval(1);
 
     try {
       runSample(); // actually execute the sample

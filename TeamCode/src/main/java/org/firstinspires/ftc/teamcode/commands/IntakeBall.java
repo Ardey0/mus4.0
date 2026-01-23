@@ -94,7 +94,7 @@ public class IntakeBall extends CommandBase {
                     kicker.setPosition(IntakeKickerSubsystem.IN);
                 }
 
-                if (senzorTavan.getDistanceMM() < 35) {
+                if (senzorTavan.getDistanceMM() < 40) {
 //                    robotStorage.setSector(sector, senzorGaura.getColor());
                     timerKicker.start();
                     currentStep = IntakeStep.STORE_BALL;
@@ -104,14 +104,14 @@ public class IntakeBall extends CommandBase {
             case STORE_BALL:
                 if (timerKicker.done()) {
                     kicker.setPosition(IntakeKickerSubsystem.OUT);
-                }
-                intake.stop();
+                    intake.stop();
 //                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30) {
-                if (senzorTavan.getDistanceMM() > 54) {
-                    robotStorage.setSector(sector, senzorGaura.getColor());
-                    timerPalete.start();
-                    sector = robotStorage.getNextFreeSector();
-                    currentStep = IntakeStep.POSITION_PALETE;
+                    if (senzorTavan.getDistanceMM() > 55) {
+                        robotStorage.setSector(sector, senzorGaura.getColor());
+                        timerPalete.start();
+                        sector = robotStorage.getNextFreeSector();
+                        currentStep = IntakeStep.POSITION_PALETE;
+                    }
                 }
 //                }
                 break;
