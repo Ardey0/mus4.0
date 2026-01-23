@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.teleop;
+package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -184,8 +184,8 @@ public class TeleOpBlue extends CommandOpMode {
     public void run() {
         super.run();
         follower.update();
-        telemetryM.addData("dist to blue goal (m)", Math.sqrt((-follower.getPose().getX()) * (-follower.getPose().getX()) +
-                (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
+//        telemetryM.addData("dist to blue goal (m)", Math.sqrt((-follower.getPose().getX()) * (-follower.getPose().getX()) +
+//                (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
         telemetryM.addData("heading error", Math.toDegrees(follower.getHeadingError()));
         telemetryM.addData("following path", follower.isBusy());
         telemetryM.update(telemetry);

@@ -106,6 +106,7 @@ public class LaunchAllBalls extends CommandBase {
 
     @Override
     public void execute() {
+        updateDistanceToGoal();
         launcher.spin(getLauncherSpeed());
         rampa.setPosition(getRampAngle());
 
@@ -197,9 +198,9 @@ public class LaunchAllBalls extends CommandBase {
         telemetry.addData("step", currentStep.name());
         telemetry.addData("done", done);
         telemetry.addData("start", start);
-        telemetry.addData("ramp angle", getRampAngle());
+//        telemetry.addData("ramp angle", getRampAngle());
         telemetry.addData("flywheel speed", launcher.getVelocity());
-        telemetry.addData("flywheel target speed", getLauncherSpeed());
+//        telemetry.addData("flywheel target speed", getLauncherSpeed());
         telemetry.addData("ramp angle", getRampAngle());
     }
 
@@ -214,6 +215,12 @@ public class LaunchAllBalls extends CommandBase {
         return done && onofreiTimer.done();
     }
 
+    private void updateDistanceToGoal() {
+        if (follower == null) {
+            return;
+        }
+        robotStorage.updateDistanceToGoal(follower.getPose().getX(), follower.getPose().getY(), alliance);
+    }
 
     private double getLauncherSpeed() {
         if (follower == null) {
@@ -221,7 +228,7 @@ public class LaunchAllBalls extends CommandBase {
         }
 
         if (alliance == 0) {
-            return robotStorage.getLauncherSpeedForCoordsNew(follower.getPose().getX(), follower.getPose().getY());
+            return robotStorage.getLauncherSpeedForCoordsNew();
         } else {
             return robotStorage.getLauncherSpeedForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
         }
@@ -233,7 +240,7 @@ public class LaunchAllBalls extends CommandBase {
         }
 
         if (alliance == 0) {
-            return robotStorage.getRampAngleForCoordsNew(follower.getPose().getX(), follower.getPose().getY());
+            return robotStorage.getRampAngleForCoordsNew();
         } else {
             return robotStorage.getRampAngleForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
         }

@@ -115,13 +115,13 @@ public class IntakeBall extends CommandBase {
                 }
 //                }
                 break;
-
-            case WAIT_AND_CYCLE:
-//                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30
-                if (senzorTavan.getDistanceMM() > 60) {
-                    currentStep = IntakeStep.POSITION_PALETE;
-                }
-                break;
+//
+//            case WAIT_AND_CYCLE:
+////                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30
+//                if (senzorTavan.getDistanceMM() > 60) {
+//                    currentStep = IntakeStep.POSITION_PALETE;
+//                }
+//                break;
 
             case DONE:
                 // Command will finish.
@@ -135,7 +135,7 @@ public class IntakeBall extends CommandBase {
         telemetry.addData("culoare sector 0", robotStorage.getSectorColor(0));
         telemetry.addData("culoare sector 1", robotStorage.getSectorColor(1));
         telemetry.addData("culoare sector 2", robotStorage.getSectorColor(2));
-        telemetry.addData("timer remaining", timerPalete.remainingTime());
+//        telemetry.addData("timer remaining", timerPalete.remainingTime());
         telemetry.addData("step", currentStep.name());
     }
 
