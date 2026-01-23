@@ -22,30 +22,43 @@ public class RobotStorage {
 //        add(2.81, 0.43);
 //        add(3.47,0.43);
 //        add(3.87, 0.43);
-        add(0.95, 0.1);
-        add(1.1, 0.15);
-        add(1.25, 0.21);
-        add(1.47, 0.28);
-        add(1.84, 0.4);
-        add(2, 0.41);
-        add(2.26, 0.43);
-        add(2.52, 0.47);
-        add(2.8, 0.47);
-        add(3.48,0.51);
-        add(3.87, 0.515);
+        // set 2
+//        add(0.95, 0.1);
+//        add(1.1, 0.15);
+//        add(1.25, 0.21);
+//        add(1.47, 0.28);
+//        add(1.84, 0.4);
+//        add(2, 0.41);
+//        add(2.26, 0.43);
+//        add(2.52, 0.47);
+//        add(2.8, 0.47);
+//        add(3.48,0.51);
+//        add(3.87, 0.515);
+        add(0.9, 0);
+        add(1.43, 0.32);
+        add(1.7, 0.5);
+        add(2.02, 0.58);
+        add(2.29, 0.75);
+        add(2.52,0.77);
+        add(2.8, 0.87);
+        add(3.38, 0.9);
+        add(3.72, 0.92);
+        add(3.94, 0.93);
     }};
 
     private final InterpLUT distanceToLauncherSpeed = new InterpLUT() {{
-        add(0.95, 1400);
-        add(1.1, 1300);
-        add(1.47, 1300);
-        add(1.83, 1400);
-        add(2, 1490);
-        add(2.26, 1500);
-        add(2.52, 1580);
-        add(2.8, 1610);
-        add(3.46, 1750);
-        add(3.87, 1830);
+        // set 2
+//        add(0.95, 1400);
+//        add(1.1, 1300);
+//        add(1.47, 1300);
+//        add(1.83, 1400);
+//        add(2, 1490);
+//        add(2.26, 1500);
+//        add(2.52, 1580);
+//        add(2.8, 1610);
+//        add(3.46, 1750);
+//        add(3.87, 1830);
+        // set 1
 //        add(0.95, 1320);
 //        add(1.2, 1300);
 //        add(1.47, 1310);
@@ -56,6 +69,16 @@ public class RobotStorage {
 //        add(2.81, 1650);
 //        add(3.47, 1820);
 //        add(3.87, 1880);
+        add(0.9, 1300);
+        add(1.43, 1440);
+        add(1.7, 1500);
+        add(2.02, 1600);
+        add(2.29, 1670);
+        add(2.52, 1750);
+        add(2.8, 1780);
+        add(3.38, 1870);
+        add(3.72, 1970);
+        add(3.94, 2020);
     }};
 
     public RobotStorage() {
@@ -137,12 +160,6 @@ public class RobotStorage {
         return -1;
     }
 
-    public double getLauncherSpeedForDistance(double distance) {
-        if (distance > 1 && distance < 4.52) {
-            return distanceToLauncherSpeed.get(distance);
-        } else return 0;
-    }
-
     public double getLauncherSpeedForCoordsBlue(double x, double y) {
         double distanceM = Math.sqrt((-x) * (-x) + (144 - y) * (144 - y)) / 39.37007874;
         return distanceToLauncherSpeed.get(clamp(distanceM, 0.95, 3.86));
@@ -151,6 +168,15 @@ public class RobotStorage {
     public double getLauncherSpeedForCoordsRed(double x, double y) {
         double distanceM = Math.sqrt((144 - x) * (144 - x) + (144 - y) * (144 - y)) / 39.37007874;
         return distanceToLauncherSpeed.get(clamp(distanceM, 0.95, 3.86));
+    }
+
+    public double getLauncherSpeedForCoordsNew(double x, double y) {
+        double distanceM = Math.sqrt((-x) * (-x) + (144 - y) * (144 - y)) / 39.37007874;
+        return clamp(23.10907 * Math.pow(distanceM, 4) -
+                219.29832 * Math.pow(distanceM, 3) +
+                707.64469 * Math.pow(distanceM, 2) -
+                654.41708 * distanceM + 1462.18186,
+                0, 2050);
     }
 
     public double getRampAngleForCoordsBlue(double x, double y) {
@@ -169,6 +195,15 @@ public class RobotStorage {
         } else {
             return distanceToRampAngle.get(clamp(distanceM, 0.95, 3.86));
         }
+    }
+
+    public double getRampAngleForCoordsNew(double x, double y) {
+        double distanceM = Math.sqrt((-x) * (-x) + (144 - y) * (144 - y)) / 39.37007874;
+        return clamp(0.0143789 * Math.pow(distanceM, 4) -
+                        0.131801 * Math.pow(distanceM, 3) +
+                        0.289158 * Math.pow(distanceM, 2) +
+                        0.38897 * distanceM - 0.496897,
+                0, 0.95);
     }
 
     public void setAutoEndPose(Pose endPose) {

@@ -1,0 +1,292 @@
+package org.firstinspires.ftc.teamcode.opmodes.auto;
+
+
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.BezierPoint;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathChain;
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.command.CommandOpMode;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
+import com.seattlesolvers.solverslib.pedroCommand.TurnToCommand;
+
+import org.firstinspires.ftc.teamcode.commands.Init;
+import org.firstinspires.ftc.teamcode.commands.IntakeBall;
+import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
+import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
+import org.firstinspires.ftc.teamcode.commands.ReadMotif;
+import org.firstinspires.ftc.teamcode.commands.SpitBalls;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
+import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
+
+import kotlin.time.MonoTimeSourceKt;
+
+@Autonomous
+public class Auto_Gate_Start_Blue extends CommandOpMode {
+    private final int ALLIANCE = 0; // BLUE
+
+    private TelemetryManager telemetryM;
+
+    private LauncherSubsystem launcher;
+    private PaleteSubsytem palete;
+    private OnofreiSubsystem onofrei;
+    private IntakeSubsystem intake;
+    private IntakeKickerSubsystem intakeKicker;
+    private RampaSubsystem rampa;
+    private SenzorTavanSubsystem senzorTavan;
+    private SenzorGauraSubsystem senzorGaura;
+    private RobotStorage robotStorage;
+    private LimelightSubsystem limelight;
+
+    private Init init;
+    private ReadMotif readMotif;
+
+    private ElapsedTime loopTime;
+
+    private Follower follower;
+
+
+    public PathChain preload;
+    private PathChain Exit;
+    public PathChain Grab1;
+    public PathChain Pickup1;
+    public PathChain Pickup1Wiggle;
+    public PathChain LaunchHuman;
+    public PathChain LaunchHuman2;
+    public PathChain Grab2;
+    public PathChain Pickup2;
+    public PathChain LaunchMiddle;
+    public PathChain GrabGate;
+    public PathChain LaunchGate;
+    public PathChain GrabHuman;
+    public PathChain PickupHuman;
+    public PathChain HumanToLaunch;
+    public PathChain Launch2;
+    public PathChain ClearGate;
+    public PathChain Motif;
+    private final Pose start = new Pose(19, 120, Math.toRadians(-129));
+    private final Pose exit = new Pose(43, 13, Math.toRadians(-140));
+    private final Pose launch1 = new Pose(45, 95, Math.toRadians(-129));
+    private final Pose motif = new Pose(45, 95, Math.toRadians(-180));
+    private final Pose launch2 = new Pose(53, 90, Math.toRadians(-129));
+    private final Pose grab1 = new Pose(23, 82, Math.toRadians(-180));
+    private final Pose clearGate = new Pose(16, 73, Math.toRadians(90));
+    private final Pose grab2 = new Pose(38, 58.5, Math.toRadians(180));
+    private final Pose pickup2 = new Pose(9, 58.5, Math.toRadians(180));
+    private final Pose launchMiddle = new Pose(50.700, 87.40, Math.toRadians(-153));
+    private final Pose grabHuman = new Pose(32, 11.5, Math.toRadians(180));
+    private final Pose pickupHuman = new Pose(9, 11.5, Math.toRadians(180));
+    private final Pose grabGate = new Pose(38, 87);
+    private final Pose launchGate = new Pose(45, 87);
+
+    public void buildPaths() {
+        preload = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(start, launch1)
+                )
+                .setLinearHeadingInterpolation(start.getHeading(), launch1.getHeading())
+                .build();
+
+        Motif = follower.pathBuilder()
+                .addPath(
+                        new BezierPoint(motif)
+                )
+                .build();
+
+        Grab1 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(launch1, grab1)
+                )
+//                .setLinearHeadingInterpolation(launch1.getHeading(), grab1.getHeading())
+                .build();
+
+        ClearGate = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(grab1, clearGate)
+                )
+                .setConstantHeadingInterpolation(clearGate.getHeading())
+                .build();
+        Launch2 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(clearGate, launch2)
+                )
+                .setLinearHeadingInterpolation(clearGate.getHeading(), launch2.getHeading())
+                .build();
+        Grab2 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(launch2, grab2)
+                )
+                .setLinearHeadingInterpolation(launch2.getHeading(), grab2.getHeading())
+                .build();
+//
+//        Pickup1Wiggle = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(pickup1, pickup1Wiggle)
+//                )
+//                .addPath(
+//                        new BezierLine(pickup1Wiggle, pickup1)
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .build();
+//
+//        LaunchHuman = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(pickup1, launchHuman)
+//                )
+//                .setLinearHeadingInterpolation(pickup1.getHeading(), launchHuman.getHeading())
+//                .build();
+//
+//        LaunchHuman2 = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(pickup2, launchHuman)
+//                )
+//                .setLinearHeadingInterpolation(pickup2.getHeading(), launchHuman.getHeading())
+//                .build();
+//
+//        Grab2 = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(launchHuman, grab2)
+//                )
+//                .setLinearHeadingInterpolation(launchHuman.getHeading(), grab2.getHeading())
+//                .build();
+//
+//        Pickup2 = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(grab2, pickup2)
+//                )
+//                .setLinearHeadingInterpolation(grab2.getHeading(), pickup2.getHeading())
+//                .build();
+//
+//        LaunchMiddle = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(grab2, launchMiddle)
+//                )
+//                .setLinearHeadingInterpolation(grab2.getHeading(), Math.toRadians(-143))
+//                .build();
+//
+//        GrabGate = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(launchMiddle, grabGate)
+//                )
+//                .setLinearHeadingInterpolation(Math.toRadians(-150), Math.toRadians(180))
+//                .build();
+//
+//        LaunchGate = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(grabGate, launchGate)
+//                )
+//                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-135))
+//                .build();
+//
+//        GrabHuman = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(launchHuman, grabHuman)
+//                )
+//                .setLinearHeadingInterpolation(launchHuman2.getHeading(), Math.toRadians(180))
+//                .build();
+//
+//        PickupHuman = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(grabHuman, pickupHuman)
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(180))
+//                .build();
+//
+//        HumanToLaunch = follower.pathBuilder()
+//                .addPath(
+//                        new BezierLine(pickupHuman, launchHuman2)
+//                )
+//                .setLinearHeadingInterpolation(pickupHuman.getHeading(), launchHuman2.getHeading())
+//                .build();
+    }
+
+    public void initialize() {
+        super.reset();
+        CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
+
+        loopTime = new ElapsedTime();
+
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+
+        limelight = new LimelightSubsystem(hardwareMap, LimelightSubsystem.BLUE_APRILTAG_PIPELINE);
+        robotStorage = new RobotStorage();
+
+        launcher = new LauncherSubsystem(hardwareMap);
+        palete = new PaleteSubsytem(hardwareMap);
+        onofrei = new OnofreiSubsystem(hardwareMap);
+        intake = new IntakeSubsystem(hardwareMap);
+        intakeKicker = new IntakeKickerSubsystem(hardwareMap);
+        rampa = new RampaSubsystem(hardwareMap);
+        senzorTavan = new SenzorTavanSubsystem(hardwareMap);
+        senzorGaura = new SenzorGauraSubsystem(hardwareMap);
+
+        init = new Init(palete, onofrei, rampa, intakeKicker);
+        readMotif = new ReadMotif(robotStorage, telemetryM, limelight);
+
+        robotStorage.setSector(0, 2);
+        robotStorage.setSector(1, 2);
+        robotStorage.setSector(2, 1);
+
+        follower = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(start);
+        buildPaths();
+        SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
+                init,
+                new FollowPathCommand(follower, preload, true),
+                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                new SequentialCommandGroup(
+                        new TurnToCommand(follower, Math.toRadians(-180)),
+                        new ReadMotif(robotStorage, telemetryM, limelight)
+                ),
+                new ParallelCommandGroup(
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(5000),
+                        new SequentialCommandGroup(
+                                new FollowPathCommand(follower, Grab1, true),
+                                new FollowPathCommand(follower, ClearGate, true)
+                        )
+                ),
+                new FollowPathCommand(follower, Launch2, true),
+                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                new ParallelCommandGroup(
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(5000),
+                        new FollowPathCommand(follower, Grab2, true)
+                ),
+                new WaitCommand(10000)
+        );
+        schedule(autonomousSequence);
+    }
+
+    @Override
+    public void run() {
+        super.run();
+        follower.update();
+
+        telemetryM.addData("Loop Time", loopTime.milliseconds());
+        telemetryM.addData("X", follower.getPose().getX());
+        telemetryM.addData("Y", follower.getPose().getY());
+        telemetryM.addData("Heading", follower.getPose().getHeading());
+        telemetryM.update(telemetry);
+
+        loopTime.reset();
+    }
+}

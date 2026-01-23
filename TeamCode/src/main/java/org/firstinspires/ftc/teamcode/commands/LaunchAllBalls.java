@@ -104,30 +104,6 @@ public class LaunchAllBalls extends CommandBase {
         currentStep = LaunchStep.SET_PALETE_POSITION;
     }
 
-    private double getLauncherSpeed() {
-        if (follower == null) {
-            return launcherSpeedSupplier.getAsDouble();
-        }
-
-        if (alliance == 0) {
-            return robotStorage.getLauncherSpeedForCoordsBlue(follower.getPose().getX(), follower.getPose().getY());
-        } else {
-            return robotStorage.getLauncherSpeedForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
-        }
-    }
-
-    private double getRampAngle() {
-        if (follower == null) {
-            return rampAngleSupplier.getAsDouble();
-        }
-
-        if (alliance == 0) {
-            return robotStorage.getRampAngleForCoordsBlue(follower.getPose().getX(), follower.getPose().getY());
-        } else {
-            return robotStorage.getRampAngleForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
-        }
-    }
-
     @Override
     public void execute() {
         launcher.spin(getLauncherSpeed());
@@ -221,6 +197,7 @@ public class LaunchAllBalls extends CommandBase {
         telemetry.addData("step", currentStep.name());
         telemetry.addData("done", done);
         telemetry.addData("start", start);
+        telemetry.addData("ramp angle", getRampAngle());
         telemetry.addData("flywheel speed", launcher.getVelocity());
         telemetry.addData("flywheel target speed", getLauncherSpeed());
         telemetry.addData("ramp angle", getRampAngle());
@@ -235,5 +212,30 @@ public class LaunchAllBalls extends CommandBase {
     @Override
     public boolean isFinished() {
         return done && onofreiTimer.done();
+    }
+
+
+    private double getLauncherSpeed() {
+        if (follower == null) {
+            return launcherSpeedSupplier.getAsDouble();
+        }
+
+        if (alliance == 0) {
+            return robotStorage.getLauncherSpeedForCoordsNew(follower.getPose().getX(), follower.getPose().getY());
+        } else {
+            return robotStorage.getLauncherSpeedForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
+        }
+    }
+
+    private double getRampAngle() {
+        if (follower == null) {
+            return rampAngleSupplier.getAsDouble();
+        }
+
+        if (alliance == 0) {
+            return robotStorage.getRampAngleForCoordsNew(follower.getPose().getX(), follower.getPose().getY());
+        } else {
+            return robotStorage.getRampAngleForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
+        }
     }
 }

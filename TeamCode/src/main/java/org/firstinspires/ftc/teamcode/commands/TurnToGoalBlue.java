@@ -23,18 +23,15 @@ public class TurnToGoalBlue extends CommandBase {
         double x = follower.getPose().getX(), y = follower.getPose().getY();
         double targetHeadingRad = -Math.PI + Math.atan(x / (RobotStorage.fieldLengthIn - y)) +
                 Math.asin(RobotStorage.centerToRampIn / Math.sqrt((RobotStorage.fieldLengthIn - y) * (RobotStorage.fieldLengthIn - y) + x * x));
-        pathChain = follower.pathBuilder()
-                .addPath(new BezierPoint(new Pose(follower.getPose().getX(), follower.getPose().getY(), targetHeadingRad)))
-                .setConstantHeadingInterpolation(targetHeadingRad)
-                .build();
-        follower.followPath(pathChain);
-//        follower.turnTo(targetHeadingRad);
+//        pathChain = follower.pathBuilder()
+//                .addPath(new BezierPoint(new Pose(follower.getPose().getX(), follower.getPose().getY(), targetHeadingRad)))
+//                .setConstantHeadingInterpolation(targetHeadingRad)
+//                .build();
+        follower.turnTo(targetHeadingRad);
     }
 
     @Override
     public void execute() {
-//        follower.followPath(pathChain);
-//        telemetry.addData("target heading deg", Math.toDegrees(targetHeadingRad));
     }
 
     @Override
@@ -45,7 +42,6 @@ public class TurnToGoalBlue extends CommandBase {
     @Override
     public boolean isFinished() {
         return false;
-//        return !follower.isBusy();
     }
 
 }

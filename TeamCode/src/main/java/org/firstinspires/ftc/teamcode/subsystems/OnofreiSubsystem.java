@@ -11,7 +11,6 @@ public class OnofreiSubsystem extends SubsystemBase {
 
     public OnofreiSubsystem(HardwareMap hwMap) {
         this.onofrei = new ServoEx(hwMap, "onofrei");
-//        this.onofrei.setCachingTolerance(0.0001);
     }
 
     public void setPosition(double position) {

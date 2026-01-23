@@ -36,7 +36,7 @@ public class test extends LinearOpMode {
     public static double intakePos = 0;
     public static double rampaPos = 0;
     public static double viteza = 0;
-    public static double kP = 0.004, kI = 0, kD = 0.0000015, kF = 0.00035;  // lansator
+    public static double kP = 0.0028, kI = 0, kD = 0.00000007, kF = 0.000365;  // lansator
     public static double motorPower = 0;
 
 //    public static InterpLUT lut = new InterpLUT()

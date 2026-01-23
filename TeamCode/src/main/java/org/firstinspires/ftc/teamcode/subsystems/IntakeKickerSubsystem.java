@@ -6,8 +6,8 @@ import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 
 public class IntakeKickerSubsystem extends SubsystemBase {
     private final ServoEx kicker;
-    public static final double OUT = 0.5,
-            IN = 0;
+    public static final double OUT = 0.7,
+            IN = 0.01;
 
     public IntakeKickerSubsystem(HardwareMap hwMap) {
         this.kicker = new ServoEx(hwMap, "servo_intake");

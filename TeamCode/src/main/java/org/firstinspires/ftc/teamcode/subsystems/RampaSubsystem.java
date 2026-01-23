@@ -11,11 +11,11 @@ import java.util.function.DoubleSupplier;
 public class RampaSubsystem extends SubsystemBase {
     private final ServoEx rampa;
     public static final double SUS = 0.8,
-                               JOS = 0;
+                               JOS = 0.01;
 
     public RampaSubsystem(HardwareMap hwMap) {
         this.rampa = new ServoEx(hwMap, "rampa");
-        this.rampa.setCachingTolerance(0.03);
+        this.rampa.setCachingTolerance(0.01);
     }
 
     public void setPosition(double position) {

@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 public class IntakeBall extends CommandBase {
     private final Timer timerPalete = new Timer(500, TimeUnit.MILLISECONDS);
-    private final Timer timerKicker = new Timer(100, TimeUnit.MILLISECONDS);
+    private final Timer timerKicker = new Timer(200, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final IntakeKickerSubsystem kicker;
     private final PaleteSubsytem palete;
@@ -91,36 +91,33 @@ public class IntakeBall extends CommandBase {
             case WAIT_FOR_BALL:
                 if (timerPalete.done()) {
                     intake.suck();
+                    kicker.setPosition(IntakeKickerSubsystem.IN);
                 }
 
-                if (senzorTavan.getDistanceMM() < 30) {
+                if (senzorTavan.getDistanceMM() < 35) {
 //                    robotStorage.setSector(sector, senzorGaura.getColor());
-
                     timerKicker.start();
                     currentStep = IntakeStep.STORE_BALL;
                 }
                 break;
 
             case STORE_BALL:
-                intake.stop();
                 if (timerKicker.done()) {
                     kicker.setPosition(IntakeKickerSubsystem.OUT);
-                    timerKicker.start();
-                    timerKicker.pause();
                 }
-                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30) {
-                    kicker.setPosition(IntakeKickerSubsystem.IN);
-                    if (senzorTavan.getDistanceMM() > 60) {
-                        robotStorage.setSector(sector, senzorGaura.getColor());
-                        timerPalete.start();
-                        currentStep = IntakeStep.WAIT_AND_CYCLE;
-                    }
+                intake.stop();
+//                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30) {
+                if (senzorTavan.getDistanceMM() > 60) {
+                    robotStorage.setSector(sector, senzorGaura.getColor());
+                    timerPalete.start();
+                    currentStep = IntakeStep.WAIT_AND_CYCLE;
                 }
+//                }
                 break;
 
             case WAIT_AND_CYCLE:
-                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30
-                        && senzorTavan.getDistanceMM() > 60) {
+//                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30
+                if (senzorTavan.getDistanceMM() > 60) {
                     sector = robotStorage.getNextFreeSector();
                     currentStep = IntakeStep.POSITION_PALETE;
                 }

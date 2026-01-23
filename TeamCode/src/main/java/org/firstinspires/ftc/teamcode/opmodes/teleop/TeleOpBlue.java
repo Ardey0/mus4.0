@@ -186,7 +186,7 @@ public class TeleOpBlue extends CommandOpMode {
         follower.update();
         telemetryM.addData("dist to blue goal (m)", Math.sqrt((-follower.getPose().getX()) * (-follower.getPose().getX()) +
                 (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
-        telemetryM.addData("heading error", follower.getHeadingError());
+        telemetryM.addData("heading error", Math.toDegrees(follower.getHeadingError()));
         telemetryM.addData("following path", follower.isBusy());
         telemetryM.update(telemetry);
     }
