@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.teleop;
+package org.firstinspires.ftc.teamcode.OpModes.teleop;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -44,7 +44,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 @TeleOp
 public class TeleOpBlue extends CommandOpMode {
 //    public static double launcherSpeed = 0, rampAngle = 0;
-    private final double triggerMultiplier = 0.0014;
+    private final double triggerMultiplier = 0.006;
     private final int ALLIANCE = 0; // BLUE
 
     private TelemetryManager telemetryM;

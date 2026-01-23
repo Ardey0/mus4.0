@@ -7,10 +7,10 @@ import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 public class PaleteSubsytem extends SubsystemBase {
     private final ServoEx palete;
     public static final double IN_BILA_0 = 0.58,
-                               IN_BILA_1 = 0.93,
+                               IN_BILA_1 = 0.92,
                                IN_BILA_2 = 0.235,
-                               OUT_BILA_0 = 0.78,
-                               OUT_BILA_1 = 0.08,
+                               OUT_BILA_0 = 0.785,
+                               OUT_BILA_1 = 0.11,
                                OUT_BILA_2 = 0.43,
                                LOCK = 0.3;
 

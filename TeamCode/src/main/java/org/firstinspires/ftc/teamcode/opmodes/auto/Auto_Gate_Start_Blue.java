@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto;
+package org.firstinspires.ftc.teamcode.OpModes.auto;
 
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
@@ -82,17 +83,22 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
     public PathChain PickupHuman;
     public PathChain HumanToLaunch;
     public PathChain Launch2;
+    public PathChain Launch1;
+    public PathChain Grab3;
+    public PathChain Launch3;
     public PathChain ClearGate;
     public PathChain Motif;
     private final Pose start = new Pose(19, 120, Math.toRadians(-129));
     private final Pose exit = new Pose(43, 13, Math.toRadians(-140));
-    private final Pose launch1 = new Pose(45, 95, Math.toRadians(-129));
+    private final Pose launchPre = new Pose(45, 95, Math.toRadians(-129));
     private final Pose motif = new Pose(45, 95, Math.toRadians(-180));
-    private final Pose launch2 = new Pose(53, 90, Math.toRadians(-129));
-    private final Pose grab1 = new Pose(23, 82, Math.toRadians(-180));
-    private final Pose clearGate = new Pose(16, 73, Math.toRadians(90));
-    private final Pose grab2 = new Pose(38, 58.5, Math.toRadians(180));
-    private final Pose pickup2 = new Pose(9, 58.5, Math.toRadians(180));
+    private final Pose launch1 = new Pose(53, 90, Math.toRadians(-129));
+    private final Pose launch2 = new Pose(52,90,Math.toRadians(-130));
+    private final Pose launch3 = new Pose(52,90,Math.toRadians(-130));
+    private final Pose grab1 = new Pose(22.5, 82, Math.toRadians(-180));
+    private final Pose clearGate = new Pose(15.5, 73, Math.toRadians(90));
+    private final Pose grab2 = new Pose(13, 58, Math.toRadians(180));
+    private final Pose grab3 = new Pose(13, 35, Math.toRadians(180));
     private final Pose launchMiddle = new Pose(50.700, 87.40, Math.toRadians(-153));
     private final Pose grabHuman = new Pose(32, 11.5, Math.toRadians(180));
     private final Pose pickupHuman = new Pose(9, 11.5, Math.toRadians(180));
@@ -102,9 +108,9 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
     public void buildPaths() {
         preload = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(start, launch1)
+                        new BezierLine(start, launchPre)
                 )
-                .setLinearHeadingInterpolation(start.getHeading(), launch1.getHeading())
+                .setLinearHeadingInterpolation(start.getHeading(), launchPre.getHeading())
                 .build();
 
         Motif = follower.pathBuilder()
@@ -115,9 +121,9 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
 
         Grab1 = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(launch1, grab1)
+                        new BezierLine(launchPre, grab1)
                 )
-//                .setLinearHeadingInterpolation(launch1.getHeading(), grab1.getHeading())
+                .setLinearHeadingInterpolation(180, grab1.getHeading())
                 .build();
 
         ClearGate = follower.pathBuilder()
@@ -126,17 +132,48 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
                 )
                 .setConstantHeadingInterpolation(clearGate.getHeading())
                 .build();
-        Launch2 = follower.pathBuilder()
+        Launch1 = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(clearGate, launch2)
+                        new BezierLine(clearGate, launch1)
                 )
-                .setLinearHeadingInterpolation(clearGate.getHeading(), launch2.getHeading())
+                .setLinearHeadingInterpolation(clearGate.getHeading(), launch1.getHeading())
                 .build();
         Grab2 = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(launch2, grab2)
+                        new BezierCurve(
+                                launch1,
+                                new Pose(47.981, 53.975),
+                                new Pose(51.262, 61.897),
+                                grab2
+                                )
                 )
-                .setLinearHeadingInterpolation(launch2.getHeading(), grab2.getHeading())
+                .setLinearHeadingInterpolation(launch1.getHeading(), grab2.getHeading())
+                .build();
+        Launch2 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                grab2,
+                                new Pose(44.168, 54.873),
+                                launch2)
+                )
+                .setLinearHeadingInterpolation(grab2.getHeading(), launch2.getHeading())
+                .build();
+        Grab3 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                launch2,
+                                new Pose(60.561, 29.383),
+                                new Pose(39.028, 35.486),
+                                grab3
+                        )
+                )
+                .setLinearHeadingInterpolation(launch2.getHeading(), grab3.getHeading())
+                .build();
+        Launch3 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(grab3, launch3)
+                )
+                .setLinearHeadingInterpolation(grab3.getHeading(), launch3.getHeading())
                 .build();
 //
 //        Pickup1Wiggle = follower.pathBuilder()
@@ -147,13 +184,6 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
 //                        new BezierLine(pickup1Wiggle, pickup1)
 //                )
 //                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                .build();
-//
-//        LaunchHuman = follower.pathBuilder()
-//                .addPath(
-//                        new BezierLine(pickup1, launchHuman)
-//                )
-//                .setLinearHeadingInterpolation(pickup1.getHeading(), launchHuman.getHeading())
 //                .build();
 //
 //        LaunchHuman2 = follower.pathBuilder()
@@ -255,22 +285,34 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
                 new FollowPathCommand(follower, preload, true),
                 new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                 new SequentialCommandGroup(
-                        new TurnToCommand(follower, Math.toRadians(-180)),
+                        new TurnToCommand(follower, Math.toRadians(180)),
                         new ReadMotif(robotStorage, telemetryM, limelight)
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(5000),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab1, true),
                                 new FollowPathCommand(follower, ClearGate, true)
                         )
                 ),
-                new FollowPathCommand(follower, Launch2, true),
+                new FollowPathCommand(follower, Launch1, true),
                 new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(5000),
-                        new FollowPathCommand(follower, Grab2, true)
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker),
+                        new SequentialCommandGroup(
+                                new FollowPathCommand(follower, Grab2, true),
+                                new FollowPathCommand(follower,Launch2,true)
+                        )
                 ),
+                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                new ParallelCommandGroup(
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker),
+                        new SequentialCommandGroup(
+                                new FollowPathCommand(follower, Grab3, true),
+                                new FollowPathCommand(follower,Launch3,true)
+                        )
+                ),
+                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                 new WaitCommand(10000)
         );
         schedule(autonomousSequence);

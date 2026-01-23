@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import java.util.concurrent.TimeUnit;
 
 public class IntakeBall extends CommandBase {
-    private final Timer timerPalete = new Timer(500, TimeUnit.MILLISECONDS);
-    private final Timer timerKicker = new Timer(200, TimeUnit.MILLISECONDS);
+    private final Timer timerPalete = new Timer(400, TimeUnit.MILLISECONDS);
+    private final Timer timerKicker = new Timer(150, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final IntakeKickerSubsystem kicker;
     private final PaleteSubsytem palete;
@@ -46,13 +46,13 @@ public class IntakeBall extends CommandBase {
         this.robotStorage = robotStorage;
         this.telemetry = telemetry;
 
-        addRequirements(intake, palete, senzorTavan);
+        addRequirements(intake, palete, senzorTavan, senzorGaura, kicker);
     }
 
     @Override
     public void initialize() {
         kicker.setPosition(IntakeKickerSubsystem.IN);
-        intake.suck();
+//        intake.suck();
         timerPalete.start();
         sector = robotStorage.getNextFreeSector();
         currentStep = IntakeStep.POSITION_PALETE;
@@ -107,10 +107,11 @@ public class IntakeBall extends CommandBase {
                 }
                 intake.stop();
 //                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30) {
-                if (senzorTavan.getDistanceMM() > 60) {
+                if (senzorTavan.getDistanceMM() > 54) {
                     robotStorage.setSector(sector, senzorGaura.getColor());
                     timerPalete.start();
-                    currentStep = IntakeStep.WAIT_AND_CYCLE;
+                    sector = robotStorage.getNextFreeSector();
+                    currentStep = IntakeStep.POSITION_PALETE;
                 }
 //                }
                 break;
@@ -118,7 +119,6 @@ public class IntakeBall extends CommandBase {
             case WAIT_AND_CYCLE:
 //                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30
                 if (senzorTavan.getDistanceMM() > 60) {
-                    sector = robotStorage.getNextFreeSector();
                     currentStep = IntakeStep.POSITION_PALETE;
                 }
                 break;

@@ -23,7 +23,7 @@ public class LaunchAllBalls extends CommandBase {
     private final RampaSubsystem rampa;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timer onofreiTimer = new Timer(200, TimeUnit.MILLISECONDS);
+    private final Timer onofreiTimer = new Timer(300, TimeUnit.MILLISECONDS);
     private final Timer paleteTimer = new Timer(400, TimeUnit.MILLISECONDS);
     private boolean done = false, start = false;
 
