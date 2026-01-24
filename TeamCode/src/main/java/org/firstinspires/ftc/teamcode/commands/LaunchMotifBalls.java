@@ -106,6 +106,7 @@ public class LaunchMotifBalls extends CommandBase {
 
     @Override
     public void execute() {
+        updateDistanceToGoal();
         launcher.spin(getLauncherSpeed());
         rampa.setPosition(getRampAngle());
 
@@ -123,25 +124,27 @@ public class LaunchMotifBalls extends CommandBase {
                     break;
                 }
 
-                switch (sector) {
-                    case 0:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_0);
-                        break;
-                    case 1:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_1);
-                        break;
-                    case 2:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_2);
-                        break;
-                    default:
-                        // Invalid sector, end the command gracefully.
-                        done = true;
-                        break;
-                }
+                if (start) {
+                    switch (sector) {
+                        case 0:
+                            palete.setPosition(PaleteSubsytem.OUT_BILA_0);
+                            break;
+                        case 1:
+                            palete.setPosition(PaleteSubsytem.OUT_BILA_1);
+                            break;
+                        case 2:
+                            palete.setPosition(PaleteSubsytem.OUT_BILA_2);
+                            break;
+                        default:
+                            // Invalid sector, end the command gracefully.
+                            done = true;
+                            break;
+                    }
 
-                if (!done && start) {
-                    paleteTimer.start();
-                    currentStep = LaunchStep.WAIT_FOR_PALETE;
+                    if (!done) {
+                        paleteTimer.start();
+                        currentStep = LaunchStep.WAIT_FOR_PALETE;
+                    }
                 }
                 break;
 
@@ -206,13 +209,20 @@ public class LaunchMotifBalls extends CommandBase {
     }
 
 
+    private void updateDistanceToGoal() {
+        if (follower == null) {
+            return;
+        }
+        robotStorage.updateDistanceToGoal(follower.getPose().getX(), follower.getPose().getY(), alliance);
+    }
+
     private double getLauncherSpeed() {
         if (follower == null) {
             return launcherSpeedSupplier.getAsDouble();
         }
 
         if (alliance == 0) {
-            return robotStorage.getLauncherSpeedForCoordsBlue(follower.getPose().getX(), follower.getPose().getY());
+            return robotStorage.getLauncherSpeedForCoordsNew();
         } else {
             return robotStorage.getLauncherSpeedForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
         }
@@ -224,7 +234,7 @@ public class LaunchMotifBalls extends CommandBase {
         }
 
         if (alliance == 0) {
-            return robotStorage.getRampAngleForCoordsBlue(follower.getPose().getX(), follower.getPose().getY());
+            return robotStorage.getRampAngleForCoordsNew();
         } else {
             return robotStorage.getRampAngleForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
         }

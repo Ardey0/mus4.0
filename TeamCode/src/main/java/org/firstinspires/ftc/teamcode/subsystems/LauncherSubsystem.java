@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
@@ -7,9 +8,10 @@ import com.seattlesolvers.solverslib.controller.PIDFController;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
+@Configurable
 public class LauncherSubsystem extends SubsystemBase {
-    private final double kP = 0.003, kI = 0, kD = 0.00000008, kF = 0.000365;
-    private final double nominalVoltage = 13.5;
+    public static double kP = 0.002, kI = 0, kD = 0.00000002, kF = 0.00039;
+    private final double nominalVoltage = 12;
     private final MotorEx flywheel1, flywheel2;
     private final VoltageSensor voltageSensor;
     private final PIDFController controller = new PIDFController(kP, kI, kD, kF);

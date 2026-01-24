@@ -60,7 +60,6 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
     private LimelightSubsystem limelight;
 
     private Init init;
-    private ReadMotif readMotif;
 
     private ElapsedTime loopTime;
 
@@ -70,18 +69,7 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
     public PathChain preload;
     private PathChain Exit;
     public PathChain Grab1;
-    public PathChain Pickup1;
-    public PathChain Pickup1Wiggle;
-    public PathChain LaunchHuman;
-    public PathChain LaunchHuman2;
     public PathChain Grab2;
-    public PathChain Pickup2;
-    public PathChain LaunchMiddle;
-    public PathChain GrabGate;
-    public PathChain LaunchGate;
-    public PathChain GrabHuman;
-    public PathChain PickupHuman;
-    public PathChain HumanToLaunch;
     public PathChain Launch2;
     public PathChain Launch1;
     public PathChain Grab3;
@@ -89,21 +77,16 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
     public PathChain ClearGate;
     public PathChain Motif;
     private final Pose start = new Pose(19, 120, Math.toRadians(-129));
-    private final Pose exit = new Pose(43, 13, Math.toRadians(-140));
     private final Pose launchPre = new Pose(45, 95, Math.toRadians(-129));
     private final Pose motif = new Pose(45, 95, Math.toRadians(-180));
     private final Pose launch1 = new Pose(53, 90, Math.toRadians(-129));
-    private final Pose launch2 = new Pose(52,90,Math.toRadians(-130));
-    private final Pose launch3 = new Pose(52,90,Math.toRadians(-130));
-    private final Pose grab1 = new Pose(22.5, 82, Math.toRadians(-180));
-    private final Pose clearGate = new Pose(15.5, 73, Math.toRadians(90));
-    private final Pose grab2 = new Pose(13, 58, Math.toRadians(180));
-    private final Pose grab3 = new Pose(13, 35, Math.toRadians(180));
-    private final Pose launchMiddle = new Pose(50.700, 87.40, Math.toRadians(-153));
-    private final Pose grabHuman = new Pose(32, 11.5, Math.toRadians(180));
-    private final Pose pickupHuman = new Pose(9, 11.5, Math.toRadians(180));
-    private final Pose grabGate = new Pose(38, 87);
-    private final Pose launchGate = new Pose(45, 87);
+    private final Pose launch2 = new Pose(52, 90, Math.toRadians(-130));
+    private final Pose launch3 = new Pose(52, 90, Math.toRadians(-130));
+    private final Pose grab1 = new Pose(22.5, 82, Math.toRadians(180));
+    private final Pose clearGate = new Pose(15, 73, Math.toRadians(90));
+    private final Pose grab2 = new Pose(14, 58, Math.toRadians(180));
+    private final Pose grab3 = new Pose(14, 35, Math.toRadians(180));
+    private final Pose exit = new Pose(50, 90, Math.toRadians(-135));
 
     public void buildPaths() {
         preload = follower.pathBuilder()
@@ -126,6 +109,7 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
                 .setLinearHeadingInterpolation(180, grab1.getHeading())
                 .build();
 
+
         ClearGate = follower.pathBuilder()
                 .addPath(
                         new BezierLine(grab1, clearGate)
@@ -145,7 +129,7 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
                                 new Pose(47.981, 53.975),
                                 new Pose(51.262, 61.897),
                                 grab2
-                                )
+                        )
                 )
                 .setLinearHeadingInterpolation(launch1.getHeading(), grab2.getHeading())
                 .build();
@@ -174,6 +158,11 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
                         new BezierLine(grab3, launch3)
                 )
                 .setLinearHeadingInterpolation(grab3.getHeading(), launch3.getHeading())
+                .build();
+        Exit = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(launch3, exit)
+                )
                 .build();
 //
 //        Pickup1Wiggle = follower.pathBuilder()
@@ -271,7 +260,6 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
         senzorGaura = new SenzorGauraSubsystem(hardwareMap);
 
         init = new Init(palete, onofrei, rampa, intakeKicker);
-        readMotif = new ReadMotif(robotStorage, telemetryM, limelight);
 
         robotStorage.setSector(0, 2);
         robotStorage.setSector(1, 2);
@@ -282,38 +270,81 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
         buildPaths();
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
                 init,
-                new FollowPathCommand(follower, preload, true),
-                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                new ParallelCommandGroup(
+                        new FollowPathCommand(follower, preload, true),
+                        new SequentialCommandGroup(
+                                new WaitCommand(700),
+                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE)
+                        )
+                ),
                 new SequentialCommandGroup(
-                        new TurnToCommand(follower, Math.toRadians(180)),
-                        new ReadMotif(robotStorage, telemetryM, limelight)
+                        new TurnToCommand(follower, Math.toRadians(150)),
+                        new WaitCommand(500),
+                        new ReadMotif(robotStorage, telemetryM, limelight),
+                        new TurnToCommand(follower, Math.toRadians(180))
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(6500),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab1, true),
-                                new FollowPathCommand(follower, ClearGate, true)
+                                new FollowPathCommand(follower, ClearGate, true),
+                                new WaitCommand(300),
+                                new FollowPathCommand(follower, Launch1, true)
                         )
                 ),
-                new FollowPathCommand(follower, Launch1, true),
-                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                new ConditionalCommand(
+                        new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                        new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                        () -> {
+                            int verzi = 0, mov = 0;
+                            for (int i = 0; i <= 2; i++) {
+                                if (robotStorage.getSectorColor(i) == 1) verzi++;
+                                if (robotStorage.getSectorColor(i) == 2) mov++;
+                            }
+                            return verzi == 1 && mov == 2;
+                        }
+                ),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(6500),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab2, true),
-                                new FollowPathCommand(follower,Launch2,true)
+                                new FollowPathCommand(follower, Launch2, true)
                         )
                 ),
-                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                new ConditionalCommand(
+                        new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                        new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                        () -> {
+                            int verzi = 0, mov = 0;
+                            for (int i = 0; i <= 2; i++) {
+                                if (robotStorage.getSectorColor(i) == 1) verzi++;
+                                if (robotStorage.getSectorColor(i) == 2) mov++;
+                            }
+                            return verzi == 1 && mov == 2;
+                        }
+                ),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(6000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab3, true),
-                                new FollowPathCommand(follower,Launch3,true)
+                                new FollowPathCommand(follower, Launch3, true)
                         )
                 ),
-                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                new WaitCommand(10000)
+                new ParallelCommandGroup(
+                        new ConditionalCommand(
+                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                () -> {
+                                    int verzi = 0, mov = 0;
+                                    for (int i = 0; i <= 2; i++) {
+                                        if (robotStorage.getSectorColor(i) == 1) verzi++;
+                                        if (robotStorage.getSectorColor(i) == 2) mov++;
+                                    }
+                                    return verzi == 1 && mov == 2;
+                                }
+                        ),
+                        new SpitBalls(intake).withTimeout(1000)
+                )
         );
         schedule(autonomousSequence);
     }

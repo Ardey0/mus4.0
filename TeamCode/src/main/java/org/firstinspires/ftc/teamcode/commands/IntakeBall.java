@@ -30,7 +30,6 @@ public class IntakeBall extends CommandBase {
         POSITION_PALETE,
         WAIT_FOR_BALL,
         STORE_BALL,
-        WAIT_AND_CYCLE,
         DONE
     }
 
@@ -52,7 +51,6 @@ public class IntakeBall extends CommandBase {
     @Override
     public void initialize() {
         kicker.setPosition(IntakeKickerSubsystem.IN);
-//        intake.suck();
         timerPalete.start();
         sector = robotStorage.getNextFreeSector();
         currentStep = IntakeStep.POSITION_PALETE;
@@ -69,7 +67,9 @@ public class IntakeBall extends CommandBase {
                     break;
                 }
 
-                // Keep intake running
+                // Ensure intake is stopped while the palette is moving to avoid jamming
+                intake.stop();
+
                 switch (sector) {
                     case 0:
                         palete.setPosition(PaleteSubsytem.IN_BILA_0);
@@ -85,43 +85,34 @@ public class IntakeBall extends CommandBase {
                         break;
                 }
 
-                currentStep = IntakeStep.WAIT_FOR_BALL;
+                if (timerPalete.done()) {
+                    currentStep = IntakeStep.WAIT_FOR_BALL;
+                }
                 break;
 
             case WAIT_FOR_BALL:
-                if (timerPalete.done()) {
-                    intake.suck();
-                    kicker.setPosition(IntakeKickerSubsystem.IN);
-                }
+                kicker.setPosition(IntakeKickerSubsystem.IN);
+                intake.suck();
 
-                if (senzorTavan.getDistanceMM() < 40) {
-//                    robotStorage.setSector(sector, senzorGaura.getColor());
+                if (senzorTavan.getDistanceMM() < 35) {
                     timerKicker.start();
                     currentStep = IntakeStep.STORE_BALL;
                 }
                 break;
 
             case STORE_BALL:
+                // Stop the intake to prevent sucking in more balls while one is being stored
+                intake.stop();
                 if (timerKicker.done()) {
                     kicker.setPosition(IntakeKickerSubsystem.OUT);
-                    intake.stop();
-//                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30) {
-                    if (senzorTavan.getDistanceMM() > 55) {
-                        robotStorage.setSector(sector, senzorGaura.getColor());
-                        timerPalete.start();
-                        sector = robotStorage.getNextFreeSector();
-                        currentStep = IntakeStep.POSITION_PALETE;
-                    }
                 }
-//                }
+                if (senzorTavan.getDistanceMM() > 55) {
+                    robotStorage.setSector(sector, senzorGaura.getColor());
+                    timerPalete.start();
+                    sector = robotStorage.getNextFreeSector();
+                    currentStep = IntakeStep.POSITION_PALETE;
+                }
                 break;
-//
-//            case WAIT_AND_CYCLE:
-////                if (senzorGaura.getDistanceMM() > 11 && senzorGaura.getDistanceMM() < 30
-//                if (senzorTavan.getDistanceMM() > 60) {
-//                    currentStep = IntakeStep.POSITION_PALETE;
-//                }
-//                break;
 
             case DONE:
                 // Command will finish.
@@ -135,7 +126,6 @@ public class IntakeBall extends CommandBase {
         telemetry.addData("culoare sector 0", robotStorage.getSectorColor(0));
         telemetry.addData("culoare sector 1", robotStorage.getSectorColor(1));
         telemetry.addData("culoare sector 2", robotStorage.getSectorColor(2));
-//        telemetry.addData("timer remaining", timerPalete.remainingTime());
         telemetry.addData("step", currentStep.name());
     }
 
@@ -150,5 +140,4 @@ public class IntakeBall extends CommandBase {
     public boolean isFinished() {
         return currentStep == IntakeStep.DONE && timerPalete.done();
     }
-
 }

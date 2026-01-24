@@ -23,7 +23,7 @@ public class LaunchAllBalls extends CommandBase {
     private final RampaSubsystem rampa;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timer onofreiTimer = new Timer(300, TimeUnit.MILLISECONDS);
+    private final Timer onofreiTimer = new Timer(200, TimeUnit.MILLISECONDS);
     private final Timer paleteTimer = new Timer(400, TimeUnit.MILLISECONDS);
     private boolean done = false, start = false;
 
@@ -132,25 +132,27 @@ public class LaunchAllBalls extends CommandBase {
                     break;
                 }
 
-                switch (sector) {
-                    case 0:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_0);
-                        break;
-                    case 1:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_1);
-                        break;
-                    case 2:
-                        palete.setPosition(PaleteSubsytem.OUT_BILA_2);
-                        break;
-                    default:
-                        // Invalid sector, end the command gracefully.
-                        done = true;
-                        break;
-                }
-                
-                if (!done && start) {
-                    paleteTimer.start();
-                    currentStep = LaunchStep.WAIT_FOR_PALETE;
+                if (start) {
+                    switch (sector) {
+                        case 0:
+                            palete.setPosition(PaleteSubsytem.OUT_BILA_0);
+                            break;
+                        case 1:
+                            palete.setPosition(PaleteSubsytem.OUT_BILA_1);
+                            break;
+                        case 2:
+                            palete.setPosition(PaleteSubsytem.OUT_BILA_2);
+                            break;
+                        default:
+                            // Invalid sector, end the command gracefully.
+                            done = true;
+                            break;
+                    }
+
+                    if (!done) {
+                        paleteTimer.start();
+                        currentStep = LaunchStep.WAIT_FOR_PALETE;
+                    }
                 }
                 break;
 
@@ -200,7 +202,7 @@ public class LaunchAllBalls extends CommandBase {
         telemetry.addData("start", start);
 //        telemetry.addData("ramp angle", getRampAngle());
         telemetry.addData("flywheel speed", launcher.getVelocity());
-//        telemetry.addData("flywheel target speed", getLauncherSpeed());
+        telemetry.addData("flywheel target speed", getLauncherSpeed());
         telemetry.addData("ramp angle", getRampAngle());
     }
 

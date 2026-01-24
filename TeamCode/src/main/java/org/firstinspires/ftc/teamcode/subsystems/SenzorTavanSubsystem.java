@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.SensorRevColorV3;
@@ -12,6 +13,7 @@ public class SenzorTavanSubsystem extends SubsystemBase {
     public SenzorTavanSubsystem(HardwareMap hwMap){
         this.colorSensor = new SensorRevColorV3(hwMap, "senzor_tavan");
         colorSensor.getColorSensor().setGain(2);
+        ((LynxI2cDeviceSynch) colorSensor.getColorSensor().getDeviceClient()).setBusSpeed(LynxI2cDeviceSynch.BusSpeed.FAST_400K);
     }
 
     public int[] getRGBColor() {
@@ -27,10 +29,10 @@ public class SenzorTavanSubsystem extends SubsystemBase {
 
     public int getColor() { // GREEN = 1    PURPLE = 2
         float[] HSVColor = getHSVColor();
-        if (HSVColor[0] > 20 && HSVColor[0] < 175) { /// 80 si 140
+        if (HSVColor[0] > 0 && HSVColor[0] < 175) { /// 80 si 140
             return 1; // GREEN
         }
-        if (HSVColor[0] >= 175 && HSVColor[0] < 350){ /// 220 si 330
+        if (HSVColor[0] >= 175 && HSVColor[0] < 360){ /// 220 si 330
             return 2; // PURPLE
         }
         return 0;
