@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.auto;
+package org.firstinspires.ftc.teamcode.OpModes.auto;
 
 
 import com.bylazar.telemetry.PanelsTelemetry;

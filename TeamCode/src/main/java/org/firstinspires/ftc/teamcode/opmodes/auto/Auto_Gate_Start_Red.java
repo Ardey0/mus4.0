@@ -73,16 +73,16 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
     public PathChain Launch3;
     public PathChain ClearGate;
     public PathChain Motif;
-    private final Pose start = new Pose(123, 120, Math.toRadians(-154));
-    private final Pose launchPre = new Pose(97, 95, Math.toRadians(-154));
+    private final Pose start = new Pose(123, 120, Math.toRadians(-140));
+    private final Pose launchPre = new Pose(97, 95, Math.toRadians(-140));
     private final Pose motif = new Pose(45, 95, Math.toRadians(-180));
-    private final Pose launch1 = new Pose(89, 90, Math.toRadians(141));
-    private final Pose launch2 = new Pose(90, 90, Math.toRadians(140));
-    private final Pose launch3 = new Pose(90, 90, Math.toRadians(140));
+    private final Pose launch1 = new Pose(89, 90, Math.toRadians(135));
+    private final Pose launch2 = new Pose(90, 90, Math.toRadians(134));
+    private final Pose launch3 = new Pose(90, 90, Math.toRadians(134));
     private final Pose grab1 = new Pose(119.5, 82, Math.toRadians(0));
-    private final Pose clearGate = new Pose(127, 73, Math.toRadians(-90));
-    private final Pose grab2 = new Pose(128, 58, Math.toRadians(0));
-    private final Pose grab3 = new Pose(128, 35, Math.toRadians(0));
+    private final Pose clearGate = new Pose(126.5, 73, Math.toRadians(90));
+    private final Pose grab2 = new Pose(128, 55, Math.toRadians(0));
+    private final Pose grab3 = new Pose(128, 33, Math.toRadians(0));
     private final Pose exit = new Pose(50, 90, Math.toRadians(-135));
 
     public void buildPaths() {
@@ -103,7 +103,7 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
                 .addPath(
                         new BezierLine(launchPre, grab1)
                 )
-                .setLinearHeadingInterpolation(141, grab1.getHeading())
+                .setLinearHeadingInterpolation(0, grab1.getHeading())
                 .build();
 
 
@@ -123,12 +123,12 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
                 .addPath(
                         new BezierCurve(
                                 launch1,
-                                new Pose(94.02, 53.975),
-                                new Pose(90.74, 61.897),
+                                new Pose(83.25, 63.62),
+                                new Pose(75.04, 51.58),
                                 grab2
                         )
                 )
-                .setLinearHeadingInterpolation(launch1.getHeading(), grab2.getHeading())
+                .setTangentHeadingInterpolation()
                 .build();
         Launch2 = follower.pathBuilder()
                 .addPath(
@@ -143,8 +143,8 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
                 .addPath(
                         new BezierCurve(
                                 launch2,
-                                new Pose(81.44, 29.383),
-                                new Pose(77.03, 35.486),
+                                new Pose(78.97, 61.23),
+                                new Pose(67.83, 29.42),
                                 grab3
                         )
                 )
@@ -270,10 +270,11 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
                 new FollowPathCommand(follower, preload, true),
                 new ReadMotif(robotStorage, telemetryM, limelight),
                 new ParallelCommandGroup(
-                        new TurnToCommand(follower, Math.toRadians(141)),
+                        new TurnToCommand(follower, Math.toRadians(135)),
                         new SequentialCommandGroup(
                                 new WaitCommand(700),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE)
+                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                  new TurnToCommand(follower, Math.toRadians(0))
                         )
                 ),
                 new ParallelCommandGroup(
