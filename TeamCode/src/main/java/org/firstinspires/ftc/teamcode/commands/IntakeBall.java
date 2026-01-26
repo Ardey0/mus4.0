@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 public class IntakeBall extends CommandBase {
     private final Timer timerPalete = new Timer(400, TimeUnit.MILLISECONDS);
-    private final Timer timerKicker = new Timer(150, TimeUnit.MILLISECONDS);
+    private final Timer timerKicker = new Timer(100, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final IntakeKickerSubsystem kicker;
     private final PaleteSubsytem palete;
@@ -95,23 +95,26 @@ public class IntakeBall extends CommandBase {
                 intake.suck();
 
                 if (senzorTavan.getDistanceMM() < 35) {
-                    timerKicker.start();
-                    currentStep = IntakeStep.STORE_BALL;
+                    kicker.setPosition(IntakeKickerSubsystem.OUT);
+                    currentStep= IntakeStep.STORE_BALL;
                 }
+
                 break;
 
             case STORE_BALL:
-                // Stop the intake to prevent sucking in more balls while one is being stored
-                intake.stop();
-                if (timerKicker.done()) {
-                    kicker.setPosition(IntakeKickerSubsystem.OUT);
-                }
-                if (senzorTavan.getDistanceMM() > 55) {
-                    robotStorage.setSector(sector, senzorGaura.getColor());
-                    timerPalete.start();
-                    sector = robotStorage.getNextFreeSector();
-                    currentStep = IntakeStep.POSITION_PALETE;
-                }
+                intake.stop();                      // Stop the intake to prevent sucking in more balls while one is being stored
+
+//                if (senzorTavan.getDistanceMM() > 55) {
+//                    robotStorage.setSector(sector, senzorGaura.getColor());
+//                    timerPalete.start();
+//                    sector = robotStorage.getNextFreeSector();
+//                    currentStep = IntakeStep.POSITION_PALETE;
+//                }
+
+                robotStorage.setSector(sector, senzorGaura.getColor());
+                timerPalete.start();
+                sector = robotStorage.getNextFreeSector();
+                currentStep = IntakeStep.POSITION_PALETE;
                 break;
 
             case DONE:

@@ -209,6 +209,7 @@ public class LaunchAllBalls extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         launcher.stop();
+        rampa.setPosition(0);
         onofrei.setPosition(OnofreiSubsystem.IN);
     }
 
