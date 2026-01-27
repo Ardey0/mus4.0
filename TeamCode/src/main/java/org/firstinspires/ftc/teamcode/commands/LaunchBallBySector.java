@@ -23,7 +23,7 @@ public class LaunchBallBySector extends CommandBase {
     private final RampaSubsystem rampa;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timing.Timer onofreiTimer = new Timing.Timer(150, TimeUnit.MILLISECONDS);
+    private final Timing.Timer onofreiTimer = new Timing.Timer(200, TimeUnit.MILLISECONDS);
     private final Timing.Timer paleteTimer = new Timing.Timer(400, TimeUnit.MILLISECONDS);
     private final int sector;
     private boolean done = false, start = false;
@@ -185,6 +185,7 @@ public class LaunchBallBySector extends CommandBase {
     public void end(boolean interrupted) {
         launcher.stop();
         onofrei.setPosition(OnofreiSubsystem.IN);
+        rampa.setPosition(0);
     }
 
     @Override
@@ -198,11 +199,7 @@ public class LaunchBallBySector extends CommandBase {
             return launcherSpeedSupplier.getAsDouble();
         }
 
-        if (alliance == 0) {
-            return robotStorage.getLauncherSpeedForCoordsBlue(follower.getPose().getX(), follower.getPose().getY());
-        } else {
-            return robotStorage.getLauncherSpeedForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
-        }
+        return robotStorage.getLauncherSpeedForDist();
     }
 
     private double getRampAngle() {
@@ -210,10 +207,6 @@ public class LaunchBallBySector extends CommandBase {
             return rampAngleSupplier.getAsDouble();
         }
 
-        if (alliance == 0) {
-            return robotStorage.getRampAngleForCoordsBlue(follower.getPose().getX(), follower.getPose().getY());
-        } else {
-            return robotStorage.getRampAngleForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
-        }
+        return robotStorage.getRampAngleForDist();
     }
 }

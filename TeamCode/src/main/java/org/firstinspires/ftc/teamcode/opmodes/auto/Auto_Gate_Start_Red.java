@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.auto;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -79,10 +79,10 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
     private final Pose launch1 = new Pose(89, 90, Math.toRadians(135));
     private final Pose launch2 = new Pose(90, 90, Math.toRadians(134));
     private final Pose launch3 = new Pose(90, 90, Math.toRadians(134));
-    private final Pose grab1 = new Pose(119.5, 82, Math.toRadians(0));
-    private final Pose clearGate = new Pose(126.5, 73, Math.toRadians(90));
-    private final Pose grab2 = new Pose(128, 55, Math.toRadians(0));
-    private final Pose grab3 = new Pose(128, 33, Math.toRadians(0));
+    private final Pose grab1 = new Pose(120, 82, Math.toRadians(0));
+    private final Pose clearGate = new Pose(126.5, 73.5, Math.toRadians(90));
+    private final Pose grab2 = new Pose(125, 55, Math.toRadians(0));
+    private final Pose grab3 = new Pose(125, 33, Math.toRadians(0));
     private final Pose exit = new Pose(50, 90, Math.toRadians(-135));
 
     public void buildPaths() {
@@ -103,7 +103,7 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
                 .addPath(
                         new BezierLine(launchPre, grab1)
                 )
-                .setLinearHeadingInterpolation(0, grab1.getHeading())
+                .setLinearHeadingInterpolation(-45, grab1.getHeading())
                 .build();
 
 
@@ -143,8 +143,8 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
                 .addPath(
                         new BezierCurve(
                                 launch2,
-                                new Pose(78.97, 61.23),
-                                new Pose(67.83, 29.42),
+                                new Pose(78, 61),
+                                new Pose(65, 29),
                                 grab3
                         )
                 )
@@ -268,17 +268,18 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
         SequentialCommandGroup autonomousSequence = new SequentialCommandGroup(
                 init,
                 new FollowPathCommand(follower, preload, true),
+                new WaitCommand(300),
                 new ReadMotif(robotStorage, telemetryM, limelight),
                 new ParallelCommandGroup(
                         new TurnToCommand(follower, Math.toRadians(135)),
                         new SequentialCommandGroup(
-                                new WaitCommand(700),
+//                                new WaitCommand(700),
                                 new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                  new TurnToCommand(follower, Math.toRadians(0))
+                                new TurnToCommand(follower, Math.toRadians(-45))
                         )
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(6500),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(10000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab1, true),
                                 new FollowPathCommand(follower, ClearGate, true),
@@ -299,7 +300,7 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
                         }
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(6500),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(10000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab2, true),
                                 new FollowPathCommand(follower, Launch2, true)
@@ -318,7 +319,7 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
                         }
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(6000),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(10000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab3, true),
                                 new FollowPathCommand(follower, Launch3, true)
@@ -347,6 +348,7 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
     public void run() {
         super.run();
         follower.update();
+        robotStorage.updateAutoEndPose(follower.getPose());
 
         telemetryM.addData("Loop Time", loopTime.milliseconds());
         telemetryM.addData("X", follower.getPose().getX());

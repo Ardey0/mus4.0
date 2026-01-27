@@ -10,8 +10,8 @@ public class PaleteSubsytem extends SubsystemBase {
                                IN_BILA_1 = 0.925,
                                IN_BILA_2 = 0.235,
                                OUT_BILA_0 = 0.785,
-                               OUT_BILA_1 = 0.11,
-                               OUT_BILA_2 = 0.43,
+                               OUT_BILA_1 = 0.092,
+                               OUT_BILA_2 = 0.445,
                                LOCK = 0.3;
 
     public PaleteSubsytem(HardwareMap hwMap) {

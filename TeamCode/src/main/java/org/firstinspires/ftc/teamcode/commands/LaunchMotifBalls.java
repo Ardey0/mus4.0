@@ -201,13 +201,13 @@ public class LaunchMotifBalls extends CommandBase {
     public void end(boolean interrupted) {
         launcher.stop();
         onofrei.setPosition(OnofreiSubsystem.IN);
+        rampa.setPosition(0);
     }
 
     @Override
     public boolean isFinished() {
         return done && onofreiTimer.done();
     }
-
 
     private void updateDistanceToGoal() {
         if (follower == null) {
@@ -221,11 +221,7 @@ public class LaunchMotifBalls extends CommandBase {
             return launcherSpeedSupplier.getAsDouble();
         }
 
-        if (alliance == 0) {
-            return robotStorage.getLauncherSpeedForCoordsNew();
-        } else {
-            return robotStorage.getLauncherSpeedForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
-        }
+        return robotStorage.getLauncherSpeedForDist();
     }
 
     private double getRampAngle() {
@@ -233,10 +229,6 @@ public class LaunchMotifBalls extends CommandBase {
             return rampAngleSupplier.getAsDouble();
         }
 
-        if (alliance == 0) {
-            return robotStorage.getRampAngleForCoordsNew();
-        } else {
-            return robotStorage.getRampAngleForCoordsRed(follower.getPose().getX(), follower.getPose().getY());
-        }
+        return robotStorage.getRampAngleForDist();
     }
 }

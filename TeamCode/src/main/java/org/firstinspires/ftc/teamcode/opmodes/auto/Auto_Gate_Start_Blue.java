@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.auto;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -273,7 +273,7 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
                 new ParallelCommandGroup(
                         new FollowPathCommand(follower, preload, true),
                         new SequentialCommandGroup(
-                                new WaitCommand(700),
+                                new WaitCommand(500),
                                 new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE)
                         )
                 ),
@@ -301,7 +301,7 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
                                 if (robotStorage.getSectorColor(i) == 1) verzi++;
                                 if (robotStorage.getSectorColor(i) == 2) mov++;
                             }
-                            return verzi == 1 && mov == 2;
+                            return verzi == 1 && mov == 2 && robotStorage.getMotif()[0] != 0;
                         }
                 ),
                 new ParallelCommandGroup(
@@ -320,7 +320,7 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
                                 if (robotStorage.getSectorColor(i) == 1) verzi++;
                                 if (robotStorage.getSectorColor(i) == 2) mov++;
                             }
-                            return verzi == 1 && mov == 2;
+                            return verzi == 1 && mov == 2 && robotStorage.getMotif()[0] != 0;
                         }
                 ),
                 new ParallelCommandGroup(
@@ -340,10 +340,15 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
                                         if (robotStorage.getSectorColor(i) == 1) verzi++;
                                         if (robotStorage.getSectorColor(i) == 2) mov++;
                                     }
-                                    return verzi == 1 && mov == 2;
+                                    return verzi == 1 && mov == 2 && robotStorage.getMotif()[0] != 0;
                                 }
                         ),
                         new SpitBalls(intake).withTimeout(1000)
+                ),
+                new InstantCommand(
+                        () -> {
+                            launcher.brake();
+                        }
                 )
         );
         schedule(autonomousSequence);
@@ -353,6 +358,7 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
     public void run() {
         super.run();
         follower.update();
+        robotStorage.updateAutoEndPose(follower.getPose());
 
         telemetryM.addData("Loop Time", loopTime.milliseconds());
         telemetryM.addData("X", follower.getPose().getX());

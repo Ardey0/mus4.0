@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.auto;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -18,7 +18,6 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
-import com.seattlesolvers.solverslib.util.TelemetryData;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.IntakeBall;
@@ -90,7 +89,7 @@ public class Auto_Human_Start_Red extends CommandOpMode {
     private final Pose pickupHuman = new Pose(134.7, 11.5, Math.toRadians(0));
     private final Pose grabGate = new Pose(38, 87);
     private final Pose launchGate = new Pose(45, 87);
-    private final Pose exit = new Pose(115, 13, Math.toRadians(135));
+    private final Pose exit = new Pose(105, 13, Math.toRadians(135));
 
     public void buildPaths() {
         preload = follower.pathBuilder()
@@ -269,15 +268,15 @@ public class Auto_Human_Start_Red extends CommandOpMode {
                 ),
                 new ParallelCommandGroup(
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1760, 0.48, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1760, 0.48, ALLIANCE),
+                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {
                                         if (robotStorage.getSectorColor(i) == 1) verzi++;
                                         if (robotStorage.getSectorColor(i) == 2) mov++;
                                     }
-                                    return verzi == 1 && mov == 2;
+                                    return verzi == 1 && mov == 2 && robotStorage.getMotif()[0] != 0;
                                 }
                         ),
                         new SpitBalls(intake).withTimeout(1000)
@@ -286,7 +285,6 @@ public class Auto_Human_Start_Red extends CommandOpMode {
                 new InstantCommand(
                         () -> {
                             launcher.brake();
-                            robotStorage.setAutoEndPose(follower.getPose());
                         }
                 )
         );
@@ -297,6 +295,7 @@ public class Auto_Human_Start_Red extends CommandOpMode {
     public void run() {
         super.run();
         follower.update();
+        robotStorage.updateAutoEndPose(follower.getPose());
 
         telemetryM.addData("Loop Time", loopTime.milliseconds());
         telemetryM.addData("X", follower.getPose().getX());

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.auto;
+package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -15,11 +15,8 @@ import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
-import com.seattlesolvers.solverslib.command.RepeatCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
-import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
-import com.seattlesolvers.solverslib.util.TelemetryData;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.IntakeBall;
@@ -81,14 +78,14 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     public PathChain HumanToLaunch;
     private final Pose start = new Pose(55.700, 8.740, Math.toRadians(180));
     private final Pose exit = new Pose(43, 13, Math.toRadians(-135));
-    private final Pose launchHuman = new Pose(53, 18, Math.toRadians(-157.5));
+    private final Pose launchHuman = new Pose(53, 18, Math.toRadians(-159));
     private final Pose launchHumanWiggle = new Pose(58.54, 22.5, Math.toRadians(-154));
     private final Pose launchHuman2 = new Pose(60.540, 23, Math.toRadians(-153));
-    private final Pose grab1 = new Pose(35, 36.5, Math.toRadians(180));
-    private final Pose pickup1 = new Pose(9.5, 36.5, Math.toRadians(180));
+    private final Pose grab1 = new Pose(39, 36, Math.toRadians(180));
+    private final Pose pickup1 = new Pose(13, 36, Math.toRadians(180));
     private final Pose pickup1Wiggle = new Pose(11.5, 36.5, Math.toRadians(180));
-    private final Pose grab2 = new Pose(38, 58.5, Math.toRadians(180));
-    private final Pose pickup2 = new Pose(9, 58.5, Math.toRadians(180));
+    private final Pose grab2 = new Pose(40, 58.5, Math.toRadians(180));
+    private final Pose pickup2 = new Pose(12.5, 58.5, Math.toRadians(180));
     private final Pose launchMiddle = new Pose(50.700, 87.40, Math.toRadians(-153));
     private final Pose grabHuman = new Pose(32, 11.5, Math.toRadians(180));
     private final Pose pickupHuman = new Pose(9, 11.5, Math.toRadians(180));
@@ -241,8 +238,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 init,
                 readMotif,
                 new ParallelCommandGroup(
-                        new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1760, 0.48, ALLIANCE),
-//                        new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1750, 0.48, ALLIANCE),
+                        new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                         new FollowPathCommand(follower, preload, true, 1)
                 ),
                 new FollowPathCommand(follower, Grab1, true, 1),
@@ -256,8 +252,8 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 new ParallelCommandGroup(
 //                        new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1750, 0.48, ALLIANCE),
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1760, 0.48, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1760, 0.48, ALLIANCE),
+                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {
@@ -280,8 +276,8 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 new ParallelCommandGroup(
 //                        new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1750, 0.48, ALLIANCE),
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1760, 0.48, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1760, 0.48, ALLIANCE),
+                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {
@@ -297,7 +293,6 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 new InstantCommand(
                         () -> {
                             launcher.brake();
-                            robotStorage.setAutoEndPose(follower.getPose());
                         }
                 ));
         schedule(autonomousSequence);
@@ -307,6 +302,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     public void run() {
         super.run();
         follower.update();
+        robotStorage.updateAutoEndPose(follower.getPose());
 
         telemetryM.addData("Loop Time", loopTime.milliseconds());
         telemetryM.addData("X", follower.getPose().getX());

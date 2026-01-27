@@ -94,7 +94,10 @@ public class IntakeBall extends CommandBase {
                 kicker.setPosition(IntakeKickerSubsystem.IN);
                 intake.suck();
 
-                if (senzorTavan.getDistanceMM() < 35) {
+                if (senzorTavan.getDistanceMM() < 25) {
+                    /// metoda veche
+//                    timerKicker.start();
+//                    currentStep = IntakeStep.STORE_BALL;
                     kicker.setPosition(IntakeKickerSubsystem.OUT);
                     currentStep= IntakeStep.STORE_BALL;
                 }
@@ -102,19 +105,21 @@ public class IntakeBall extends CommandBase {
                 break;
 
             case STORE_BALL:
-                intake.stop();                      // Stop the intake to prevent sucking in more balls while one is being stored
-
-//                if (senzorTavan.getDistanceMM() > 55) {
+                // Stop the intake to prevent sucking in more balls while one is being stored
+                intake.stop();
+                /// metoda veche
+//                if (timerKicker.done()) {
+//                    kicker.setPosition(IntakeKickerSubsystem.OUT);
+//                }
+//                if (senzorTavan.getDistanceMM() > 60) {
 //                    robotStorage.setSector(sector, senzorGaura.getColor());
 //                    timerPalete.start();
 //                    sector = robotStorage.getNextFreeSector();
 //                    currentStep = IntakeStep.POSITION_PALETE;
 //                }
-
                 robotStorage.setSector(sector, senzorGaura.getColor());
                 timerPalete.start();
                 sector = robotStorage.getNextFreeSector();
-                currentStep = IntakeStep.POSITION_PALETE;
                 break;
 
             case DONE:

@@ -117,15 +117,7 @@ public class RobotStorage {
         return -1;
     }
 
-    public double getLauncherSpeedForCoordsBlue(double x, double y) {
-        return distanceToLauncherSpeed.get(clamp(distanceToDepotM, 0.95, 3.86));
-    }
-
-    public double getLauncherSpeedForCoordsRed(double x, double y) {
-        return distanceToLauncherSpeed.get(clamp(distanceToDepotM, 0.95, 3.86));
-    }
-
-    public double getLauncherSpeedForCoordsNew() {
+    public double getLauncherSpeedForDist() {
         double d2 = distanceToDepotM * distanceToDepotM;
         double d3 = d2 * distanceToDepotM;
         double d4 = d3 * distanceToDepotM;
@@ -136,23 +128,7 @@ public class RobotStorage {
                 0, 2050);
     }
 
-    public double getRampAngleForCoordsBlue(double x, double y) {
-        if (distanceToDepotM < 0.95) {
-            return 0;
-        } else {
-            return distanceToRampAngle.get(clamp(distanceToDepotM, 0.95, 3.86));
-        }
-    }
-
-    public double getRampAngleForCoordsRed(double x, double y) {
-        if (distanceToDepotM < 0.95) {
-            return 0;
-        } else {
-            return distanceToRampAngle.get(clamp(distanceToDepotM, 0.95, 3.86));
-        }
-    }
-
-    public double getRampAngleForCoordsNew() {
+    public double getRampAngleForDist() {
         double d2 = distanceToDepotM * distanceToDepotM;
         double d3 = d2 * distanceToDepotM;
         double d4 = d3 * distanceToDepotM;
@@ -163,7 +139,7 @@ public class RobotStorage {
                 0, 0.95);
     }
 
-    public void setAutoEndPose(Pose endPose) {
+    public void updateAutoEndPose(Pose endPose) {
         autoEnd = endPose;
     }
 
