@@ -78,7 +78,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     public PathChain HumanToLaunch;
     private final Pose start = new Pose(55.700, 8.740, Math.toRadians(180));
     private final Pose exit = new Pose(43, 13, Math.toRadians(-135));
-    private final Pose launchHuman = new Pose(53, 18, Math.toRadians(-159));
+    private final Pose launchHuman = new Pose(53, 18, Math.toRadians(-155));
     private final Pose launchHumanWiggle = new Pose(58.54, 22.5, Math.toRadians(-154));
     private final Pose launchHuman2 = new Pose(60.540, 23, Math.toRadians(-153));
     private final Pose grab1 = new Pose(39, 36, Math.toRadians(180));
@@ -265,30 +265,29 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                         ),
                         new SpitBalls(intake).withTimeout(1000)
                 ),
-                new FollowPathCommand(follower, Grab2, true, 1),
-                new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(6700),
-                        new SequentialCommandGroup(
-                                new FollowPathCommand(follower, Pickup2, true, 0.2),
-                                new FollowPathCommand(follower, LaunchHuman2, true, 0.9)
-                        )
-                ),
-                new ParallelCommandGroup(
-//                        new LaunchAllBalls(robotStorage, telemetryM, palete, onofrei, launcher, rampa, 1750, 0.48, ALLIANCE),
-                        new ConditionalCommand(
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                () -> {
-                                    int verzi = 0, mov = 0;
-                                    for (int i = 0; i <= 2; i++) {
-                                        if (robotStorage.getSectorColor(i) == 1) verzi++;
-                                        if (robotStorage.getSectorColor(i) == 2) mov++;
-                                    }
-                                    return verzi == 1 && mov == 2;
-                                }
-                        ),
-                        new SpitBalls(intake).withTimeout(1000)
-                ),
+//                new FollowPathCommand(follower, Grab2, true, 1),
+//                new ParallelCommandGroup(
+//                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(6700),
+//                        new SequentialCommandGroup(
+//                                new FollowPathCommand(follower, Pickup2, true, 0.2),
+//                                new FollowPathCommand(follower, LaunchHuman2, true, 0.9)
+//                        )
+//                ),
+//                new ParallelCommandGroup(
+//                        new ConditionalCommand(
+//                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+//                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+//                                () -> {
+//                                    int verzi = 0, mov = 0;
+//                                    for (int i = 0; i <= 2; i++) {
+//                                        if (robotStorage.getSectorColor(i) == 1) verzi++;
+//                                        if (robotStorage.getSectorColor(i) == 2) mov++;
+//                                    }
+//                                    return verzi == 1 && mov == 2;
+//                                }
+//                        ),
+//                        new SpitBalls(intake).withTimeout(1000)
+//                ),
                 new FollowPathCommand(follower, Exit, true),
                 new InstantCommand(
                         () -> {

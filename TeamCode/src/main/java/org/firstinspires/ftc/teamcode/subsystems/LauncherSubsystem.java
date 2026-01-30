@@ -10,7 +10,7 @@ import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 @Configurable
 public class LauncherSubsystem extends SubsystemBase {
-    public static double kP = 0.002, kI = 0, kD = 0.00000002, kF = 0.00039;
+    private final double kP = 0.002, kI = 0, kD = 0.00000002, kF = 0.00039, idleSpeed = 600;
     private final double nominalVoltage = 12;
     private final MotorEx flywheel1, flywheel2;
     private final VoltageSensor voltageSensor;
@@ -51,13 +51,19 @@ public class LauncherSubsystem extends SubsystemBase {
     }
 
     public void stop() {
-        flywheel1.stopMotor();
-        flywheel2.stopMotor();
+        controller.setPIDF(0, 0, 0, kF);
+        double power = controller.calculate(flywheel1.getVelocity(), idleSpeed) * getCompensationCoefficient();
+        flywheel1.set(power);
+        flywheel2.set(power);
+//        flywheel1.stopMotor();
+//        flywheel2.stopMotor();
     }
 
     public void brake() {
-        this.flywheel1.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        this.flywheel2.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        flywheel1.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        flywheel2.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        flywheel1.set(0);
+        flywheel2.set(0);
     }
 
     // voltage compensation

@@ -190,4 +190,9 @@ public class TeleOpBlue extends CommandOpMode {
         telemetryM.addData("following path", follower.isBusy());
         telemetryM.update(telemetry);
     }
+
+    @Override
+    public void end() {
+        robotStorage.updateAutoEndPose(new Pose(55.700, 8.740, Math.toRadians(180)));
+    }
 }
