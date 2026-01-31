@@ -190,11 +190,11 @@ public class LaunchMotifBalls extends CommandBase {
         telemetry.addData("sector", sector);
         telemetry.addData("ball", ball);
         telemetry.addData("step", currentStep.name());
-        telemetry.addData("start", start);
-        telemetry.addData("done", done);
-        telemetry.addData("flywheel speed", launcher.getVelocity());
-        telemetry.addData("flywheel target speed", getLauncherSpeed());
-        telemetry.addData("ramp angle", getRampAngle());
+//        telemetry.addData("start", start);
+//        telemetry.addData("done", done);
+//        telemetry.addData("flywheel speed", launcher.getVelocity());
+//        telemetry.addData("flywheel target speed", getLauncherSpeed());
+//        telemetry.addData("ramp angle", getRampAngle());
     }
 
     @Override

@@ -27,10 +27,10 @@ public class SenzorGauraSubsystem extends SubsystemBase {
 
     public int getColor() { // GREEN = 1    PURPLE = 2
         float[] HSVColor = getHSVColor();
-        if (HSVColor[0] > 10 && HSVColor[0] < 170) { /// 80 si 140
+        if (HSVColor[0] > 10 && HSVColor[0] < 160) { /// 80 si 140
             return 1; // GREEN
         }
-        if (HSVColor[0] >= 170 && HSVColor[0] < 350){ /// 220 si 330
+        if (HSVColor[0] >= 160 && HSVColor[0] < 350){ /// 220 si 330
             return 2; // PURPLE
         }
         return 0;

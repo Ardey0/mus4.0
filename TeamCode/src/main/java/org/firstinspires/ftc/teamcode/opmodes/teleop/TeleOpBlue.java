@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.IntakeBall;
 import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
 import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
-import org.firstinspires.ftc.teamcode.commands.LaunchBallByColor;
 import org.firstinspires.ftc.teamcode.commands.LaunchBallBySector;
 import org.firstinspires.ftc.teamcode.commands.PedroDrive;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
@@ -28,7 +27,6 @@ import org.firstinspires.ftc.teamcode.commands.SpitBalls;
 import org.firstinspires.ftc.teamcode.commands.TurnToGoalBlue;
 import org.firstinspires.ftc.teamcode.commands.UpdatePose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
@@ -43,7 +41,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 @Configurable
 @TeleOp
 public class TeleOpBlue extends CommandOpMode {
-//    public static double launcherSpeed = 0, rampAngle = 0;
+    //    public static double launcherSpeed = 0, rampAngle = 0;
     private final double triggerMultiplier = 0.006;
     private final int ALLIANCE = 0; // BLUE
 
@@ -64,7 +62,7 @@ public class TeleOpBlue extends CommandOpMode {
 
     private Button intakeButton, launchMotifButton, readMotifButton, launchSector0Button,
             launchSector1Button, launchSector2Button, launchPurpleButton, launchGreenButton, launchAllButton,
-            trackAprilTagButton, spitButton, updatePoseButton, kickerButton, resetHeadingButton;
+            trackAprilTagButton, spitButton, resetRoataButton, kickerButton, resetHeadingButton;
 
     @Override
     public void initialize() {
@@ -123,7 +121,7 @@ public class TeleOpBlue extends CommandOpMode {
             spitButton = new GamepadButton(
                     gamepad, GamepadKeys.Button.OPTIONS
             );
-            updatePoseButton = new GamepadButton(
+            resetRoataButton = new GamepadButton(
                     gamepad, GamepadKeys.Button.TOUCHPAD
             );
             kickerButton = new GamepadButton(
@@ -153,7 +151,12 @@ public class TeleOpBlue extends CommandOpMode {
                 }, palete
         ));
 
-        updatePoseButton.whenPressed(new UpdatePose(telemetryM, follower, limelight));
+        resetRoataButton.whenPressed(new InstantCommand(
+                () -> {
+                    for (int i = 0; i < 3; i++)
+                        robotStorage.setSector(i, 0);
+                }
+        ));
 
         trackAprilTagButton.toggleWhenPressed(new TurnToGoalBlue(follower));
 
@@ -188,6 +191,7 @@ public class TeleOpBlue extends CommandOpMode {
 //                (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
         telemetryM.addData("heading error", Math.toDegrees(follower.getHeadingError()));
         telemetryM.addData("following path", follower.isBusy());
+        telemetryM.addData("motif", robotStorage.getMotif()[0]);
         telemetryM.update(telemetry);
     }
 

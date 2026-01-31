@@ -78,12 +78,12 @@ public class Auto_Human_Start_Red extends CommandOpMode {
 
 
     private final Pose start = new Pose(88, 8.740, Math.toRadians(180));
-    private final Pose launchHuman = new Pose(87.5, 20, Math.toRadians(157));
+    private final Pose launchHuman = new Pose(87.5, 20, Math.toRadians(156));
     private final Pose launchHuman2 = new Pose(84, 22, Math.toRadians(154));
     private final Pose grab1 = new Pose(107, 36.5, Math.toRadians(0));
-    private final Pose pickup1 = new Pose(133, 36.5, Math.toRadians(0));
+    private final Pose pickup1 = new Pose(125, 36.5, Math.toRadians(0));
     private final Pose grab2 = new Pose(105.7, 58, Math.toRadians(0));
-    private final Pose pickup2 = new Pose(133, 58, Math.toRadians(0));
+    private final Pose pickup2 = new Pose(125, 58, Math.toRadians(0));
     private final Pose launchMiddle = new Pose(93.7, 87.40, Math.toRadians(150));
     private final Pose grabHuman = new Pose(111.7, 11.5, Math.toRadians(0));
     private final Pose pickupHuman = new Pose(134.7, 11.5, Math.toRadians(0));
