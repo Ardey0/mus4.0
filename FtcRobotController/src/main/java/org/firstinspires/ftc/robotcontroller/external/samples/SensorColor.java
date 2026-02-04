@@ -138,7 +138,7 @@ public class SensorColor extends LinearOpMode {
     // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
     // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
     // the values you get from ColorSensor are dependent on the specific sensor you're using.
-    colorSensor = hardwareMap.get(NormalizedColorSensor.class, "senzor_gaura");
+    colorSensor = hardwareMap.get(NormalizedColorSensor.class, "senzor_roata");
 
     // If possible, turn the light on in the beginning (it might already be on anyway,
     // we just make sure it is if we can).
@@ -197,9 +197,9 @@ public class SensorColor extends LinearOpMode {
       Color.colorToHSV(colors.toColor(), hsvValues);
 
       telemetry.addLine()
-              .addData("Red", "%.3f", colors.red)
-              .addData("Green", "%.3f", colors.green)
-              .addData("Blue", "%.3f", colors.blue);
+              .addData("Red", "%.5f", colors.red)
+              .addData("Green", "%.5f", colors.green)
+              .addData("Blue", "%.5f", colors.blue);
       telemetry.addLine()
               .addData("Hue", "%.3f", hsvValues[0])
               .addData("Saturation", "%.3f", hsvValues[1])

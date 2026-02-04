@@ -21,13 +21,13 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.IntakeBall;
 import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
-import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.commands.SpitBalls;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorRoataSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
@@ -49,7 +49,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
     private IntakeKickerSubsystem intakeKicker;
     private RampaSubsystem rampa;
     private SenzorTavanSubsystem senzorTavan;
-    private SenzorGauraSubsystem senzorGaura;
+    private SenzorRoataSubsystem senzorRoata;
     private RobotStorage robotStorage;
     private LimelightSubsystem limelight;
 
@@ -220,7 +220,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
         intakeKicker = new IntakeKickerSubsystem(hardwareMap);
         rampa = new RampaSubsystem(hardwareMap);
         senzorTavan = new SenzorTavanSubsystem(hardwareMap);
-        senzorGaura = new SenzorGauraSubsystem(hardwareMap);
+        senzorRoata = new SenzorRoataSubsystem(hardwareMap);
 
         init = new Init(palete, onofrei, rampa, intakeKicker);
 
@@ -243,7 +243,7 @@ public class Auto_Human_Start_Blue extends CommandOpMode {
                 ),
                 new FollowPathCommand(follower, Grab1, true, 1),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(6700),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, intakeKicker).withTimeout(6700),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Pickup1, true, 0.2),
                                 new FollowPathCommand(follower, LaunchHuman, true, 0.9)

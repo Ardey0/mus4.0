@@ -74,6 +74,7 @@ public class test extends LinearOpMode {
 
         NormalizedColorSensor senzorTavan = hardwareMap.get(NormalizedColorSensor.class, "senzor_tavan");
         NormalizedColorSensor senzorGaura = hardwareMap.get(NormalizedColorSensor.class, "senzor_gaura");
+        NormalizedColorSensor senzorRoata = hardwareMap.get(NormalizedColorSensor.class, "senzor_roata");
 
         GoBildaPinpointDriver pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
@@ -227,8 +228,9 @@ public class test extends LinearOpMode {
             if (gamepad1.x)
                 senzorGaura.setGain(senzorGaura.getGain() - 0.001f);
 
-            telemetryM.addData("senzor tavan dist", ((DistanceSensor) senzorTavan).getDistance(DistanceUnit.CM));
-            telemetryM.addData("senzor gaura dist", ((DistanceSensor) senzorGaura).getDistance(DistanceUnit.CM));
+            telemetryM.addData("senzor tavan dist", ((DistanceSensor) senzorTavan).getDistance(DistanceUnit.MM));
+            telemetryM.addData("senzor gaura dist", ((DistanceSensor) senzorGaura).getDistance(DistanceUnit.MM));
+            telemetryM.addData("senzor roata dist", ((DistanceSensor) senzorRoata).getDistance(DistanceUnit.MM));
 //            telemetry.addLine()
 //                    .addData("Hue", "%.3f", hsvValues[0])
 //                    .addData("Saturation", "%.3f", hsvValues[1])

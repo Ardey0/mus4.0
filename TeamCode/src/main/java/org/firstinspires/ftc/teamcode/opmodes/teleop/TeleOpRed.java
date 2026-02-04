@@ -24,13 +24,12 @@ import org.firstinspires.ftc.teamcode.commands.LaunchBallBySector;
 import org.firstinspires.ftc.teamcode.commands.PedroDrive;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.commands.SpitBalls;
-import org.firstinspires.ftc.teamcode.commands.TurnToGoalBlue;
 import org.firstinspires.ftc.teamcode.commands.TurnToGoalRed;
-import org.firstinspires.ftc.teamcode.commands.UpdatePose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorRoataSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
@@ -57,7 +56,7 @@ public class TeleOpRed extends CommandOpMode {
     private IntakeKickerSubsystem intakeKicker;
     private RampaSubsystem rampa;
     private SenzorTavanSubsystem senzorTavan;
-    private SenzorGauraSubsystem senzorGaura;
+    private SenzorRoataSubsystem senzorRoata;
     private RobotStorage robotStorage;
     private LimelightSubsystem limelight;
 
@@ -82,7 +81,7 @@ public class TeleOpRed extends CommandOpMode {
             intakeKicker = new IntakeKickerSubsystem(hardwareMap);
             rampa = new RampaSubsystem(hardwareMap);
             senzorTavan = new SenzorTavanSubsystem(hardwareMap);
-            senzorGaura = new SenzorGauraSubsystem(hardwareMap);
+            senzorRoata = new SenzorRoataSubsystem(hardwareMap);
             limelight = new LimelightSubsystem(hardwareMap, LimelightSubsystem.BLUE_APRILTAG_PIPELINE);
             robotStorage = new RobotStorage();
         }
@@ -142,7 +141,7 @@ public class TeleOpRed extends CommandOpMode {
         schedule(new PedroDrive(telemetryM, gamepad, follower));
         readMotifButton.whenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
 
-        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker));
+        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, intakeKicker));
 
         palete.setDefaultCommand(new RunCommand(
                 () -> {

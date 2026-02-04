@@ -6,6 +6,7 @@ import com.seattlesolvers.solverslib.util.Timing.Timer;
 
 import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorRoataSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
@@ -14,14 +15,15 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import java.util.concurrent.TimeUnit;
 
 public class IntakeBall extends CommandBase {
-    private final Timer timerPalete = new Timer(400, TimeUnit.MILLISECONDS);
+    private final Timer timerPalete = new Timer(500, TimeUnit.MILLISECONDS);
     private final Timer timerCuloare = new Timer(100, TimeUnit.MILLISECONDS);
-    private final Timer timerKicker = new Timer(100, TimeUnit.MILLISECONDS);
+    private final Timer timerKicker = new Timer(150, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final IntakeKickerSubsystem kicker;
     private final PaleteSubsytem palete;
     private final SenzorTavanSubsystem senzorTavan;
-    private final SenzorGauraSubsystem senzorGaura;
+//    private final SenzorGauraSubsystem senzorGaura;
+    private final SenzorRoataSubsystem senzorRoata;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
 
@@ -37,16 +39,16 @@ public class IntakeBall extends CommandBase {
     private IntakeStep currentStep;
 
     public IntakeBall(RobotStorage robotStorage, TelemetryManager telemetry, IntakeSubsystem intakeSubsystem, PaleteSubsytem paleteSubsytem,
-                      SenzorTavanSubsystem senzorTavanSubsystem, SenzorGauraSubsystem senzorGauraSubsystem, IntakeKickerSubsystem intakeKickerSubsystem) {
+                      SenzorTavanSubsystem senzorTavanSubsystem, SenzorRoataSubsystem senzorGauraSubsystem, IntakeKickerSubsystem intakeKickerSubsystem) {
         this.intake = intakeSubsystem;
         this.palete = paleteSubsytem;
         this.senzorTavan = senzorTavanSubsystem;
-        this.senzorGaura = senzorGauraSubsystem;
+        this.senzorRoata = senzorGauraSubsystem;
         this.kicker = intakeKickerSubsystem;
         this.robotStorage = robotStorage;
         this.telemetry = telemetry;
 
-        addRequirements(intake, palete, senzorTavan, senzorGaura, kicker);
+        addRequirements(intake, palete, senzorTavan, senzorRoata, kicker);
     }
 
     @Override
@@ -92,24 +94,24 @@ public class IntakeBall extends CommandBase {
                 kicker.setPosition(IntakeKickerSubsystem.IN);
                 intake.suck();
 
-                if (senzorTavan.getDistanceMM() < 30 || senzorGaura.getDistanceMM() < 25) {
+                if (senzorTavan.getDistanceMM() < 30) {
                     /// metoda veche
                     timerKicker.start();
-//                    currentStep = IntakeStep.STORE_BALL;
-                    kicker.setPosition(IntakeKickerSubsystem.OUT);
-                    timerCuloare.start();
                     currentStep = IntakeStep.STORE_BALL;
                 }
-
                 break;
 
             case STORE_BALL:
                 /// metoda veche
                 if (timerKicker.done()) {
                     kicker.setPosition(IntakeKickerSubsystem.OUT);
+                    if (senzorTavan.getDistanceMM() < 25) {
+                        currentStep = IntakeStep.WAIT_FOR_BALL;
+                        break;
+                    }
                 }
-                if (senzorTavan.getDistanceMM() > 60 || senzorGaura.getDistanceMM() < 25) {
-                    robotStorage.setSector(sector, senzorGaura.getColor());
+                if (senzorRoata.getDistanceMM() < 55) {
+                    robotStorage.setSector(sector, senzorRoata.getColor());
                     timerPalete.start();
                     sector = robotStorage.getNextFreeSector();
                     currentStep = IntakeStep.POSITION_PALETE;
@@ -130,7 +132,7 @@ public class IntakeBall extends CommandBase {
         telemetry.addData("sector", sector);
 //        telemetry.addData("culoare", senzorGaura.getColor());
         telemetry.addData("distanta tavan", senzorTavan.getDistanceMM());
-        telemetry.addData("distanta gaura", senzorGaura.getDistanceMM());
+        telemetry.addData("distanta roata", senzorRoata.getDistanceMM());
         telemetry.addData("culoare sector 0", robotStorage.getSectorColor(0));
         telemetry.addData("culoare sector 1", robotStorage.getSectorColor(1));
         telemetry.addData("culoare sector 2", robotStorage.getSectorColor(2));

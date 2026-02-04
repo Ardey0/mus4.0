@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorRoataSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 
 @Autonomous
@@ -52,7 +53,7 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
     private IntakeKickerSubsystem intakeKicker;
     private RampaSubsystem rampa;
     private SenzorTavanSubsystem senzorTavan;
-    private SenzorGauraSubsystem senzorGaura;
+    private SenzorRoataSubsystem senzorRoata;
     private RobotStorage robotStorage;
     private LimelightSubsystem limelight;
 
@@ -254,7 +255,7 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
         intakeKicker = new IntakeKickerSubsystem(hardwareMap);
         rampa = new RampaSubsystem(hardwareMap);
         senzorTavan = new SenzorTavanSubsystem(hardwareMap);
-        senzorGaura = new SenzorGauraSubsystem(hardwareMap);
+        senzorRoata = new SenzorRoataSubsystem(hardwareMap);
 
         init = new Init(palete, onofrei, rampa, intakeKicker);
 
@@ -279,7 +280,7 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
                         )
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(10000),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, intakeKicker).withTimeout(10000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab1, true),
                                 new FollowPathCommand(follower, ClearGate, true),
@@ -300,7 +301,7 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
                         }
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(10000),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, intakeKicker).withTimeout(10000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab2, true),
                                 new FollowPathCommand(follower, Launch2, true)
@@ -319,7 +320,7 @@ public class Auto_Gate_Start_Red extends CommandOpMode {
                         }
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorGaura, intakeKicker).withTimeout(10000),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, intakeKicker).withTimeout(10000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab3, true),
                                 new FollowPathCommand(follower, Launch3, true)
