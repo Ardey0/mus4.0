@@ -5,7 +5,6 @@ import com.seattlesolvers.solverslib.command.CommandBase;
 import com.seattlesolvers.solverslib.util.Timing.Timer;
 
 import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorRoataSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
@@ -18,6 +17,7 @@ public class IntakeBall extends CommandBase {
     private final Timer timerPalete = new Timer(500, TimeUnit.MILLISECONDS);
     private final Timer timerCuloare = new Timer(100, TimeUnit.MILLISECONDS);
     private final Timer timerKicker = new Timer(150, TimeUnit.MILLISECONDS);
+    private final Timer timerFail = new Timer(500, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final IntakeKickerSubsystem kicker;
     private final PaleteSubsytem palete;
@@ -92,17 +92,17 @@ public class IntakeBall extends CommandBase {
 
             case WAIT_FOR_BALL:
                 kicker.setPosition(IntakeKickerSubsystem.IN);
-                intake.suck();
+                intake.suck(1);
 
                 if (senzorTavan.getDistanceMM() < 30) {
-                    /// metoda veche
                     timerKicker.start();
+                    timerFail.start();
                     currentStep = IntakeStep.STORE_BALL;
                 }
                 break;
 
             case STORE_BALL:
-                /// metoda veche
+                intake.suck(0.6);
                 if (timerKicker.done()) {
                     kicker.setPosition(IntakeKickerSubsystem.OUT);
                     if (senzorTavan.getDistanceMM() < 25) {
@@ -115,6 +115,11 @@ public class IntakeBall extends CommandBase {
                     timerPalete.start();
                     sector = robotStorage.getNextFreeSector();
                     currentStep = IntakeStep.POSITION_PALETE;
+                    break;
+                }
+                if (timerFail.done()) {
+                    currentStep = IntakeStep.WAIT_FOR_BALL;
+                    break;
                 }
 //                if (timerCuloare.done()) {
 //                    robotStorage.setSector(sector, senzorGaura.getColor());
@@ -130,7 +135,6 @@ public class IntakeBall extends CommandBase {
         }
 
         telemetry.addData("sector", sector);
-//        telemetry.addData("culoare", senzorGaura.getColor());
         telemetry.addData("distanta tavan", senzorTavan.getDistanceMM());
         telemetry.addData("distanta roata", senzorRoata.getDistanceMM());
         telemetry.addData("culoare sector 0", robotStorage.getSectorColor(0));

@@ -15,7 +15,7 @@ public class SpitBalls extends CommandBase {
 
     @Override
     public void initialize() {
-        intake.spit();
+        intake.spit(0.5);
     }
 
     @Override

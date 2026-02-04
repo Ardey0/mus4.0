@@ -18,12 +18,12 @@ public class IntakeSubsystem extends SubsystemBase {
         this.intake.setRunMode(Motor.RunMode.RawPower);
     }
 
-    public void suck() {
-        intake.set(1);
+    public void suck(double power) {
+        intake.set(power);
     }
 
-    public void spit() {
-        intake.set(-1);
+    public void spit(double power) {
+        intake.set(power);
     }
 
     public void stop() {
