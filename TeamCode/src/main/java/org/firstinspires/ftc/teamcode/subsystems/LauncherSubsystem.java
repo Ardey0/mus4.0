@@ -10,8 +10,8 @@ import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 @Configurable
 public class LauncherSubsystem extends SubsystemBase {
-    private final double kP = 0.002, kI = 0, kD = 0.00000002, kF = 0.00039, idleSpeed = 600;
-    private final double nominalVoltage = 12;
+    public static double kP = 0.002, kI = 0, kD = 0.00000002, kF = 0.000385, idleSpeed = 600;
+    public static double nominalVoltage = 12.5;
     private final MotorEx flywheel1, flywheel2;
     private final VoltageSensor voltageSensor;
     private final PIDFController controller = new PIDFController(kP, kI, kD, kF);

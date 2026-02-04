@@ -1,42 +1,28 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.SensorRevColorV3;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class SenzorGauraSubsystem extends SubsystemBase {
-    private final SensorRevColorV3 colorSensor;
+    private final NormalizedColorSensor colorSensor;
+    private final double purpleCompensation = 0.000585;
 
     public SenzorGauraSubsystem(HardwareMap hwMap){
-        this.colorSensor = new SensorRevColorV3(hwMap, "senzor_gaura");
-        colorSensor.getColorSensor().setGain(2);
+        this.colorSensor = hwMap.get(NormalizedColorSensor.class, "senzor_gaura");
     }
 
-    public int[] getRGBColor() {
-        return colorSensor.getARGB();
-    }
-
-    public float[] getHSVColor() {
-        float[] HSVColors = new float[3];
-        colorSensor.RGBtoHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), HSVColors);
-
-        return HSVColors;
-    }
 
     public int getColor() { // GREEN = 1    PURPLE = 2
-        float[] HSVColor = getHSVColor();
-        if (HSVColor[0] > 10 && HSVColor[0] < 160) { /// 80 si 140
-            return 1; // GREEN
-        }
-        if (HSVColor[0] >= 160 && HSVColor[0] < 350){ /// 220 si 330
-            return 2; // PURPLE
-        }
-        return 0;
+        return colorSensor.getNormalizedColors().blue + colorSensor.getNormalizedColors().red + purpleCompensation - colorSensor.getNormalizedColors().green < 0.001 ? 1 : 2;
     }
 
     public double getDistanceMM() {
-        return colorSensor.distance(DistanceUnit.MM);
+        return ((DistanceSensor) colorSensor).getDistance(DistanceUnit.MM);
     }
 }

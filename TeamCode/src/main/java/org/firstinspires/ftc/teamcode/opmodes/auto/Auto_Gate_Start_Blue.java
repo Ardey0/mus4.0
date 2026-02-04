@@ -86,7 +86,7 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
     private final Pose clearGate = new Pose(15, 73, Math.toRadians(90));
     private final Pose grab2 = new Pose(14, 58, Math.toRadians(180));
     private final Pose grab3 = new Pose(14, 35, Math.toRadians(180));
-    private final Pose exit = new Pose(50, 90, Math.toRadians(-135));
+    private final Pose exit = new Pose(40, 80, Math.toRadians(-135));
 
     public void buildPaths() {
         preload = follower.pathBuilder()
@@ -349,7 +349,8 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
                         () -> {
                             launcher.brake();
                         }
-                )
+                ),
+                new FollowPathCommand(follower, Exit, true)
         );
         schedule(autonomousSequence);
     }
@@ -363,7 +364,8 @@ public class Auto_Gate_Start_Blue extends CommandOpMode {
         telemetryM.addData("Loop Time", loopTime.milliseconds());
         telemetryM.addData("X", follower.getPose().getX());
         telemetryM.addData("Y", follower.getPose().getY());
-        telemetryM.addData("Heading", follower.getPose().getHeading());
+        telemetryM.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));
+        telemetryM.addData("motif", robotStorage.getMotif()[0]);
         telemetryM.update(telemetry);
 
         loopTime.reset();

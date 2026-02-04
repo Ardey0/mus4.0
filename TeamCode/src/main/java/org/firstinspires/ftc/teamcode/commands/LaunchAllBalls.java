@@ -23,7 +23,7 @@ public class LaunchAllBalls extends CommandBase {
     private final RampaSubsystem rampa;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timer onofreiTimer = new Timer(100, TimeUnit.MILLISECONDS);
+    private final Timer onofreiTimer = new Timer(110, TimeUnit.MILLISECONDS);
     private final Timer paleteTimer = new Timer(150, TimeUnit.MILLISECONDS);
     private boolean done = false, start = false;
 
@@ -209,7 +209,6 @@ public class LaunchAllBalls extends CommandBase {
     public void end(boolean interrupted) {
         launcher.stop();
         onofrei.setPosition(OnofreiSubsystem.IN);
-        rampa.setPosition(0);
     }
 
     @Override

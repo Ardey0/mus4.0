@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 public class IntakeBall extends CommandBase {
     private final Timer timerPalete = new Timer(400, TimeUnit.MILLISECONDS);
+    private final Timer timerCuloare = new Timer(100, TimeUnit.MILLISECONDS);
     private final Timer timerKicker = new Timer(100, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final IntakeKickerSubsystem kicker;
@@ -91,11 +92,12 @@ public class IntakeBall extends CommandBase {
                 kicker.setPosition(IntakeKickerSubsystem.IN);
                 intake.suck();
 
-                if (senzorTavan.getDistanceMM() < 25 || senzorGaura.getDistanceMM() < 25) {
+                if (senzorTavan.getDistanceMM() < 30 || senzorGaura.getDistanceMM() < 25) {
                     /// metoda veche
-//                    timerKicker.start();
+                    timerKicker.start();
 //                    currentStep = IntakeStep.STORE_BALL;
                     kicker.setPosition(IntakeKickerSubsystem.OUT);
+                    timerCuloare.start();
                     currentStep = IntakeStep.STORE_BALL;
                 }
 
@@ -103,20 +105,21 @@ public class IntakeBall extends CommandBase {
 
             case STORE_BALL:
                 /// metoda veche
-//                if (timerKicker.done()) {
-//                    kicker.setPosition(IntakeKickerSubsystem.OUT);
-//                }
-//                if (senzorTavan.getDistanceMM() > 60) {
+                if (timerKicker.done()) {
+                    kicker.setPosition(IntakeKickerSubsystem.OUT);
+                }
+                if (senzorTavan.getDistanceMM() > 60 || senzorGaura.getDistanceMM() < 25) {
+                    robotStorage.setSector(sector, senzorGaura.getColor());
+                    timerPalete.start();
+                    sector = robotStorage.getNextFreeSector();
+                    currentStep = IntakeStep.POSITION_PALETE;
+                }
+//                if (timerCuloare.done()) {
 //                    robotStorage.setSector(sector, senzorGaura.getColor());
 //                    timerPalete.start();
 //                    sector = robotStorage.getNextFreeSector();
 //                    currentStep = IntakeStep.POSITION_PALETE;
 //                }
-                robotStorage.setSector(sector, senzorGaura.getColor());
-                timerPalete.start();
-                sector = robotStorage.getNextFreeSector();
-                currentStep = IntakeStep.POSITION_PALETE;
-
                 break;
 
             case DONE:
@@ -125,7 +128,7 @@ public class IntakeBall extends CommandBase {
         }
 
         telemetry.addData("sector", sector);
-        telemetry.addData("culoare", senzorGaura.getHSVColor()[0]);
+//        telemetry.addData("culoare", senzorGaura.getColor());
         telemetry.addData("distanta tavan", senzorTavan.getDistanceMM());
         telemetry.addData("distanta gaura", senzorGaura.getDistanceMM());
         telemetry.addData("culoare sector 0", robotStorage.getSectorColor(0));

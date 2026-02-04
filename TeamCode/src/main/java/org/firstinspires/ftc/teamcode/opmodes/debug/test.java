@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.debug;
 
+import android.graphics.Color;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -8,6 +10,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,6 +22,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.controller.PIDFController;
+import com.seattlesolvers.solverslib.hardware.SensorRevColorV3;
 import com.seattlesolvers.solverslib.util.InterpLUT;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -50,6 +54,7 @@ public class test extends LinearOpMode {
 //    }};
 
     double straightLineDistance;
+    float[] hsvValues = new float[3];
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -216,10 +221,24 @@ public class test extends LinearOpMode {
 //            rampaPos = lut.get(straightLineDistance);
             servoRampa.setPosition(rampaPos);
 
-//            telemetryM.addData("senzor tavan:", ((DistanceSensor) senzorTavan).getDistance(DistanceUnit.CM));
-//            telemetryM.addData("senzor gaura:", ((DistanceSensor) senzorGaura).getDistance(DistanceUnit.CM));
-//            telemetryM.addData("tx:", limelight.getLatestResult().getTx());
-//            telemetryM.addData("rx", rx);
+            Color.colorToHSV(senzorGaura.getNormalizedColors().toColor(), hsvValues);
+            if (gamepad1.y)
+                senzorGaura.setGain(senzorGaura.getGain() + 0.001f);
+            if (gamepad1.x)
+                senzorGaura.setGain(senzorGaura.getGain() - 0.001f);
+
+            telemetryM.addData("senzor tavan dist", ((DistanceSensor) senzorTavan).getDistance(DistanceUnit.CM));
+            telemetryM.addData("senzor gaura dist", ((DistanceSensor) senzorGaura).getDistance(DistanceUnit.CM));
+//            telemetry.addLine()
+//                    .addData("Hue", "%.3f", hsvValues[0])
+//                    .addData("Saturation", "%.3f", hsvValues[1])
+//                    .addData("Value", "%.3f", hsvValues[2]);
+            telemetry.addLine()
+                    .addData("Red", "%.5f", senzorGaura.getNormalizedColors().red)
+                    .addData("Green", "%.5f", senzorGaura.getNormalizedColors().green)
+                    .addData("Blue", "%.5f", senzorGaura.getNormalizedColors().blue);
+            telemetryM.addData("ball color", (senzorGaura.getNormalizedColors().red + senzorGaura.getNormalizedColors().blue + 0.00055 - senzorGaura.getNormalizedColors().green < 0.001) ? "green" : "purple");
+            telemetryM.addData("gaura gain", senzorGaura.getGain());
             telemetryM.addData("loop time:", time.milliseconds());
             telemetryM.addData("viteza lansator: ", launcher.getVelocity());
             telemetryM.addData("launcher on?", launcherState);

@@ -196,7 +196,6 @@ public class LaunchBallByColor extends CommandBase {
     public void end(boolean interrupted) {
         launcher.stop();
         onofrei.setPosition(OnofreiSubsystem.IN);
-        rampa.setPosition(0);
     }
 
     @Override

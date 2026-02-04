@@ -41,7 +41,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 @Configurable
 @TeleOp
 public class TeleOpBlue extends CommandOpMode {
-    //    public static double launcherSpeed = 0, rampAngle = 0;
+    public static double launcherSpeed = 0, rampAngle = 0;
     private final double triggerMultiplier = 0.006;
     private final int ALLIANCE = 0; // BLUE
 
@@ -187,11 +187,12 @@ public class TeleOpBlue extends CommandOpMode {
     public void run() {
         super.run();
         follower.update();
-//        telemetryM.addData("dist to blue goal (m)", Math.sqrt((-follower.getPose().getX()) * (-follower.getPose().getX()) +
-//                (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
+        telemetryM.addData("dist to blue goal (m)", Math.sqrt((-follower.getPose().getX()) * (-follower.getPose().getX()) +
+                (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
         telemetryM.addData("heading error", Math.toDegrees(follower.getHeadingError()));
         telemetryM.addData("following path", follower.isBusy());
         telemetryM.addData("motif", robotStorage.getMotif()[0]);
+//        telemetryM.addData("viteza flywheel", launcher.getVelocity());
         telemetryM.update(telemetry);
     }
 

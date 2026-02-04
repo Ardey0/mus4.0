@@ -39,8 +39,8 @@ public class RobotStorage {
     }};
 
     public RobotStorage() {
-        distanceToLauncherSpeed.createLUT();
-        distanceToRampAngle.createLUT();
+//        distanceToLauncherSpeed.createLUT();
+//        distanceToRampAngle.createLUT();
         roata[0] = 0;
         roata[1] = 0;
         roata[2] = 0;
@@ -125,7 +125,12 @@ public class RobotStorage {
                         219.29832 * d3 +
                         707.64469 * d2 -
                         654.41708 * distanceToDepotM + 1462.18186,
-                0, 2050);
+                0, 2050); // astea sunt bune
+//        return clamp(18.95641 * d4 -
+//                        189.86524 * d3 +
+//                        636.90309 * d2 -
+//                        596.22345 * distanceToDepotM + 1450.17245,
+//                0, 2000);
     }
 
     public double getRampAngleForDist() {
@@ -136,7 +141,12 @@ public class RobotStorage {
                         0.131801 * d3 +
                         0.289158 * d2 +
                         0.38897 * distanceToDepotM - 0.496897,
-                0, 0.95);
+                0, 0.92);
+//        return clamp(0.0175148 * d4 -
+//                        0.135472 * d3 +
+//                        0.176572 * d2 +
+//                        0.743649 * distanceToDepotM - 0.656955,
+//                0.01, 0.93);
     }
 
     public void updateAutoEndPose(Pose endPose) {
@@ -152,7 +162,7 @@ public class RobotStorage {
         double dy = 144.0 - y;
         distanceToDepotM = Math.sqrt(dx * dx + dy * dy) * IN_TO_METERS;
     }
-    
+
     public double getDistanceToDepotM() {
         return distanceToDepotM;
     }
