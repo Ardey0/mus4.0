@@ -21,6 +21,15 @@ public class LimelightSubsystem extends SubsystemBase {
         this.limelight.pipelineSwitch(pipeline);
     }
 
+    @Override
+    public void periodic() {
+        // reconnect if disconnected
+        if (!limelight.isRunning()) {
+            limelight.stop();
+            limelight.start();
+        }
+    }
+
     public void switchPipeline(int pipelineIndex) {
         limelight.pipelineSwitch(pipelineIndex);
     }

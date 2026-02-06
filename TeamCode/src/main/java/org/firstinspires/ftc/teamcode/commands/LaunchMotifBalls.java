@@ -23,9 +23,10 @@ public class LaunchMotifBalls extends CommandBase {
     private final RampaSubsystem rampa;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timer onofreiTimer = new Timer(110, TimeUnit.MILLISECONDS);
-    private final Timer paleteTimer = new Timer(350, TimeUnit.MILLISECONDS);
-    private int ball = 0;
+    private final Timer onofreiOutTimer = new Timer(150, TimeUnit.MILLISECONDS);
+    private final Timer onofreiInTimer = new Timer(20, TimeUnit.MILLISECONDS);
+    private final Timer paleteTimer = new Timer(360, TimeUnit.MILLISECONDS);
+    private int ball = 0, sector = 0;
     private boolean done = false, start = false;
     private final DoubleSupplier launcherSpeedSupplier;
     private final DoubleSupplier rampAngleSupplier;
@@ -101,6 +102,7 @@ public class LaunchMotifBalls extends CommandBase {
         start = false;
         launcher.spin(getLauncherSpeed());
         ball = 0;
+        sector = robotStorage.getNextSectorWithMotifBall(ball);
         currentStep = LaunchStep.SET_PALETE_POSITION;
     }
 
@@ -109,8 +111,6 @@ public class LaunchMotifBalls extends CommandBase {
         updateDistanceToGoal();
         launcher.spin(getLauncherSpeed());
         rampa.setPosition(getRampAngle());
-
-        int sector = robotStorage.getNextSectorWithMotifBall(ball);
 
         if (launcher.atTargetSpeed()) {
             start = true;
@@ -156,25 +156,25 @@ public class LaunchMotifBalls extends CommandBase {
 
             case MOVE_ONOFREI_OUT:
                 onofrei.setPosition(OnofreiSubsystem.OUT);
-                telemetry.addLine("ONOFREI OUT");
-                onofreiTimer.start();
+//                telemetry.addLine("ONOFREI OUT");
+                onofreiOutTimer.start();
                 currentStep = LaunchStep.WAIT_FOR_ONOFREI;
                 break;
 
             case WAIT_FOR_ONOFREI:
-                if (onofreiTimer.done() && launcher.atTargetSpeed()) {
+                if (onofreiOutTimer.done()) {
                     currentStep = LaunchStep.MOVE_ONOFREI_IN;
                 }
                 break;
 
             case MOVE_ONOFREI_IN:
                 onofrei.setPosition(OnofreiSubsystem.IN);
-                onofreiTimer.start(); // Start timer to wait for Onofrei to return
+                onofreiInTimer.start(); // Start timer to wait for Onofrei to return
                 currentStep = LaunchStep.WAIT_FOR_ONOFREI_RETURN;
                 break;
 
             case WAIT_FOR_ONOFREI_RETURN: // New state
-                if (onofreiTimer.done()) {
+                if (onofreiInTimer.done()) {
                     currentStep = LaunchStep.INCREMENT_BALL;
                 }
                 break;
@@ -182,19 +182,19 @@ public class LaunchMotifBalls extends CommandBase {
             case INCREMENT_BALL:
                 robotStorage.setSector(sector, 0);
                 ball++;
+                sector = robotStorage.getNextSectorWithMotifBall(ball);
                 // Move to the next ball
                 currentStep = LaunchStep.SET_PALETE_POSITION;
                 break;
         }
 
         telemetry.addData("sector", sector);
-        telemetry.addData("ball", ball);
         telemetry.addData("step", currentStep.name());
-//        telemetry.addData("start", start);
 //        telemetry.addData("done", done);
-//        telemetry.addData("flywheel speed", launcher.getVelocity());
-//        telemetry.addData("flywheel target speed", getLauncherSpeed());
-//        telemetry.addData("ramp angle", getRampAngle());
+//        telemetry.addData("start", start);
+        telemetry.addData("flywheel speed", launcher.getVelocity());
+        telemetry.addData("flywheel target speed", getLauncherSpeed());
+        telemetry.addData("ramp angle", getRampAngle());
     }
 
     @Override
@@ -205,7 +205,7 @@ public class LaunchMotifBalls extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return done && onofreiTimer.done();
+        return done && onofreiOutTimer.done();
     }
 
     private void updateDistanceToGoal() {

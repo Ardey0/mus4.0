@@ -17,7 +17,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
-import org.firstinspires.ftc.teamcode.commands.IntakeBall;
+import org.firstinspires.ftc.teamcode.commands.IntakeBallIndexing;
 import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
 import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
 import org.firstinspires.ftc.teamcode.commands.LaunchBallBySector;
@@ -57,6 +57,7 @@ public class TeleOpRed extends CommandOpMode {
     private RampaSubsystem rampa;
     private SenzorTavanSubsystem senzorTavan;
     private SenzorRoataSubsystem senzorRoata;
+    private SenzorGauraSubsystem senzorGaura;
     private RobotStorage robotStorage;
     private LimelightSubsystem limelight;
 
@@ -82,6 +83,7 @@ public class TeleOpRed extends CommandOpMode {
             rampa = new RampaSubsystem(hardwareMap);
             senzorTavan = new SenzorTavanSubsystem(hardwareMap);
             senzorRoata = new SenzorRoataSubsystem(hardwareMap);
+            senzorGaura = new SenzorGauraSubsystem(hardwareMap);
             limelight = new LimelightSubsystem(hardwareMap, LimelightSubsystem.BLUE_APRILTAG_PIPELINE);
             robotStorage = new RobotStorage();
         }
@@ -141,7 +143,7 @@ public class TeleOpRed extends CommandOpMode {
         schedule(new PedroDrive(telemetryM, gamepad, follower));
         readMotifButton.whenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
 
-        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, intakeKicker));
+        intakeButton.toggleWhenPressed(new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker));
 
         palete.setDefaultCommand(new RunCommand(
                 () -> {

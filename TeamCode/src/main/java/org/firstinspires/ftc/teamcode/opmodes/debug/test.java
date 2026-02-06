@@ -40,6 +40,7 @@ public class test extends LinearOpMode {
     public static double intakePos = 0;
     public static double rampaPos = 0;
     public static double viteza = 0;
+    public static double purpleCompensation = 0;
     public static double kP = 0.0028, kI = 0, kD = 0.00000007, kF = 0.000365;  // lansator
     public static double motorPower = 0;
 
@@ -222,27 +223,27 @@ public class test extends LinearOpMode {
 //            rampaPos = lut.get(straightLineDistance);
             servoRampa.setPosition(rampaPos);
 
-            Color.colorToHSV(senzorGaura.getNormalizedColors().toColor(), hsvValues);
+            Color.colorToHSV(senzorRoata.getNormalizedColors().toColor(), hsvValues);
             if (gamepad1.y)
-                senzorGaura.setGain(senzorGaura.getGain() + 0.001f);
+                senzorRoata.setGain(senzorRoata.getGain() + 0.01f);
             if (gamepad1.x)
-                senzorGaura.setGain(senzorGaura.getGain() - 0.001f);
+                senzorRoata.setGain(senzorRoata.getGain() - 0.01f);
 
             telemetryM.addData("senzor tavan dist", ((DistanceSensor) senzorTavan).getDistance(DistanceUnit.MM));
-            telemetryM.addData("senzor gaura dist", ((DistanceSensor) senzorGaura).getDistance(DistanceUnit.MM));
+//            telemetryM.addData("senzor gaura dist", ((DistanceSensor) senzorGaura).getDistance(DistanceUnit.MM));
             telemetryM.addData("senzor roata dist", ((DistanceSensor) senzorRoata).getDistance(DistanceUnit.MM));
 //            telemetry.addLine()
 //                    .addData("Hue", "%.3f", hsvValues[0])
 //                    .addData("Saturation", "%.3f", hsvValues[1])
 //                    .addData("Value", "%.3f", hsvValues[2]);
-            telemetry.addLine()
-                    .addData("Red", "%.5f", senzorGaura.getNormalizedColors().red)
-                    .addData("Green", "%.5f", senzorGaura.getNormalizedColors().green)
-                    .addData("Blue", "%.5f", senzorGaura.getNormalizedColors().blue);
-            telemetryM.addData("ball color", (senzorGaura.getNormalizedColors().red + senzorGaura.getNormalizedColors().blue + 0.00055 - senzorGaura.getNormalizedColors().green < 0.001) ? "green" : "purple");
-            telemetryM.addData("gaura gain", senzorGaura.getGain());
+            telemetryM.addData("Red", senzorRoata.getNormalizedColors().red);
+            telemetryM.addData("Green", senzorRoata.getNormalizedColors().green);
+            telemetryM.addData("Blue", senzorRoata.getNormalizedColors().blue);
+            telemetryM.addData("Alpha", senzorRoata.getNormalizedColors().alpha);
+            telemetryM.addData("ball color", (senzorGaura.getNormalizedColors().blue + senzorGaura.getNormalizedColors().red + purpleCompensation - senzorGaura.getNormalizedColors().green < 0.001 ? 1 : 2));
+            telemetryM.addData("gaura gain", senzorRoata.getGain());
             telemetryM.addData("loop time:", time.milliseconds());
-            telemetryM.addData("viteza lansator: ", launcher.getVelocity());
+//            telemetryM.addData("viteza lansator: ", launcher.getVelocity());
             telemetryM.addData("launcher on?", launcherState);
 //            telemetryM.addData("pinpoint heading", pinpoint.getHeading(AngleUnit.DEGREES));
             telemetryM.update(telemetry);

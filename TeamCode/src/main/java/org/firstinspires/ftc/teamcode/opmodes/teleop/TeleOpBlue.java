@@ -7,6 +7,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -17,7 +18,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
-import org.firstinspires.ftc.teamcode.commands.IntakeBall;
+import org.firstinspires.ftc.teamcode.commands.IntakeBallIndexing;
 import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
 import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
 import org.firstinspires.ftc.teamcode.commands.LaunchBallBySector;
@@ -48,6 +49,7 @@ public class TeleOpBlue extends CommandOpMode {
     private TelemetryManager telemetryM;
     private GamepadEx gamepad;
     private Follower follower;
+    private final ElapsedTime loopTime = new ElapsedTime();
 
     private LauncherSubsystem launcher;
     private PaleteSubsytem palete;
@@ -57,6 +59,7 @@ public class TeleOpBlue extends CommandOpMode {
     private RampaSubsystem rampa;
     private SenzorTavanSubsystem senzorTavan;
     private SenzorRoataSubsystem senzorRoata;
+    private SenzorGauraSubsystem senzorGaura;
     private RobotStorage robotStorage;
     private LimelightSubsystem limelight;
 
@@ -82,6 +85,7 @@ public class TeleOpBlue extends CommandOpMode {
             rampa = new RampaSubsystem(hardwareMap);
             senzorTavan = new SenzorTavanSubsystem(hardwareMap);
             senzorRoata = new SenzorRoataSubsystem(hardwareMap);
+            senzorGaura = new SenzorGauraSubsystem(hardwareMap);
             limelight = new LimelightSubsystem(hardwareMap, LimelightSubsystem.BLUE_APRILTAG_PIPELINE);
             robotStorage = new RobotStorage();
         }
@@ -141,7 +145,7 @@ public class TeleOpBlue extends CommandOpMode {
         schedule(new PedroDrive(telemetryM, gamepad, follower));
         readMotifButton.whenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
 
-        intakeButton.toggleWhenPressed(new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, intakeKicker));
+        intakeButton.toggleWhenPressed(new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker));
 
         palete.setDefaultCommand(new RunCommand(
                 () -> {
@@ -186,14 +190,18 @@ public class TeleOpBlue extends CommandOpMode {
     @Override
     public void run() {
         super.run();
+
         follower.update();
+
         telemetryM.addData("dist to blue goal (m)", Math.sqrt((-follower.getPose().getX()) * (-follower.getPose().getX()) +
                 (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
         telemetryM.addData("heading error", Math.toDegrees(follower.getHeadingError()));
         telemetryM.addData("following path", follower.isBusy());
         telemetryM.addData("motif", robotStorage.getMotif()[0]);
-//        telemetryM.addData("viteza flywheel", launcher.getVelocity());
+        telemetryM.addData("loop time", loopTime.milliseconds());
         telemetryM.update(telemetry);
+
+        loopTime.reset();
     }
 
     @Override

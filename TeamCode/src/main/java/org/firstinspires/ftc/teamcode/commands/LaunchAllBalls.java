@@ -23,8 +23,9 @@ public class LaunchAllBalls extends CommandBase {
     private final RampaSubsystem rampa;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timer onofreiTimer = new Timer(110, TimeUnit.MILLISECONDS);
-    private final Timer paleteTimer = new Timer(150, TimeUnit.MILLISECONDS);
+    private final Timer onofreiOutTimer = new Timer(150, TimeUnit.MILLISECONDS);
+    private final Timer onofreiInTimer = new Timer(20, TimeUnit.MILLISECONDS);
+    private final Timer paleteTimer = new Timer(220, TimeUnit.MILLISECONDS);
     private boolean done = false, start = false;
 
     private final DoubleSupplier launcherSpeedSupplier;
@@ -164,25 +165,25 @@ public class LaunchAllBalls extends CommandBase {
 
             case MOVE_ONOFREI_OUT:
                 onofrei.setPosition(OnofreiSubsystem.OUT);
-                telemetry.addLine("ONOFREI OUT");
-                onofreiTimer.start();
+//                telemetry.addLine("ONOFREI OUT");
+                onofreiOutTimer.start();
                 currentStep = LaunchStep.WAIT_FOR_ONOFREI;
                 break;
 
             case WAIT_FOR_ONOFREI:
-                if (onofreiTimer.done()) {
+                if (onofreiOutTimer.done()) {
                     currentStep = LaunchStep.MOVE_ONOFREI_IN;
                 }
                 break;
 
             case MOVE_ONOFREI_IN:
                 onofrei.setPosition(OnofreiSubsystem.IN);
-                onofreiTimer.start(); // Start timer to wait for Onofrei to return
+                onofreiInTimer.start(); // Start timer to wait for Onofrei to return
                 currentStep = LaunchStep.WAIT_FOR_ONOFREI_RETURN;
                 break;
 
             case WAIT_FOR_ONOFREI_RETURN: // New state
-                if (onofreiTimer.done()) {
+                if (onofreiInTimer.done()) {
                     currentStep = LaunchStep.INCREMENT_BALL;
                 }
                 break;
@@ -198,8 +199,8 @@ public class LaunchAllBalls extends CommandBase {
 
         telemetry.addData("sector", sector);
         telemetry.addData("step", currentStep.name());
-        telemetry.addData("done", done);
-        telemetry.addData("start", start);
+//        telemetry.addData("done", done);
+//        telemetry.addData("start", start);
         telemetry.addData("flywheel speed", launcher.getVelocity());
         telemetry.addData("flywheel target speed", getLauncherSpeed());
         telemetry.addData("ramp angle", getRampAngle());
@@ -213,7 +214,7 @@ public class LaunchAllBalls extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return done && onofreiTimer.done();
+        return done && onofreiOutTimer.done();
     }
 
     private void updateDistanceToGoal() {

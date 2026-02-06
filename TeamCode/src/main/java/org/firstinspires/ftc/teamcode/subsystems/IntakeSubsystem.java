@@ -22,8 +22,8 @@ public class IntakeSubsystem extends SubsystemBase {
         intake.set(power);
     }
 
-    public void spit(double power) {
-        intake.set(power);
+    public void spit() {
+        intake.set(-0.6);
     }
 
     public void stop() {

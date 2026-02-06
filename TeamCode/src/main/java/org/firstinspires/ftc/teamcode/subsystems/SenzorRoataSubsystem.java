@@ -16,10 +16,21 @@ public class SenzorRoataSubsystem extends SubsystemBase {
         this.colorSensor = hwMap.get(NormalizedColorSensor.class, "senzor_roata");
     }
 
+    public float getRed() {
+        return colorSensor.getNormalizedColors().red;
+    }
+
+    public float getBlue() {
+        return colorSensor.getNormalizedColors().blue;
+    }
+
+    public float getGreen() {
+        return colorSensor.getNormalizedColors().green;
+    }
 
     public int getColor() { // GREEN = 1    PURPLE = 2
-//        return colorSensor.getNormalizedColors().blue < colorSensor.getNormalizedColors().green ? 1 : 2;
-        return colorSensor.getNormalizedColors().blue + colorSensor.getNormalizedColors().red + purpleCompensation - colorSensor.getNormalizedColors().green < 0.001 ? 1 : 2;
+        return colorSensor.getNormalizedColors().blue < colorSensor.getNormalizedColors().green ? 1 : 2;
+//        return colorSensor.getNormalizedColors().blue + colorSensor.getNormalizedColors().red + purpleCompensation - colorSensor.getNormalizedColors().green < 0.001 ? 1 : 2;
     }
 
     public double getDistanceMM() {
