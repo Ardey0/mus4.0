@@ -83,7 +83,7 @@ public class AutoBlueClose extends CommandOpMode {
     private final Pose launch2 = new Pose(52, 90, Math.toRadians(-130));
     private final Pose launch3 = new Pose(52, 90, Math.toRadians(-130));
     private final Pose grab1 = new Pose(22, 82, Math.toRadians(180));
-    private final Pose clearGate = new Pose(12, 73, Math.toRadians(90));
+    private final Pose clearGate = new Pose(13, 73, Math.toRadians(90));
     private final Pose grab2 = new Pose(13, 58, Math.toRadians(180));
     private final Pose grab3 = new Pose(13, 35, Math.toRadians(180));
     private final Pose exit = new Pose(35, 75, Math.toRadians(-135));
@@ -290,7 +290,7 @@ public class AutoBlueClose extends CommandOpMode {
                         new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6500),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab1, true),
-                                new FollowPathCommand(follower, ClearGate, true),
+                                new FollowPathCommand(follower, ClearGate, true).withTimeout(1500),
                                 new WaitCommand(300),
                                 new FollowPathCommand(follower, Launch1, true)
                         )
@@ -372,5 +372,11 @@ public class AutoBlueClose extends CommandOpMode {
         telemetryM.update(telemetry);
 
         loopTime.reset();
+    }
+
+    @Override
+    public void end() {
+        robotStorage.updateAutoEndPose(follower.getPose());
+        super.end();
     }
 }

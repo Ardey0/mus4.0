@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.RunCommand;
 import com.seattlesolvers.solverslib.command.button.Button;
@@ -18,6 +19,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
+import org.firstinspires.ftc.teamcode.commands.IntakeBall;
 import org.firstinspires.ftc.teamcode.commands.IntakeBallIndexing;
 import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
 import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
@@ -25,7 +27,7 @@ import org.firstinspires.ftc.teamcode.commands.LaunchBallBySector;
 import org.firstinspires.ftc.teamcode.commands.PedroDrive;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.commands.SpitBalls;
-import org.firstinspires.ftc.teamcode.commands.TurnToGoalBlue;
+import org.firstinspires.ftc.teamcode.commands.TurnToGoal;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
@@ -42,7 +44,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 @Configurable
 @TeleOp
 public class TeleOpBlue extends CommandOpMode {
-    public static double launcherSpeed = 0, rampAngle = 0;
+//    public static double launcherSpeed = 0, rampAngle = 0;
     private final double triggerMultiplier = 0.006;
     private final int ALLIANCE = 0; // BLUE
 
@@ -50,6 +52,7 @@ public class TeleOpBlue extends CommandOpMode {
     private GamepadEx gamepad;
     private Follower follower;
     private final ElapsedTime loopTime = new ElapsedTime();
+    private final ElapsedTime gameTime = new ElapsedTime();
 
     private LauncherSubsystem launcher;
     private PaleteSubsytem palete;
@@ -74,6 +77,7 @@ public class TeleOpBlue extends CommandOpMode {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         gamepad = new GamepadEx(gamepad1);
         follower = Constants.createFollower(hardwareMap);
+        gameTime.reset();
 
         // Subsystems
         {
@@ -145,7 +149,13 @@ public class TeleOpBlue extends CommandOpMode {
         schedule(new PedroDrive(telemetryM, gamepad, follower));
         readMotifButton.whenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
 
-        intakeButton.toggleWhenPressed(new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker));
+        intakeButton.toggleWhenPressed(
+                new ConditionalCommand(
+                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker),
+                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker),
+                        () -> gameTime.seconds() > 90
+                )
+        );
 
         palete.setDefaultCommand(new RunCommand(
                 () -> {
@@ -162,7 +172,7 @@ public class TeleOpBlue extends CommandOpMode {
                 }
         ));
 
-        trackAprilTagButton.toggleWhenPressed(new TurnToGoalBlue(follower));
+        trackAprilTagButton.toggleWhenPressed(new TurnToGoal(follower, ALLIANCE));
 
         spitButton.whenPressed(new SpitBalls(intake));
 
@@ -193,12 +203,14 @@ public class TeleOpBlue extends CommandOpMode {
 
         follower.update();
 
-        telemetryM.addData("dist to blue goal (m)", Math.sqrt((-follower.getPose().getX()) * (-follower.getPose().getX()) +
-                (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
+//        telemetryM.addData("dist to blue goal (m)", Math.sqrt((-follower.getPose().getX()) * (-follower.getPose().getX()) +
+//                (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
         telemetryM.addData("heading error", Math.toDegrees(follower.getHeadingError()));
         telemetryM.addData("following path", follower.isBusy());
         telemetryM.addData("motif", robotStorage.getMotif()[0]);
         telemetryM.addData("loop time", loopTime.milliseconds());
+        telemetryM.addData("game time", gameTime.seconds());
+//        telemetryM.addData("launcher speed", launcher.getVelocity());
         telemetryM.update(telemetry);
 
         loopTime.reset();

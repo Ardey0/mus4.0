@@ -252,29 +252,29 @@ public class AutoRedFar extends CommandOpMode {
                         ),
                         new SpitBalls(intake).withTimeout(1000)
                 ),
-                new FollowPathCommand(follower, Grab2, true, 1),
-                new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
-                        new SequentialCommandGroup(
-                                new FollowPathCommand(follower, Pickup2, true, 0.2),
-                                new FollowPathCommand(follower, LaunchHuman2, true, 0.7)
-                        )
-                ),
-                new ParallelCommandGroup(
-                        new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                () -> {
-                                    int verzi = 0, mov = 0;
-                                    for (int i = 0; i <= 2; i++) {
-                                        if (robotStorage.getSectorColor(i) == 1) verzi++;
-                                        if (robotStorage.getSectorColor(i) == 2) mov++;
-                                    }
-                                    return verzi == 1 && mov == 2 && robotStorage.getMotif()[0] != 0;
-                                }
-                        ),
-                        new SpitBalls(intake).withTimeout(1000)
-                ),
+//                new FollowPathCommand(follower, Grab2, true, 1),
+//                new ParallelCommandGroup(
+//                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
+//                        new SequentialCommandGroup(
+//                                new FollowPathCommand(follower, Pickup2, true, 0.2),
+//                                new FollowPathCommand(follower, LaunchHuman2, true, 0.7)
+//                        )
+//                ),
+//                new ParallelCommandGroup(
+//                        new ConditionalCommand(
+//                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+//                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+//                                () -> {
+//                                    int verzi = 0, mov = 0;
+//                                    for (int i = 0; i <= 2; i++) {
+//                                        if (robotStorage.getSectorColor(i) == 1) verzi++;
+//                                        if (robotStorage.getSectorColor(i) == 2) mov++;
+//                                    }
+//                                    return verzi == 1 && mov == 2 && robotStorage.getMotif()[0] != 0;
+//                                }
+//                        ),
+//                        new SpitBalls(intake).withTimeout(1000)
+//                ),
                 new FollowPathCommand(follower, Exit, true),
                 new InstantCommand(
                         () -> {

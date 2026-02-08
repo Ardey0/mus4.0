@@ -83,7 +83,7 @@ public class AutoRedClose extends CommandOpMode {
     private final Pose launch2 = new Pose(90, 90, Math.toRadians(134));
     private final Pose launch3 = new Pose(90, 90, Math.toRadians(134));
     private final Pose grab1 = new Pose(122, 82, Math.toRadians(0));
-    private final Pose clearGate = new Pose(128, 73, Math.toRadians(90));
+    private final Pose clearGate = new Pose(128, 73 , Math.toRadians(90));
     private final Pose grab2 = new Pose(130, 55, Math.toRadians(0));
     private final Pose grab3 = new Pose(130, 31, Math.toRadians(0));
     private final Pose exit = new Pose(150, 90, Math.toRadians(-135));
