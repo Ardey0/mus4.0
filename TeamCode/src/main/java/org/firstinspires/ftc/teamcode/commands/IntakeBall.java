@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 public class IntakeBall extends CommandBase {
     private final Timing.Timer timerPalete = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-    private final Timing.Timer timerCuloare = new Timing.Timer(100, TimeUnit.MILLISECONDS);
+//    private final Timing.Timer timerCuloare = new Timing.Timer(100, TimeUnit.MILLISECONDS);
     private final Timing.Timer timerKicker = new Timing.Timer(50, TimeUnit.MILLISECONDS);
     private final Timing.Timer timerFail = new Timing.Timer(500, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
@@ -28,8 +28,7 @@ public class IntakeBall extends CommandBase {
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
 
-    private int sector = -2, colorReadings = 0;
-    private float green = 0, purple = 0;
+    private int sector = -2;
 
     private enum IntakeStep {
         POSITION_PALETE,
@@ -104,7 +103,7 @@ public class IntakeBall extends CommandBase {
                 break;
 
             case STORE_BALL:
-                intake.suck(0.75);
+                intake.suck(0.7);
                 if (timerKicker.done()) {
                     kicker.setPosition(IntakeKickerSubsystem.OUT);
                 }
@@ -116,6 +115,7 @@ public class IntakeBall extends CommandBase {
                     break;
                 }
                 if (timerFail.done() && senzorTavan.getDistanceMM() < 35) {
+                    kicker.setPosition(IntakeKickerSubsystem.OUT);
                     currentStep = IntakeStep.WAIT_FOR_BALL;
                     break;
                 }
@@ -128,8 +128,8 @@ public class IntakeBall extends CommandBase {
 
         telemetry.addData("sector", sector);
 //        telemetry.addLine("");
-//        telemetry.addData("distanta tavan", senzorTavan.getDistanceMM());
-//        telemetry.addData("distanta roata", senzorRoata.getDistanceMM());
+        telemetry.addData("distanta tavan", senzorTavan.getDistanceMM());
+        telemetry.addData("distanta roata", senzorRoata.getDistanceMM());
 //        telemetry.addLine("");
 //        telemetry.addData("red", senzorRoata.getRed());
 //        telemetry.addData("blue", senzorRoata.getBlue());

@@ -155,8 +155,8 @@ public class IntakeBallIndexing extends CommandBase {
 
         telemetry.addData("sector", sector);
 //        telemetry.addLine("");
-//        telemetry.addData("distanta tavan", senzorTavan.getDistanceMM());
-//        telemetry.addData("distanta roata", senzorRoata.getDistanceMM());
+        telemetry.addData("distanta tavan", senzorTavan.getDistanceMM());
+        telemetry.addData("distanta roata", senzorRoata.getDistanceMM());
 //        telemetry.addLine("");
 //        telemetry.addData("red", senzorRoata.getRed());
 //        telemetry.addData("blue", senzorRoata.getBlue());
