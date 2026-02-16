@@ -102,11 +102,11 @@ public class IntakeBall extends CommandBase {
                 break;
 
             case STORE_BALL:
-//                intake.suck(0.7);
                 if (timerKicker.done()) {
                     kicker.setPosition(IntakeKickerSubsystem.OUT);
                 }
                 if (senzorRoata.getDistanceMM() < 65) {
+                    kicker.setPosition(IntakeKickerSubsystem.OUT);
                     robotStorage.setSector(sector, 2);
                     sector = robotStorage.getNextFreeSector();
                     timerPalete.start();
@@ -114,7 +114,6 @@ public class IntakeBall extends CommandBase {
                     break;
                 }
                 if (timerFail.done() && senzorTavan.getDistanceMM() < 35) {
-                    kicker.setPosition(IntakeKickerSubsystem.OUT);
                     currentStep = IntakeStep.WAIT_FOR_BALL;
                     break;
                 }

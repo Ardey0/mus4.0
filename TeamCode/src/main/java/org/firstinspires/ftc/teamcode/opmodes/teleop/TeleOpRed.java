@@ -44,7 +44,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 @Configurable
 @TeleOp
 public class TeleOpRed extends CommandOpMode {
-//    public static double launcherSpeed = 0, rampAngle = 0;
+    //    public static double launcherSpeed = 0, rampAngle = 0;
     private final double triggerMultiplier = 0.006;
     private final int ALLIANCE = 1; // RED
 
@@ -68,7 +68,7 @@ public class TeleOpRed extends CommandOpMode {
 
     private Button intakeButton, launchMotifButton, readMotifButton, launchSector0Button,
             launchSector1Button, launchSector2Button, launchPurpleButton, launchGreenButton, launchAllButton,
-            trackAprilTagButton, spitButton, resetRoataButton, kickerButton, resetHeadingButton;
+            trackAprilTagButton, spitButton, resetRoataButton;
 
     @Override
     public void initialize() {
@@ -132,15 +132,9 @@ public class TeleOpRed extends CommandOpMode {
             resetRoataButton = new GamepadButton(
                     gamepad, GamepadKeys.Button.TOUCHPAD
             );
-            kickerButton = new GamepadButton(
-                    gamepad, GamepadKeys.Button.LEFT_BUMPER
-            );
-            resetHeadingButton = new GamepadButton(
-                    gamepad, GamepadKeys.Button.RIGHT_BUMPER
-            );
         }
 
-        Pose start = robotStorage.getAutoEndPose() == null ? new Pose(55.700, 8.740, Math.toRadians(180)) : robotStorage.getAutoEndPose();
+        Pose start = robotStorage.getAutoEndPose() == null ? new Pose(56.1, 8.70, Math.toRadians(180)) : robotStorage.getAutoEndPose();
         follower.setStartingPose(start);
 
         CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
@@ -176,16 +170,6 @@ public class TeleOpRed extends CommandOpMode {
 
         spitButton.whenPressed(new SpitBalls(intake));
 
-        intakeKicker.setDefaultCommand(new RunCommand(
-                () -> {
-                    intakeKicker.setPosition(gamepad.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? IntakeKickerSubsystem.OUT : IntakeKickerSubsystem.IN);
-                }, intakeKicker
-        ));
-
-        resetHeadingButton.whenPressed(new InstantCommand(
-                () -> follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(180)))
-        ));
-
         launchMotifButton.toggleWhenPressed(new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
         launchAllButton.toggleWhenPressed(new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
         launchSector0Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 0));
@@ -205,11 +189,12 @@ public class TeleOpRed extends CommandOpMode {
 
 //        telemetryM.addData("dist to blue goal (m)", Math.sqrt((-follower.getPose().getX()) * (-follower.getPose().getX()) +
 //                (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
-        telemetryM.addData("heading error", Math.toDegrees(follower.getHeadingError()));
-        telemetryM.addData("following path", follower.isBusy());
+//        telemetryM.addData("heading error", Math.toDegrees(follower.getHeadingError()));
+//        telemetryM.addData("following path", follower.isBusy());
         telemetryM.addData("motif", robotStorage.getMotif()[0]);
         telemetryM.addData("loop time", loopTime.milliseconds());
         telemetryM.addData("game time", gameTime.seconds());
+//        telemetryM.addData("launcher speed", launcher.getVelocity());
         telemetryM.update(telemetry);
 
         loopTime.reset();
@@ -217,6 +202,6 @@ public class TeleOpRed extends CommandOpMode {
 
     @Override
     public void end() {
-        robotStorage.updateAutoEndPose(new Pose(55.700, 8.740, Math.toRadians(180)));
+        robotStorage.updateAutoEndPose(new Pose(56.1, 8.70, Math.toRadians(180)));
     }
 }

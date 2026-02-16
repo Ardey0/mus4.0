@@ -170,12 +170,6 @@ public class TeleOpBlue extends CommandOpMode {
 
         spitButton.whenPressed(new SpitBalls(intake));
 
-//        intakeKicker.setDefaultCommand(new RunCommand(
-//                () -> {
-//                    intakeKicker.setPosition(gamepad.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? IntakeKickerSubsystem.OUT : IntakeKickerSubsystem.IN);
-//                }, intakeKicker
-//        ));
-
         launchMotifButton.toggleWhenPressed(new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
         launchAllButton.toggleWhenPressed(new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
         launchSector0Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 0));
@@ -195,8 +189,8 @@ public class TeleOpBlue extends CommandOpMode {
 
 //        telemetryM.addData("dist to blue goal (m)", Math.sqrt((-follower.getPose().getX()) * (-follower.getPose().getX()) +
 //                (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
-        telemetryM.addData("heading error", Math.toDegrees(follower.getHeadingError()));
-        telemetryM.addData("following path", follower.isBusy());
+//        telemetryM.addData("heading error", Math.toDegrees(follower.getHeadingError()));
+//        telemetryM.addData("following path", follower.isBusy());
         telemetryM.addData("motif", robotStorage.getMotif()[0]);
         telemetryM.addData("loop time", loopTime.milliseconds());
         telemetryM.addData("game time", gameTime.seconds());
@@ -208,6 +202,6 @@ public class TeleOpBlue extends CommandOpMode {
 
     @Override
     public void end() {
-        robotStorage.updateAutoEndPose(new Pose(55.700, 8.740, Math.toRadians(180)));
+        robotStorage.updateAutoEndPose(new Pose(56.1, 8.70, Math.toRadians(180)));
     }
 }

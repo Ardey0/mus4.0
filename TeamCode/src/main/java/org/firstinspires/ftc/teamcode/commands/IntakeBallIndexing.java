@@ -117,11 +117,11 @@ public class IntakeBallIndexing extends CommandBase {
                 }
                 if (timerFail.done() && senzorTavan.getDistanceMM() < 35) {
                     currentStep = IntakeStep.WAIT_FOR_BALL;
-                    break;
                 }
                 break;
 
             case GET_BALL_COLOR:
+                kicker.setPosition(IntakeKickerSubsystem.OUT);
                 if (colorReadings >= 3) {
                     robotStorage.setSector(sector, (green > purple) ? 1 : 2);
                     sector = robotStorage.getNextFreeSector();
