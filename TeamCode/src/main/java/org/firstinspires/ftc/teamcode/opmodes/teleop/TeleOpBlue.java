@@ -68,7 +68,7 @@ public class TeleOpBlue extends CommandOpMode {
 
     private Button intakeButton, launchMotifButton, readMotifButton, launchSector0Button,
             launchSector1Button, launchSector2Button, launchPurpleButton, launchGreenButton, launchAllButton,
-            trackAprilTagButton, spitButton, resetRoataButton, kickerButton, resetHeadingButton;
+            trackAprilTagButton, spitButton, resetRoataButton;
 
     @Override
     public void initialize() {
@@ -132,15 +132,9 @@ public class TeleOpBlue extends CommandOpMode {
             resetRoataButton = new GamepadButton(
                     gamepad, GamepadKeys.Button.TOUCHPAD
             );
-            kickerButton = new GamepadButton(
-                    gamepad, GamepadKeys.Button.LEFT_BUMPER
-            );
-            resetHeadingButton = new GamepadButton(
-                    gamepad, GamepadKeys.Button.RIGHT_BUMPER
-            );
         }
 
-        Pose start = robotStorage.getAutoEndPose() == null ? new Pose(55.700, 8.740, Math.toRadians(180)) : robotStorage.getAutoEndPose();
+        Pose start = robotStorage.getAutoEndPose() == null ? new Pose(56.1, 8.70, Math.toRadians(180)) : robotStorage.getAutoEndPose();
         follower.setStartingPose(start);
 
         CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
@@ -176,15 +170,11 @@ public class TeleOpBlue extends CommandOpMode {
 
         spitButton.whenPressed(new SpitBalls(intake));
 
-        intakeKicker.setDefaultCommand(new RunCommand(
-                () -> {
-                    intakeKicker.setPosition(gamepad.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? IntakeKickerSubsystem.OUT : IntakeKickerSubsystem.IN);
-                }, intakeKicker
-        ));
-
-        resetHeadingButton.whenPressed(new InstantCommand(
-                () -> follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(180)))
-        ));
+//        intakeKicker.setDefaultCommand(new RunCommand(
+//                () -> {
+//                    intakeKicker.setPosition(gamepad.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? IntakeKickerSubsystem.OUT : IntakeKickerSubsystem.IN);
+//                }, intakeKicker
+//        ));
 
         launchMotifButton.toggleWhenPressed(new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
         launchAllButton.toggleWhenPressed(new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));

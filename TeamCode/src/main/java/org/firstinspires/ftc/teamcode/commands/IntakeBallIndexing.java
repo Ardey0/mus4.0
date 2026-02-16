@@ -16,9 +16,8 @@ import java.util.concurrent.TimeUnit;
 
 public class IntakeBallIndexing extends CommandBase {
     private final Timer timerPalete = new Timer(500, TimeUnit.MILLISECONDS);
-    private final Timer timerCuloare = new Timer(100, TimeUnit.MILLISECONDS);
-    private final Timer timerKicker = new Timer(50, TimeUnit.MILLISECONDS);
-    private final Timer timerFail = new Timer(500, TimeUnit.MILLISECONDS);
+    private final Timer timerKicker = new Timer(30, TimeUnit.MILLISECONDS);
+    private final Timer timerFail = new Timer(700, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final IntakeKickerSubsystem kicker;
     private final PaleteSubsytem palete;
@@ -106,14 +105,10 @@ public class IntakeBallIndexing extends CommandBase {
                 break;
 
             case STORE_BALL:
-                intake.suck(0.75);
                 if (timerKicker.done()) {
                     kicker.setPosition(IntakeKickerSubsystem.OUT);
                 }
                 if (senzorRoata.getDistanceMM() < 65) {
-//                    robotStorage.setSector(sector, senzorGaura.getColor());
-//                    sector = robotStorage.getNextFreeSector();
-//                    timerPalete.start();
                     colorReadings = 0;
                     green = 0;
                     purple = 0;
@@ -124,12 +119,6 @@ public class IntakeBallIndexing extends CommandBase {
                     currentStep = IntakeStep.WAIT_FOR_BALL;
                     break;
                 }
-//                if (timerCuloare.done()) {
-//                    robotStorage.setSector(sector, senzorGaura.getColor());
-//                    timerPalete.start();
-//                    sector = robotStorage.getNextFreeSector();
-//                    currentStep = IntakeStep.POSITION_PALETE;
-//                }
                 break;
 
             case GET_BALL_COLOR:

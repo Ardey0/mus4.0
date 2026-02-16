@@ -16,9 +16,8 @@ import java.util.concurrent.TimeUnit;
 
 public class IntakeBall extends CommandBase {
     private final Timing.Timer timerPalete = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-//    private final Timing.Timer timerCuloare = new Timing.Timer(100, TimeUnit.MILLISECONDS);
     private final Timing.Timer timerKicker = new Timing.Timer(50, TimeUnit.MILLISECONDS);
-    private final Timing.Timer timerFail = new Timing.Timer(500, TimeUnit.MILLISECONDS);
+    private final Timing.Timer timerFail = new Timing.Timer(700, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final IntakeKickerSubsystem kicker;
     private final PaleteSubsytem palete;
@@ -103,7 +102,7 @@ public class IntakeBall extends CommandBase {
                 break;
 
             case STORE_BALL:
-                intake.suck(0.7);
+//                intake.suck(0.7);
                 if (timerKicker.done()) {
                     kicker.setPosition(IntakeKickerSubsystem.OUT);
                 }

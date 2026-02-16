@@ -287,7 +287,7 @@ public class AutoBlueClose extends CommandOpMode {
                         new TurnToCommand(follower, Math.toRadians(180))
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6500),
+                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab1, true),
                                 new FollowPathCommand(follower, ClearGate, true).withTimeout(1500),
