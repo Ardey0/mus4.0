@@ -125,7 +125,7 @@ public class RobotStorage {
                         219.29832 * d3 +
                         707.64469 * d2 -
                         654.41708 * distanceToDepotM + 1462.18186,
-                0, 2050); // astea sunt bune
+                0, 2050) + 6.7; // astea sunt bune
 //        return clamp(18.95641 * d4 -
 //                        189.86524 * d3 +
 //                        636.90309 * d2 -

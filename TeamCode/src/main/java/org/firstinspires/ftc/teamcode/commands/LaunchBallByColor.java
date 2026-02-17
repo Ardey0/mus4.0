@@ -23,7 +23,7 @@ public class LaunchBallByColor extends CommandBase {
     private final RampaSubsystem rampa;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timing.Timer onofreiTimer = new Timing.Timer(80, TimeUnit.MILLISECONDS);
+    private final Timing.Timer onofreiTimer = new Timing.Timer(100, TimeUnit.MILLISECONDS);
     private final Timing.Timer paleteTimer = new Timing.Timer(300, TimeUnit.MILLISECONDS);
     private final int color;
     private boolean done = false, start = false;

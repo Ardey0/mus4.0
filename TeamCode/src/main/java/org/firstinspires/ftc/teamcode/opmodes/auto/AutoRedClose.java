@@ -79,9 +79,9 @@ public class AutoRedClose extends CommandOpMode {
     private final Pose start = new Pose(123, 120, Math.toRadians(-140));
     private final Pose launchPre = new Pose(97, 95, Math.toRadians(-140));
     private final Pose motif = new Pose(45, 95, Math.toRadians(-180));
-    private final Pose launch1 = new Pose(89, 90, Math.toRadians(135));
+    private final Pose launch1 = new Pose(89, 90, Math.toRadians(134));
     private final Pose launch2 = new Pose(90, 90, Math.toRadians(134));
-    private final Pose launch3 = new Pose(90, 90, Math.toRadians(134));
+    private final Pose launch3 = new Pose(86, 100, Math.toRadians(131));
     private final Pose grab1 = new Pose(122, 82, Math.toRadians(0));
     private final Pose clearGate = new Pose(128, 73 , Math.toRadians(90));
     private final Pose grab2 = new Pose(130, 55, Math.toRadians(0));
@@ -350,8 +350,8 @@ public class AutoRedClose extends CommandOpMode {
                         () -> {
                             launcher.brake();
                         }
-                ),
-                new FollowPathCommand(follower, Exit, true)
+                )
+//                new FollowPathCommand(follower, Exit, true)
         );
         schedule(autonomousSequence);
     }

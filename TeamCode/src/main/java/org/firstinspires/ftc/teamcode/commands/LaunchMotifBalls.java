@@ -25,7 +25,7 @@ public class LaunchMotifBalls extends CommandBase {
     private final TelemetryManager telemetry;
     private final Timer onofreiOutTimer = new Timer(150, TimeUnit.MILLISECONDS);
     private final Timer onofreiInTimer = new Timer(20, TimeUnit.MILLISECONDS);
-    private final Timer paleteTimer = new Timer(360, TimeUnit.MILLISECONDS);
+    private final Timer paleteTimer = new Timer(350, TimeUnit.MILLISECONDS);
     private int ball = 0, sector = 0;
     private boolean done = false, start = false;
     private final DoubleSupplier launcherSpeedSupplier;

@@ -17,6 +17,7 @@ import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
@@ -86,11 +87,11 @@ public class AutoRedFar extends CommandOpMode {
     private final Pose grab2 = new Pose(105, 58, Math.toRadians(0));
     private final Pose pickup2 = new Pose(133, 58, Math.toRadians(0));
     private final Pose launchMiddle = new Pose(93.7, 87.40, Math.toRadians(150));
-    private final Pose grabHuman = new Pose(111.7, 11.5, Math.toRadians(0));
-    private final Pose pickupHuman = new Pose(134.7, 11.5, Math.toRadians(0));
+    private final Pose grabHuman = new Pose(134, 27, Math.toRadians(-90));
+    private final Pose pickupHuman = new Pose(135, 10, Math.toRadians(-90));
     private final Pose grabGate = new Pose(38, 87);
     private final Pose launchGate = new Pose(45, 87);
-    private final Pose exit = new Pose(105, 15, Math.toRadians(135));
+    private final Pose exit = new Pose(115, 15, Math.toRadians(-90));
 
     public void buildPaths() {
         preload = follower.pathBuilder()
@@ -161,19 +162,25 @@ public class AutoRedFar extends CommandOpMode {
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-135))
                 .build();
+        GrabHuman = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(launchHuman, grabHuman)
+                )
+                .setConstantHeadingInterpolation(grabHuman.getHeading())
+                .build();
 
         PickupHuman = follower.pathBuilder()
                 .addPath(
                         new BezierLine(grabHuman, pickupHuman)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setLinearHeadingInterpolation(grabHuman.getHeading(), pickupHuman.getHeading())
                 .build();
 
         Exit = follower.pathBuilder()
                 .addPath(
                         new BezierLine(launchHuman, exit)
                 )
-                .setLinearHeadingInterpolation(launchHuman.getHeading(), exit.getHeading())
+                .setLinearHeadingInterpolation(pickupHuman.getHeading(), exit.getHeading())
                 .build();
     }
 
@@ -252,30 +259,41 @@ public class AutoRedFar extends CommandOpMode {
                         ),
                         new SpitBalls(intake).withTimeout(1000)
                 ),
-//                new FollowPathCommand(follower, Grab2, true, 1),
-//                new ParallelCommandGroup(
-//                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
-//                        new SequentialCommandGroup(
-//                                new FollowPathCommand(follower, Pickup2, true, 0.2),
-//                                new FollowPathCommand(follower, LaunchHuman2, true, 0.7)
-//                        )
-//                ),
-//                new ParallelCommandGroup(
-//                        new ConditionalCommand(
-//                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-//                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-//                                () -> {
-//                                    int verzi = 0, mov = 0;
-//                                    for (int i = 0; i <= 2; i++) {
-//                                        if (robotStorage.getSectorColor(i) == 1) verzi++;
-//                                        if (robotStorage.getSectorColor(i) == 2) mov++;
-//                                    }
-//                                    return verzi == 1 && mov == 2 && robotStorage.getMotif()[0] != 0;
-//                                }
-//                        ),
-//                        new SpitBalls(intake).withTimeout(1000)
-//                ),
-                new FollowPathCommand(follower, Exit, true),
+                new FollowPathCommand(follower, Grab2, true, 1),
+                new ParallelCommandGroup(
+                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
+                        new SequentialCommandGroup(
+                                new FollowPathCommand(follower, Pickup2, true, 0.2),
+                                new FollowPathCommand(follower, LaunchHuman2, true, 0.7)
+                        )
+                ),
+                new ParallelCommandGroup(
+                        new ConditionalCommand(
+                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                () -> {
+                                    int verzi = 0, mov = 0;
+                                    for (int i = 0; i <= 2; i++) {
+                                        if (robotStorage.getSectorColor(i) == 1) verzi++;
+                                        if (robotStorage.getSectorColor(i) == 2) mov++;
+                                    }
+                                    return verzi == 1 && mov == 2 && robotStorage.getMotif()[0] != 0;
+                                }
+                        )
+                ),
+                new ParallelCommandGroup(
+                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
+                        new SequentialCommandGroup(
+                                new FollowPathCommand(follower, GrabHuman, true, 1),
+                                new WaitCommand(500),
+                                new FollowPathCommand(follower, PickupHuman, true, 1)
+//                                new FollowPathCommand(follower, Launch3, true, 1)
+                        )
+                ),
+                new ParallelCommandGroup(
+                        new SpitBalls(intake).withTimeout(1000),
+                        new FollowPathCommand(follower, Exit, true)
+                        ),
                 new InstantCommand(
                         () -> {
                             launcher.brake();

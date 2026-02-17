@@ -81,12 +81,12 @@ public class AutoBlueClose extends CommandOpMode {
     private final Pose motif = new Pose(45, 95, Math.toRadians(-180));
     private final Pose launch1 = new Pose(53, 90, Math.toRadians(-129));
     private final Pose launch2 = new Pose(52, 90, Math.toRadians(-130));
-    private final Pose launch3 = new Pose(52, 90, Math.toRadians(-130));
+    private final Pose launch3 = new Pose(56, 98, Math.toRadians(-128));
     private final Pose grab1 = new Pose(22, 82, Math.toRadians(180));
     private final Pose clearGate = new Pose(13, 73, Math.toRadians(90));
     private final Pose grab2 = new Pose(13, 58, Math.toRadians(180));
     private final Pose grab3 = new Pose(13, 35, Math.toRadians(180));
-    private final Pose exit = new Pose(35, 75, Math.toRadians(-135));
+    private final Pose exit = new Pose(34, 75, Math.toRadians(-135));
 
     public void buildPaths() {
         preload = follower.pathBuilder()
@@ -352,8 +352,7 @@ public class AutoBlueClose extends CommandOpMode {
                         () -> {
                             launcher.brake();
                         }
-                ),
-                new FollowPathCommand(follower, Exit, true)
+                )
         );
         schedule(autonomousSequence);
     }
