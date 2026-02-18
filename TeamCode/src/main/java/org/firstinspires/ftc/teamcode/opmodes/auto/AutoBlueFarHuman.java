@@ -74,6 +74,9 @@ public class AutoBlueFarHuman extends CommandOpMode {
     public PathChain Launch3;
     public PathChain GrabHuman;
     public PathChain PickupHuman;
+    public PathChain GrabHuman2;
+    public PathChain PickupHuman2;
+    public PathChain Launch4;
 
     private final Pose start = new Pose(56.1, 8.70, Math.toRadians(180));
     private final Pose exit = new Pose(43, 13, Math.toRadians(-135));
@@ -83,7 +86,9 @@ public class AutoBlueFarHuman extends CommandOpMode {
     private final Pose grab2 = new Pose(40, 58.5, Math.toRadians(180));
     private final Pose pickup2 = new Pose(13.5, 58.5, Math.toRadians(180));
     private final Pose grabHuman = new Pose(9, 27, Math.toRadians(-90));
-    private final Pose pickupHuman = new Pose(8, 10, Math.toRadians(-90));
+    private final Pose pickupHuman = new Pose(8, 11, Math.toRadians(-90));
+    private final Pose grabHuman2 = new Pose(9, 27, Math.toRadians(90));
+    private final Pose pickupHuman2 = new Pose(9, 30, Math.toRadians(90));
 
     public void buildPaths() {
         preload = follower.pathBuilder()
@@ -156,7 +161,21 @@ public class AutoBlueFarHuman extends CommandOpMode {
                 .addPath(
                         new BezierLine(grabHuman, pickupHuman)
                 )
-//                .setConstantHeadingInterpolation(pickupHuman.getHeading())
+                .setConstantHeadingInterpolation(pickupHuman.getHeading())
+                .build();
+
+        GrabHuman2 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(launchHuman, grabHuman2)
+                )
+                .setLinearHeadingInterpolation(launchHuman.getHeading(), grabHuman2.getHeading())
+                .build();
+
+        PickupHuman2 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(grabHuman2, pickupHuman2)
+                )
+                .setConstantHeadingInterpolation(pickupHuman2.getHeading())
                 .build();
 
         Launch3 = follower.pathBuilder()
@@ -164,6 +183,13 @@ public class AutoBlueFarHuman extends CommandOpMode {
                         new BezierLine(pickupHuman, launchHuman)
                 )
                 .setLinearHeadingInterpolation(pickupHuman.getHeading(), launchHuman.getHeading())
+                .build();
+
+        Launch4 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(pickupHuman2, launchHuman)
+                )
+                .setLinearHeadingInterpolation(pickupHuman2.getHeading(), launchHuman.getHeading())
                 .build();
     }
 
@@ -274,9 +300,9 @@ public class AutoBlueFarHuman extends CommandOpMode {
                 new ParallelCommandGroup(
                         new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
                         new SequentialCommandGroup(
-                                new FollowPathCommand(follower, GrabHuman, true, 1),
-                                new FollowPathCommand(follower, PickupHuman, true, 1),
-                                new FollowPathCommand(follower, Launch3, true, 1)
+                                new FollowPathCommand(follower, GrabHuman2, true, 1),
+                                new FollowPathCommand(follower, PickupHuman2, true, 1),
+                                new FollowPathCommand(follower, Launch4, true, 1)
                         )
                 ),
                 new ParallelCommandGroup(
