@@ -27,19 +27,19 @@ import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.commands.SpitBalls;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.SenzorRoataSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LauncherSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
+import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorRoataSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 
 @Autonomous
-public class AutoBlueFarHuman extends CommandOpMode {
+public class AutoBlueFarHumanBoogey extends CommandOpMode {
     private final int ALLIANCE = 0; // BLUE
 
     private TelemetryManager telemetryM;
@@ -86,9 +86,9 @@ public class AutoBlueFarHuman extends CommandOpMode {
     private final Pose pickup1 = new Pose(13.5, 36, Math.toRadians(180));
     private final Pose grab2 = new Pose(40, 58.5, Math.toRadians(180));
     private final Pose pickup2 = new Pose(13.5, 58.5, Math.toRadians(180));
-    private final Pose grabHuman = new Pose(9, 27, Math.toRadians(-90));
+    private final Pose grabHuman = new Pose(10, 18, Math.toRadians(180));
     private final Pose pickupHuman = new Pose(9, 11, Math.toRadians(-90));
-    private final Pose grabHuman2 = new Pose(9, 27, Math.toRadians(90));
+    private final Pose grabHuman2 = new Pose(10, 18, Math.toRadians(180));
     private final Pose pickupHuman2 = new Pose(9, 49, Math.toRadians(90));
 
     public void buildPaths() {
@@ -181,16 +181,16 @@ public class AutoBlueFarHuman extends CommandOpMode {
 
         Launch3 = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(pickupHuman, launchHuman)
+                        new BezierLine(grabHuman, launchHuman)
                 )
-                .setLinearHeadingInterpolation(pickupHuman.getHeading(), launchHuman.getHeading())
+                .setLinearHeadingInterpolation(grabHuman.getHeading(), launchHuman.getHeading())
                 .build();
 
         Launch4 = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(pickupHuman2, launchHuman)
+                        new BezierLine(grabHuman2, launchHuman)
                 )
-                .setLinearHeadingInterpolation(pickupHuman2.getHeading(), launchHuman.getHeading())
+                .setLinearHeadingInterpolation(grabHuman2.getHeading(), launchHuman.getHeading())
                 .build();
     }
 
@@ -271,10 +271,9 @@ public class AutoBlueFarHuman extends CommandOpMode {
                         new SpitBalls(intake).withTimeout(1000)
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
+                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(5000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, GrabHuman, true, 1),
-                                new FollowPathCommand(follower, PickupHuman, true, 1),
                                 new WaitCommand(500),
                                 new FollowPathCommand(follower, Launch3, true, 1)
                         )
@@ -303,10 +302,9 @@ public class AutoBlueFarHuman extends CommandOpMode {
                         new SpitBalls(intake).withTimeout(1000)
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
+                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(5000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, GrabHuman2, true, 1),
-                                new FollowPathCommand(follower, PickupHuman2, true, 1),
                                 new WaitCommand(500),
                                 new FollowPathCommand(follower, Launch4, true, 1)
                         )
