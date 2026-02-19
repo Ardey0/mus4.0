@@ -17,6 +17,7 @@ import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
@@ -88,7 +89,7 @@ public class AutoBlueFarHuman extends CommandOpMode {
     private final Pose grabHuman = new Pose(9, 27, Math.toRadians(-90));
     private final Pose pickupHuman = new Pose(8, 11, Math.toRadians(-90));
     private final Pose grabHuman2 = new Pose(9, 27, Math.toRadians(90));
-    private final Pose pickupHuman2 = new Pose(9, 30, Math.toRadians(90));
+    private final Pose pickupHuman2 = new Pose(8, 49, Math.toRadians(90));
 
     public void buildPaths() {
         preload = follower.pathBuilder()
@@ -268,7 +269,7 @@ public class AutoBlueFarHuman extends CommandOpMode {
                 ),
                 new FollowPathCommand(follower, GrabHuman, true, 1),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
+                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, PickupHuman, true, 1),
                                 new FollowPathCommand(follower, Launch3, true, 1)
@@ -298,10 +299,11 @@ public class AutoBlueFarHuman extends CommandOpMode {
                         new SpitBalls(intake).withTimeout(1000)
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
+                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, GrabHuman2, true, 1),
                                 new FollowPathCommand(follower, PickupHuman2, true, 1),
+                                new WaitCommand(500),
                                 new FollowPathCommand(follower, Launch4, true, 1)
                         )
                 ),

@@ -15,7 +15,6 @@ public class SenzorGauraSubsystem extends SubsystemBase {
         this.colorSensor = hwMap.get(NormalizedColorSensor.class, "senzor_gaura");
     }
 
-
     public int getColor() { // GREEN = 1    PURPLE = 2
         return colorSensor.getNormalizedColors().blue + colorSensor.getNormalizedColors().red + purpleCompensation - colorSensor.getNormalizedColors().green < 0.001 ? 1 : 2;
     }
