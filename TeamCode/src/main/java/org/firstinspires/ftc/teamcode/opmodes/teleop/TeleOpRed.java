@@ -151,6 +151,8 @@ public class TeleOpRed extends CommandOpMode {
                 )
         );
 
+//        intakeButton.toggleWhenPressed(new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker));
+
         palete.setDefaultCommand(new RunCommand(
                 () -> {
                     palete.setPosition(palete.getTargetPosition() - gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) * triggerMultiplier

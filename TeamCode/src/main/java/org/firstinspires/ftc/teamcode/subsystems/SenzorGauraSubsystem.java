@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class SenzorGauraSubsystem extends SubsystemBase {
     private final NormalizedColorSensor colorSensor;
-    private final double purpleCompensation = 0.00025;
+    private final double purpleCompensation = 0.00005;
 
     public SenzorGauraSubsystem(HardwareMap hwMap){
         this.colorSensor = hwMap.get(NormalizedColorSensor.class, "senzor_gaura");
