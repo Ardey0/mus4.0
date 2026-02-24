@@ -19,11 +19,11 @@ import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
-import org.firstinspires.ftc.teamcode.commands.IntakeBall;
-import org.firstinspires.ftc.teamcode.commands.IntakeBallIndexing;
-import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
-import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
-import org.firstinspires.ftc.teamcode.commands.LaunchBallBySector;
+import org.firstinspires.ftc.teamcode.commands.Intake;
+import org.firstinspires.ftc.teamcode.commands.IntakeIndexing;
+import org.firstinspires.ftc.teamcode.commands.LaunchAll;
+import org.firstinspires.ftc.teamcode.commands.LaunchMotif;
+import org.firstinspires.ftc.teamcode.commands.LaunchBySector;
 import org.firstinspires.ftc.teamcode.commands.PedroDrive;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.commands.SpitBalls;
@@ -145,8 +145,8 @@ public class TeleOpBlue extends CommandOpMode {
 
         intakeButton.toggleWhenPressed(
                 new ConditionalCommand(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker),
-                        new IntakeBall(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker),
+                        new Intake(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker),
                         () -> gameTime.seconds() > 90
                 )
         );
@@ -172,11 +172,11 @@ public class TeleOpBlue extends CommandOpMode {
 
         spitButton.whenPressed(new SpitBalls(intake));
 
-        launchMotifButton.toggleWhenPressed(new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
-        launchAllButton.toggleWhenPressed(new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
-        launchSector0Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 0));
-        launchSector1Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 1));
-        launchSector2Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 2));
+        launchMotifButton.toggleWhenPressed(new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
+        launchAllButton.toggleWhenPressed(new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
+        launchSector0Button.toggleWhenPressed(new LaunchBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 0));
+        launchSector1Button.toggleWhenPressed(new LaunchBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 1));
+        launchSector2Button.toggleWhenPressed(new LaunchBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 2));
 //        launchPurpleButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 2));
 //        launchGreenButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 1));
 

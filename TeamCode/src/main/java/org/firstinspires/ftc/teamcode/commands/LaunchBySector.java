@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleSupplier;
 
-public class LaunchBallBySector extends CommandBase {
+public class LaunchBySector extends CommandBase {
     private final int alliance; // 0 - albastru, 1 - rosu
     private final Follower follower;
     private final OnofreiSubsystem onofrei;
@@ -31,7 +31,7 @@ public class LaunchBallBySector extends CommandBase {
     private final DoubleSupplier launcherSpeedSupplier;
     private final DoubleSupplier rampAngleSupplier;
 
-    public LaunchBallBySector(RobotStorage robotStorage, TelemetryManager telemetry, Follower follower, PaleteSubsytem paleteSubsytem,
+    public LaunchBySector(RobotStorage robotStorage, TelemetryManager telemetry, Follower follower, PaleteSubsytem paleteSubsytem,
                           OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
                           int alliance, int sector) {
         this.palete = paleteSubsytem;
@@ -49,7 +49,7 @@ public class LaunchBallBySector extends CommandBase {
         addRequirements(palete, onofrei, launcher, rampa);
     }
 
-    public LaunchBallBySector(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+    public LaunchBySector(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
                           OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
                           double launcherSpeed, double rampAngle, int alliance, int sector) {
         this.palete = paleteSubsytem;
@@ -67,9 +67,9 @@ public class LaunchBallBySector extends CommandBase {
         addRequirements(palete, onofrei, launcher, rampa);
     }
 
-    public LaunchBallBySector(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
-                              OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                              DoubleSupplier launcherSpeed, DoubleSupplier rampAngleSupplier, int alliance, int sector) {
+    public LaunchBySector(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                          DoubleSupplier launcherSpeed, DoubleSupplier rampAngleSupplier, int alliance, int sector) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;

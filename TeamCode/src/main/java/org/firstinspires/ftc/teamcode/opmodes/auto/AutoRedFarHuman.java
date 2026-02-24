@@ -20,9 +20,9 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
-import org.firstinspires.ftc.teamcode.commands.IntakeBallIndexing;
-import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
-import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
+import org.firstinspires.ftc.teamcode.commands.IntakeIndexing;
+import org.firstinspires.ftc.teamcode.commands.LaunchAll;
+import org.firstinspires.ftc.teamcode.commands.LaunchMotif;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.commands.SpitBalls;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -231,8 +231,8 @@ public class AutoRedFarHuman extends CommandOpMode {
                 readMotif,
                 new ParallelCommandGroup(
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {
@@ -246,7 +246,7 @@ public class AutoRedFarHuman extends CommandOpMode {
                 ),
                 new FollowPathCommand(follower, Grab1, true, 1),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(4000),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(4000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Pickup1, true, 0.2),
                                 new FollowPathCommand(follower, Launch1, true, 0.7)
@@ -254,8 +254,8 @@ public class AutoRedFarHuman extends CommandOpMode {
                 ),
                 new ParallelCommandGroup(
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {
@@ -268,7 +268,7 @@ public class AutoRedFarHuman extends CommandOpMode {
                         new SpitBalls(intake).withTimeout(1000)
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, GrabHuman, true, 1),
                                 new FollowPathCommand(follower, PickupHuman, true, 0.2),
@@ -277,8 +277,8 @@ public class AutoRedFarHuman extends CommandOpMode {
                 ),
                 new ParallelCommandGroup(
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {
@@ -291,7 +291,7 @@ public class AutoRedFarHuman extends CommandOpMode {
                         new SpitBalls(intake).withTimeout(1000)
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, GrabHuman2, true, 1),
                                 new FollowPathCommand(follower, PickupHuman2, true, 0.2),
@@ -301,8 +301,8 @@ public class AutoRedFarHuman extends CommandOpMode {
                 ),
                 new ParallelCommandGroup(
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {

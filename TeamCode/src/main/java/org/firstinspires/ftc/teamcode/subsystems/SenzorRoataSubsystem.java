@@ -1,38 +1,24 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.hardware.SensorRevColorV3;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class SenzorRoataSubsystem extends SubsystemBase {
-    private final NormalizedColorSensor colorSensor;
-    private final double purpleCompensation = 0.0006;
+    private final SensorRevColorV3 colorSensor;
 
     public SenzorRoataSubsystem(HardwareMap hwMap){
-        this.colorSensor = hwMap.get(NormalizedColorSensor.class, "senzor_roata");
-    }
-
-    public float getRed() {
-        return colorSensor.getNormalizedColors().red;
-    }
-
-    public float getBlue() {
-        return colorSensor.getNormalizedColors().blue;
-    }
-
-    public float getGreen() {
-        return colorSensor.getNormalizedColors().green;
-    }
-
-    public int getColor() { // GREEN = 1    PURPLE = 2
-        return colorSensor.getNormalizedColors().blue < colorSensor.getNormalizedColors().green ? 1 : 2;
-//        return colorSensor.getNormalizedColors().blue + colorSensor.getNormalizedColors().red + purpleCompensation - colorSensor.getNormalizedColors().green < 0.001 ? 1 : 2;
+        this.colorSensor = new SensorRevColorV3(hwMap, "senzor_tavan");
+        colorSensor.getColorSensor().setGain(2);
+        ((LynxI2cDeviceSynch) colorSensor.getColorSensor().getDeviceClient()).setBusSpeed(LynxI2cDeviceSynch.BusSpeed.FAST_400K);
     }
 
     public double getDistanceMM() {
-        return ((DistanceSensor) colorSensor).getDistance(DistanceUnit.MM);
+        return colorSensor.distance(DistanceUnit.MM);
     }
 }

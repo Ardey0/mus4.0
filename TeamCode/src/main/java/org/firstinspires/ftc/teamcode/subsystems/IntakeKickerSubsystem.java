@@ -11,7 +11,7 @@ public class IntakeKickerSubsystem extends SubsystemBase {
 
     public IntakeKickerSubsystem(HardwareMap hwMap) {
         this.kicker = new ServoEx(hwMap, "servo_intake");
-//        this.kicker.setCachingTolerance(0.0001);
+        this.kicker.setCachingTolerance(0.1);
     }
 
     public void setPosition(double position) {

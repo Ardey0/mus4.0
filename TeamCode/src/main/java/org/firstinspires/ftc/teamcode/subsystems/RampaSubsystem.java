@@ -10,8 +10,8 @@ import java.util.function.DoubleSupplier;
 @Configurable
 public class RampaSubsystem extends SubsystemBase {
     private final ServoEx rampa;
-    public static final double SUS = 0.8,
-                               JOS = 0.01;
+    public static final double OUT = 0.93,
+                               IN = 0.01;
 
     public RampaSubsystem(HardwareMap hwMap) {
         this.rampa = new ServoEx(hwMap, "rampa");

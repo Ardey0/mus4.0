@@ -64,7 +64,6 @@ public class LauncherSubsystem extends SubsystemBase {
         flywheel2.set(0);
     }
 
-    // voltage compensation
     private double getCompensationCoefficient() {
         return nominalVoltage / voltageSensor.getVoltage();
     }

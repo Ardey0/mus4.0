@@ -24,7 +24,7 @@ public class Init extends CommandBase {
     public void initialize() {
         onofrei.setPosition(OnofreiSubsystem.IN);
         palete.setPosition(PaleteSubsytem.LOCK);
-        rampa.setPosition(RampaSubsystem.JOS);
+        rampa.setPosition(RampaSubsystem.IN);
         intakeKicker.setPosition(IntakeKickerSubsystem.IN);
     }
 

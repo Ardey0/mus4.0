@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleSupplier;
 
-public class LaunchMotifBalls extends CommandBase {
+public class LaunchMotif extends CommandBase {
     private final int alliance; // 0 - albastru, 1 - rosu
     private final Follower follower;
     private final OnofreiSubsystem onofrei;
@@ -44,9 +44,9 @@ public class LaunchMotifBalls extends CommandBase {
 
     private LaunchStep currentStep;
 
-    public LaunchMotifBalls(RobotStorage robotStorage, TelemetryManager telemetry, Follower follower, PaleteSubsytem paleteSubsytem,
-                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                          int alliance) {
+    public LaunchMotif(RobotStorage robotStorage, TelemetryManager telemetry, Follower follower, PaleteSubsytem paleteSubsytem,
+                       OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                       int alliance) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
@@ -61,9 +61,9 @@ public class LaunchMotifBalls extends CommandBase {
         addRequirements(palete, onofrei, launcher, rampa);
     }
 
-    public LaunchMotifBalls(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
-                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                          double launcherSpeed, double rampAngle, int alliance) {
+    public LaunchMotif(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+                       OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                       double launcherSpeed, double rampAngle, int alliance) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
@@ -78,9 +78,9 @@ public class LaunchMotifBalls extends CommandBase {
         addRequirements(palete, onofrei, launcher, rampa);
     }
 
-    public LaunchMotifBalls(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
-                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                          DoubleSupplier launcherSpeed, DoubleSupplier rampAngleSupplier, int alliance) {
+    public LaunchMotif(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+                       OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                       DoubleSupplier launcherSpeed, DoubleSupplier rampAngleSupplier, int alliance) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;

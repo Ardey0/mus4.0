@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleSupplier;
 
-public class LaunchBallByColor extends CommandBase {
+public class LaunchByColor extends CommandBase {
     private final int alliance; // 0 - albastru, 1 - rosu
     private final Follower follower;
     private final OnofreiSubsystem onofrei;
@@ -44,9 +44,9 @@ public class LaunchBallByColor extends CommandBase {
 
     private LaunchStep currentStep;
 
-    public LaunchBallByColor(RobotStorage robotStorage, TelemetryManager telemetry, Follower follower, PaleteSubsytem paleteSubsytem,
-                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                          int alliance, int color) {
+    public LaunchByColor(RobotStorage robotStorage, TelemetryManager telemetry, Follower follower, PaleteSubsytem paleteSubsytem,
+                         OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                         int alliance, int color) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
@@ -62,9 +62,9 @@ public class LaunchBallByColor extends CommandBase {
         addRequirements(palete, onofrei, launcher, rampa);
     }
 
-    public LaunchBallByColor(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
-                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                          double launcherSpeed, double rampAngle, int alliance, int color) {
+    public LaunchByColor(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+                         OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                         double launcherSpeed, double rampAngle, int alliance, int color) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
@@ -80,9 +80,9 @@ public class LaunchBallByColor extends CommandBase {
         addRequirements(palete, onofrei, launcher, rampa);
     }
 
-    public LaunchBallByColor(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
-                             OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                             DoubleSupplier launcherSpeed, DoubleSupplier rampAngleSupplier, int alliance, int color) {
+    public LaunchByColor(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+                         OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                         DoubleSupplier launcherSpeed, DoubleSupplier rampAngleSupplier, int alliance, int color) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;

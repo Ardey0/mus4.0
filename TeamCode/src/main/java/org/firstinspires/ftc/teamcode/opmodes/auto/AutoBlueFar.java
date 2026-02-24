@@ -20,9 +20,9 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
-import org.firstinspires.ftc.teamcode.commands.IntakeBallIndexing;
-import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
-import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
+import org.firstinspires.ftc.teamcode.commands.IntakeIndexing;
+import org.firstinspires.ftc.teamcode.commands.LaunchAll;
+import org.firstinspires.ftc.teamcode.commands.LaunchMotif;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.commands.SpitBalls;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -206,8 +206,8 @@ public class AutoBlueFar extends CommandOpMode {
                 readMotif,
                 new ParallelCommandGroup(
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {
@@ -220,7 +220,7 @@ public class AutoBlueFar extends CommandOpMode {
                         new FollowPathCommand(follower, preload, true, 1)
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab1, true),
                                 new FollowPathCommand(follower, Launch1, true, 0.9)
@@ -228,8 +228,8 @@ public class AutoBlueFar extends CommandOpMode {
                 ),
                 new ParallelCommandGroup(
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {
@@ -251,7 +251,7 @@ public class AutoBlueFar extends CommandOpMode {
 //                ),
                 new FollowPathCommand(follower, Grab2, true, 1),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Pickup2, true, 0.2),
                                 new FollowPathCommand(follower, Launch2, true, 0.9)
@@ -259,8 +259,8 @@ public class AutoBlueFar extends CommandOpMode {
                 ),
                 new ParallelCommandGroup(
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {
@@ -273,7 +273,7 @@ public class AutoBlueFar extends CommandOpMode {
                         new SpitBalls(intake).withTimeout(1000)
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6700),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, GrabHuman, true, 1),
                                 new FollowPathCommand(follower, PickupHuman, true, 1)

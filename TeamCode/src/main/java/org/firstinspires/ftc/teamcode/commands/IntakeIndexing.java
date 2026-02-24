@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 
 import java.util.concurrent.TimeUnit;
 
-public class IntakeBallIndexing extends CommandBase {
+public class IntakeIndexing extends CommandBase {
     private final Timer timerPalete = new Timer(600, TimeUnit.MILLISECONDS);
     private final Timer timerKicker = new Timer(30, TimeUnit.MILLISECONDS);
     private final Timer timerFail = new Timer(700, TimeUnit.MILLISECONDS);
@@ -40,8 +40,8 @@ public class IntakeBallIndexing extends CommandBase {
 
     private IntakeStep currentStep;
 
-    public IntakeBallIndexing(RobotStorage robotStorage, TelemetryManager telemetry, IntakeSubsystem intakeSubsystem, PaleteSubsytem paleteSubsytem,
-                              SenzorTavanSubsystem senzorTavanSubsystem, SenzorRoataSubsystem senzorRoataSubsystem, SenzorGauraSubsystem senzorGauraSubsystem, IntakeKickerSubsystem intakeKickerSubsystem) {
+    public IntakeIndexing(RobotStorage robotStorage, TelemetryManager telemetry, IntakeSubsystem intakeSubsystem, PaleteSubsytem paleteSubsytem,
+                          SenzorTavanSubsystem senzorTavanSubsystem, SenzorRoataSubsystem senzorRoataSubsystem, SenzorGauraSubsystem senzorGauraSubsystem, IntakeKickerSubsystem intakeKickerSubsystem) {
         this.intake = intakeSubsystem;
         this.palete = paleteSubsytem;
         this.senzorTavan = senzorTavanSubsystem;

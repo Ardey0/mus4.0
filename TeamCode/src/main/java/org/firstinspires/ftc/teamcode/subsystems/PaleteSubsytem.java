@@ -16,7 +16,7 @@ public class PaleteSubsytem extends SubsystemBase {
 
     public PaleteSubsytem(HardwareMap hwMap) {
         this.palete = new ServoEx(hwMap, "palete");
-//        this.palete.setCachingTolerance(0.0001);
+        this.palete.setCachingTolerance(0.0005);
     }
 
     public void setPosition(double position) {

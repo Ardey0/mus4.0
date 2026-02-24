@@ -23,9 +23,9 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import com.seattlesolvers.solverslib.pedroCommand.TurnToCommand;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
-import org.firstinspires.ftc.teamcode.commands.IntakeBallIndexing;
-import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
-import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
+import org.firstinspires.ftc.teamcode.commands.IntakeIndexing;
+import org.firstinspires.ftc.teamcode.commands.LaunchAll;
+import org.firstinspires.ftc.teamcode.commands.LaunchMotif;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.commands.SpitBalls;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -280,12 +280,12 @@ public class AutoRedClose extends CommandOpMode {
                 new ParallelCommandGroup(
                         new TurnToCommand(follower, Math.toRadians(135)),
                         new SequentialCommandGroup(
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 new TurnToCommand(follower, Math.toRadians(-45))
                         )
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab1, true),
                                 new FollowPathCommand(follower, ClearGate, true),
@@ -295,8 +295,8 @@ public class AutoRedClose extends CommandOpMode {
                 ),
                 new ParallelCommandGroup(
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {
@@ -309,7 +309,7 @@ public class AutoRedClose extends CommandOpMode {
                         new SpitBalls(intake).withTimeout(1000)
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab2, true),
                                 new FollowPathCommand(follower, Launch2, true)
@@ -317,8 +317,8 @@ public class AutoRedClose extends CommandOpMode {
                 ),
                 new ParallelCommandGroup(
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {
@@ -331,7 +331,7 @@ public class AutoRedClose extends CommandOpMode {
                         new SpitBalls(intake).withTimeout(1000)
                 ),
                 new ParallelCommandGroup(
-                        new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(5800),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(5800),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab3, true),
                                 new FollowPathCommand(follower, Launch3, true)
@@ -339,8 +339,8 @@ public class AutoRedClose extends CommandOpMode {
                 ),
                 new ParallelCommandGroup(
                         new ConditionalCommand(
-                                new LaunchMotifBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {

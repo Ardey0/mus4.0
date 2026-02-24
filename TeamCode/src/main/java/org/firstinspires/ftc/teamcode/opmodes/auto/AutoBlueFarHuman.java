@@ -21,11 +21,8 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
-import org.firstinspires.ftc.teamcode.commands.IntakeBallIndexing;
-import org.firstinspires.ftc.teamcode.commands.LaunchAllBalls;
-import org.firstinspires.ftc.teamcode.commands.LaunchMotifBalls;
+import org.firstinspires.ftc.teamcode.commands.LaunchAll;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
-import org.firstinspires.ftc.teamcode.commands.SpitBalls;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.RampaSubsystem;
@@ -237,8 +234,8 @@ public class AutoBlueFarHuman extends CommandOpMode {
                 new WaitCommand(24000),
                 new ParallelCommandGroup(
                         new ConditionalCommand(
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchAllBalls(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                                new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                                 () -> {
                                     int verzi = 0, mov = 0;
                                     for (int i = 0; i <= 2; i++) {

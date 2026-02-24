@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleSupplier;
 
-public class LaunchAllBalls extends CommandBase {
+public class LaunchAll extends CommandBase {
     private final int alliance; // 0 - albastru, 1 - rosu
     private final Follower follower;
     private final OnofreiSubsystem onofrei;
@@ -43,9 +43,9 @@ public class LaunchAllBalls extends CommandBase {
 
     private LaunchStep currentStep;
 
-    public LaunchAllBalls(RobotStorage robotStorage, TelemetryManager telemetry, Follower follower, PaleteSubsytem paleteSubsytem,
-                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                          int alliance) {
+    public LaunchAll(RobotStorage robotStorage, TelemetryManager telemetry, Follower follower, PaleteSubsytem paleteSubsytem,
+                     OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                     int alliance) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
@@ -60,9 +60,9 @@ public class LaunchAllBalls extends CommandBase {
         addRequirements(palete, onofrei, launcher, rampa);
     }
 
-    public LaunchAllBalls(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
-                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                          double launcherSpeed, double rampAngle, int alliance) {
+    public LaunchAll(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+                     OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                     double launcherSpeed, double rampAngle, int alliance) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
@@ -77,9 +77,9 @@ public class LaunchAllBalls extends CommandBase {
         addRequirements(palete, onofrei, launcher, rampa);
     }
 
-    public LaunchAllBalls(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
-                          OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                          DoubleSupplier launcherSpeed, DoubleSupplier rampAngleSupplier, int alliance) {
+    public LaunchAll(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+                     OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                     DoubleSupplier launcherSpeed, DoubleSupplier rampAngleSupplier, int alliance) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
@@ -165,7 +165,6 @@ public class LaunchAllBalls extends CommandBase {
 
             case MOVE_ONOFREI_OUT:
                 onofrei.setPosition(OnofreiSubsystem.OUT);
-//                telemetry.addLine("ONOFREI OUT");
                 onofreiOutTimer.start();
                 currentStep = LaunchStep.WAIT_FOR_ONOFREI;
                 break;
@@ -178,7 +177,7 @@ public class LaunchAllBalls extends CommandBase {
 
             case MOVE_ONOFREI_IN:
                 onofrei.setPosition(OnofreiSubsystem.IN);
-                onofreiInTimer.start(); // Start timer to wait for Onofrei to return
+                onofreiInTimer.start();
                 currentStep = LaunchStep.WAIT_FOR_ONOFREI_RETURN;
                 break;
 
@@ -191,7 +190,6 @@ public class LaunchAllBalls extends CommandBase {
             case INCREMENT_BALL:
                 robotStorage.setSector(sector, 0);
                 sector++;
-                // Move to the next ball
                 currentStep = LaunchStep.SET_PALETE_POSITION;
                 break;
         }
@@ -203,7 +201,7 @@ public class LaunchAllBalls extends CommandBase {
 //        telemetry.addData("start", start);
         telemetry.addData("flywheel speed", launcher.getVelocity());
         telemetry.addData("flywheel target speed", getLauncherSpeed());
-        telemetry.addData("ramp angle", getRampAngle());
+//        telemetry.addData("ramp angle", getRampAngle());
     }
 
     @Override
