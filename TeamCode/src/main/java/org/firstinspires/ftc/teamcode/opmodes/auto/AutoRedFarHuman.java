@@ -79,6 +79,7 @@ public class AutoRedFarHuman extends CommandOpMode {
     public PathChain HumanToLaunch;
     private PathChain Exit;
     public PathChain LaunchHuman2;
+    private PathChain Launch1;
 
 
     private final Pose start = new Pose(88, 8.740, Math.toRadians(180));
@@ -114,6 +115,13 @@ public class AutoRedFarHuman extends CommandOpMode {
                         new BezierLine(grab1, pickup1)
                 )
                 .setLinearHeadingInterpolation(grab1.getHeading(), pickup1.getHeading())
+                .build();
+
+        Launch1 = follower.pathBuilder()
+                .addPath(
+                        new BezierLine(pickup1, launchHuman)
+                )
+                .setLinearHeadingInterpolation(pickup1.getHeading(), launchHuman.getHeading())
                 .build();
 
         LaunchHuman = follower.pathBuilder()
@@ -241,7 +249,7 @@ public class AutoRedFarHuman extends CommandOpMode {
                         new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(4000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Pickup1, true, 0.2),
-                                new FollowPathCommand(follower, LaunchHuman, true, 0.7)
+                                new FollowPathCommand(follower, Launch1, true, 0.7)
                         )
                 ),
                 new ParallelCommandGroup(
@@ -287,7 +295,7 @@ public class AutoRedFarHuman extends CommandOpMode {
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, GrabHuman2, true, 1),
                                 new FollowPathCommand(follower, PickupHuman2, true, 0.2),
-                                new WaitCommand(500),
+                                new WaitCommand(800),
                                 new FollowPathCommand(follower, LaunchHuman2, true, 0.7)
                         )
                 ),

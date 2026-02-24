@@ -25,7 +25,7 @@ public class LaunchAllBalls extends CommandBase {
     private final TelemetryManager telemetry;
     private final Timer onofreiOutTimer = new Timer(100, TimeUnit.MILLISECONDS);
     private final Timer onofreiInTimer = new Timer(30, TimeUnit.MILLISECONDS);
-    private final Timer paleteTimer = new Timer(200, TimeUnit.MILLISECONDS);
+    private final Timer paleteTimer = new Timer(150, TimeUnit.MILLISECONDS);
     private boolean done = false, start = false;
 
     private final DoubleSupplier launcherSpeedSupplier;
