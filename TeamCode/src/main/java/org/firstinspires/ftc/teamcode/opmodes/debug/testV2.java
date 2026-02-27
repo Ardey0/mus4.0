@@ -109,7 +109,7 @@ public class testV2 extends LinearOpMode {
             rampa.setPosition(rampAngle);
 
             telemetryM.addData("launcher speed", launcher.getVelocity());
-            telemetryM.addData("loop time", loopTime);
+            telemetryM.addData("loop time", loopTime.milliseconds());
             telemetryM.update();
         }
     }

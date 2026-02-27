@@ -13,7 +13,7 @@ public class SenzorRoataSubsystem extends SubsystemBase {
     private final SensorRevColorV3 colorSensor;
 
     public SenzorRoataSubsystem(HardwareMap hwMap){
-        this.colorSensor = new SensorRevColorV3(hwMap, "senzor_tavan");
+        this.colorSensor = new SensorRevColorV3(hwMap, "senzor_roata");
         colorSensor.getColorSensor().setGain(2);
         ((LynxI2cDeviceSynch) colorSensor.getColorSensor().getDeviceClient()).setBusSpeed(LynxI2cDeviceSynch.BusSpeed.FAST_400K);
     }

@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.commands.LaunchMotif;
 import org.firstinspires.ftc.teamcode.commands.LaunchBySector;
 import org.firstinspires.ftc.teamcode.commands.PedroDrive;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
+import org.firstinspires.ftc.teamcode.commands.Relocalize;
 import org.firstinspires.ftc.teamcode.commands.SpitBalls;
 import org.firstinspires.ftc.teamcode.commands.TurnToGoal;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -68,7 +69,7 @@ public class TeleOpBlue extends CommandOpMode {
 
     private Button intakeButton, launchMotifButton, readMotifButton, launchSector0Button,
             launchSector1Button, launchSector2Button, launchPurpleButton, launchGreenButton, launchAllButton,
-            trackAprilTagButton, spitButton, resetRoataButton;
+            trackAprilTagButton, spitButton, resetRoataButton, resetPositionButton;
 
     @Override
     public void initialize() {
@@ -103,7 +104,7 @@ public class TeleOpBlue extends CommandOpMode {
                     gamepad, GamepadKeys.Button.CIRCLE
             );
             readMotifButton = new GamepadButton(
-                    gamepad, GamepadKeys.Button.SHARE
+                    gamepad, GamepadKeys.Button.SQUARE
             );
             trackAprilTagButton = new GamepadButton(
                     gamepad, GamepadKeys.Button.TRIANGLE
@@ -132,15 +133,21 @@ public class TeleOpBlue extends CommandOpMode {
             resetRoataButton = new GamepadButton(
                     gamepad, GamepadKeys.Button.TOUCHPAD
             );
+            resetPositionButton = new GamepadButton(
+                    gamepad, GamepadKeys.Button.SHARE
+            );
         }
 
         Pose start = robotStorage.getAutoEndPose() == null ? new Pose(56.1, 8.70, Math.toRadians(180)) : robotStorage.getAutoEndPose();
         follower.setStartingPose(start);
 
         CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-        schedule(new Init(palete, onofrei, rampa, intakeKicker));
+//        schedule(new Init(palete, onofrei, rampa, intakeKicker));
 
         schedule(new PedroDrive(telemetryM, gamepad, follower));
+
+        resetPositionButton.whenPressed(new Relocalize(follower));
+
         readMotifButton.whenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
 
         intakeButton.toggleWhenPressed(
