@@ -45,7 +45,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 @Configurable
 @TeleOp
 public class TeleOpBlue extends CommandOpMode {
-//    public static double launcherSpeed = 0, rampAngle = 0;
+    public static double launcherSpeed = 0, rampAngle = 0;
     private final double triggerMultiplier = 0.006;
     private final int ALLIANCE = 0; // BLUE
 
@@ -104,7 +104,7 @@ public class TeleOpBlue extends CommandOpMode {
                     gamepad, GamepadKeys.Button.CIRCLE
             );
             readMotifButton = new GamepadButton(
-                    gamepad, GamepadKeys.Button.SQUARE
+                    gamepad, GamepadKeys.Button.OPTIONS
             );
             trackAprilTagButton = new GamepadButton(
                     gamepad, GamepadKeys.Button.TRIANGLE
@@ -128,37 +128,37 @@ public class TeleOpBlue extends CommandOpMode {
 //                    gamepad, GamepadKeys.Button.RIGHT_BUMPER
 //            );
             spitButton = new GamepadButton(
-                    gamepad, GamepadKeys.Button.OPTIONS
+                    gamepad, GamepadKeys.Button.SQUARE
             );
             resetRoataButton = new GamepadButton(
                     gamepad, GamepadKeys.Button.TOUCHPAD
             );
-            resetPositionButton = new GamepadButton(
-                    gamepad, GamepadKeys.Button.SHARE
-            );
+//            resetPositionButton = new GamepadButton(
+//                    gamepad, GamepadKeys.Button.SHARE
+//            );
         }
 
         Pose start = robotStorage.getAutoEndPose() == null ? new Pose(56.1, 8.70, Math.toRadians(180)) : robotStorage.getAutoEndPose();
         follower.setStartingPose(start);
 
         CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-//        schedule(new Init(palete, onofrei, rampa, intakeKicker));
+        schedule(new Init(palete, onofrei, rampa, intakeKicker));
 
         schedule(new PedroDrive(telemetryM, gamepad, follower));
 
-        resetPositionButton.whenPressed(new Relocalize(follower));
+//        resetPositionButton.whenPressed(new Relocalize(follower));
 
         readMotifButton.whenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
 
-        intakeButton.toggleWhenPressed(
-                new ConditionalCommand(
-                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker),
-                        new Intake(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker),
-                        () -> gameTime.seconds() > 90
-                )
-        );
+//        intakeButton.toggleWhenPressed(
+//                new ConditionalCommand(
+//                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker),
+//                        new Intake(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker),
+//                        () -> gameTime.seconds() > 90
+//                )
+//        );
 
-//        intakeButton.toggleWhenPressed(new IntakeBallIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker));
+        intakeButton.toggleWhenPressed(new Intake(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker));
 
         palete.setDefaultCommand(new RunCommand(
                 () -> {
@@ -179,15 +179,15 @@ public class TeleOpBlue extends CommandOpMode {
 
         spitButton.whenPressed(new SpitBalls(intake));
 
-        launchMotifButton.toggleWhenPressed(new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
-        launchAllButton.toggleWhenPressed(new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
-        launchSector0Button.toggleWhenPressed(new LaunchBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 0));
-        launchSector1Button.toggleWhenPressed(new LaunchBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 1));
-        launchSector2Button.toggleWhenPressed(new LaunchBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 2));
+//        launchMotifButton.toggleWhenPressed(new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
+//        launchAllButton.toggleWhenPressed(new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE));
+//        launchSector0Button.toggleWhenPressed(new LaunchBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 0));
+//        launchSector1Button.toggleWhenPressed(new LaunchBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 1));
+//        launchSector2Button.toggleWhenPressed(new LaunchBySector(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 2));
 //        launchPurpleButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 2));
 //        launchGreenButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 1));
 
-//        launchSector0Button.toggleWhenPressed(new LaunchBallBySector(robotStorage, telemetryM, palete, onofrei, launcher, rampa, () -> launcherSpeed, () -> rampAngle, 0, 0));
+        launchSector0Button.toggleWhenPressed(new LaunchBySector(robotStorage, telemetryM, palete, onofrei, launcher, rampa, () -> launcherSpeed, () -> rampAngle, 0, 0));
     }
 
     @Override
@@ -196,8 +196,8 @@ public class TeleOpBlue extends CommandOpMode {
 
         follower.update();
 
-//        telemetryM.addData("dist to blue goal (m)", Math.sqrt((-follower.getPose().getX()) * (-follower.getPose().getX()) +
-//                (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
+        telemetryM.addData("dist to blue goal (m)", Math.sqrt((-follower.getPose().getX()) * (-follower.getPose().getX()) +
+                (144 - follower.getPose().getY()) * (144 - follower.getPose().getY())) / 39.37007874);
 //        telemetryM.addData("heading error", Math.toDegrees(follower.getHeadingError()));
 //        telemetryM.addData("following path", follower.isBusy());
         telemetryM.addData("motif", robotStorage.getMotif()[0]);

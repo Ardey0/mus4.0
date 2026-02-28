@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
@@ -28,6 +29,7 @@ import java.util.List;
 @TeleOp
 public class testV2 extends LinearOpMode {
     public static double launcherSpeed = 0, rampAngle = 0, onoPos = 0, paletaPos = 0, intakePos = 0, intakePower = 0;
+    boolean launcherState = false;
 
     private ElapsedTime loopTime = new ElapsedTime();
     private TelemetryManager telemetryM;
@@ -70,6 +72,12 @@ public class testV2 extends LinearOpMode {
 
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
+        Gamepad currentGamepad1 = new Gamepad();
+        Gamepad currentGamepad2 = new Gamepad();
+
+        Gamepad previousGamepad1 = new Gamepad();
+        Gamepad previousGamepad2 = new Gamepad();
+
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
         for (LynxModule hub : allHubs) {
@@ -89,6 +97,23 @@ public class testV2 extends LinearOpMode {
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
 
+            previousGamepad1.copy(currentGamepad1);
+            previousGamepad2.copy(currentGamepad2);
+
+            // Store gamepad values from this loop iteration
+            currentGamepad1.copy(gamepad1);
+            currentGamepad2.copy(gamepad2);
+
+
+            if (previousGamepad1.b && !currentGamepad1.b) {
+                launcherState = !launcherState;
+            }
+
+            if (launcherState) {
+                launcher.spin(launcherSpeed);
+            } else {
+                launcher.brake();
+            }
 
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
             double frontLeftPower = (y + x + rx) / denominator;
@@ -101,7 +126,8 @@ public class testV2 extends LinearOpMode {
             frontRight.setPower(frontRightPower);
             backRight.setPower(backRightPower);
 
-            launcher.spin(launcherSpeed);
+
+
             intake.suck(intakePower);
             palete.setPosition(paletaPos);
             onofrei.setPosition(onoPos);

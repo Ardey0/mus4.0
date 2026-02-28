@@ -10,7 +10,9 @@ import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 @Configurable
 public class LauncherSubsystem extends SubsystemBase {
-    public static double kP = 0.0019, kI = 0, kD = 0.00000002, kF = 0.00036, idleSpeed = 700;
+    public static double kP = 0.0033, kI = 0, kD = 0.00000003, kF = 0.000353, idleSpeed = 1000;
+
+    //public static double kP = 0.0019, kI = 0, kD = 0.00000002, kF = 0.00036, idleSpeed = 700;
     public static double nominalVoltage = 13;
     private final MotorEx flywheel1, flywheel2;
     private final VoltageSensor voltageSensor;

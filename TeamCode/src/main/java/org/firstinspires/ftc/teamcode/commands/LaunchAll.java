@@ -23,9 +23,9 @@ public class LaunchAll extends CommandBase {
     private final RampaSubsystem rampa;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timer onofreiOutTimer = new Timer(100, TimeUnit.MILLISECONDS);
-    private final Timer onofreiInTimer = new Timer(30, TimeUnit.MILLISECONDS);
-    private final Timer paleteTimer = new Timer(150, TimeUnit.MILLISECONDS);
+    private final Timer onofreiOutTimer = new Timer(90, TimeUnit.MILLISECONDS);
+    private final Timer onofreiInTimer = new Timer(20, TimeUnit.MILLISECONDS);
+    private final Timer paleteTimer = new Timer(10, TimeUnit.MILLISECONDS);
     private boolean done = false, start = false;
 
     private final DoubleSupplier launcherSpeedSupplier;
@@ -136,13 +136,13 @@ public class LaunchAll extends CommandBase {
                 if (start) {
                     switch (sector) {
                         case 0:
-                            palete.setPosition(PaleteSubsytem.OUT_BILA_0);
+                            palete.setPosition(PaleteSubsytem.OUT_BILA_2);
                             break;
                         case 1:
-                            palete.setPosition(PaleteSubsytem.OUT_BILA_1);
+                            palete.setPosition(PaleteSubsytem.OUT_BILA_0);
                             break;
                         case 2:
-                            palete.setPosition(PaleteSubsytem.OUT_BILA_2);
+                            palete.setPosition(PaleteSubsytem.OUT_BILA_1);
                             break;
                         default:
                             // Invalid sector, end the command gracefully.
@@ -166,6 +166,7 @@ public class LaunchAll extends CommandBase {
             case MOVE_ONOFREI_OUT:
                 onofrei.setPosition(OnofreiSubsystem.OUT);
                 onofreiOutTimer.start();
+//                telemetry.addLine("ono out");
                 currentStep = LaunchStep.WAIT_FOR_ONOFREI;
                 break;
 

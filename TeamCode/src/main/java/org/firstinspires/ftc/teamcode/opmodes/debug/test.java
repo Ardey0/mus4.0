@@ -194,7 +194,7 @@ public class test extends LinearOpMode {
             if (launcherState) {
                 double power = controller.calculate(launcher.getVelocity(), viteza);
                 telemetryM.addData("viteza target:", viteza);
-                telemetryM.addData("power:", power);
+                telemetryM.addData("power:", launcher.getVelocity());
                 launcher.setPower(power);
                 launcher2.setPower(power);
             } else {
