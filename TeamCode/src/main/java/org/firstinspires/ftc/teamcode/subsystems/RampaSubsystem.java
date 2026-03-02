@@ -15,7 +15,7 @@ public class RampaSubsystem extends SubsystemBase {
 
     public RampaSubsystem(HardwareMap hwMap) {
         this.rampa = new ServoEx(hwMap, "rampa");
-        this.rampa.setCachingTolerance(0.01);
+        this.rampa.setCachingTolerance(0.005);
     }
 
     public void setPosition(double position) {

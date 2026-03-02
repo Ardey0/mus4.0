@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.seattlesolvers.solverslib.util.MathUtils.clamp;
 
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
 public class RobotStorage {
@@ -83,10 +84,10 @@ public class RobotStorage {
         double d2 = distanceToDepotM * distanceToDepotM;
         double d3 = d2 * distanceToDepotM;
         double d4 = d3 * distanceToDepotM;
-        return clamp(23.10907 * d4 -
-                        219.29832 * d3 +
-                        707.64469 * d2 -
-                        654.41708 * distanceToDepotM + 1468.88186,
+        return clamp(-9.88535 * d4 +
+                        119.79707 * d3 -
+                        518.17132 * d2 +
+                        1120.16708 * distanceToDepotM + 365.28292,
                 0, 2050);
     }
 
@@ -94,10 +95,10 @@ public class RobotStorage {
         double d2 = distanceToDepotM * distanceToDepotM;
         double d3 = d2 * distanceToDepotM;
         double d4 = d3 * distanceToDepotM;
-        return clamp(0.0143789 * d4 -
-                        0.131801 * d3 +
-                        0.289158 * d2 +
-                        0.38897 * distanceToDepotM - 0.496897,
+        return clamp(-0.00173126 * d4 +
+                        0.0437586 * d3 -
+                        0.360518 * d2 +
+                        1.29682 * distanceToDepotM - 0.848703,
                 0, 0.92);
     }
 
@@ -110,8 +111,13 @@ public class RobotStorage {
     }
 
     public void updateDistanceToGoal(double x, double y, int alliance) {
-        double dx = (alliance == 0) ? x : (144.0 - x);
-        double dy = 144.0 - y;
+        double dx = (alliance == 0) ? x : (144.0 - x), dy = 144.0 - y;
+        distanceToDepotM = Math.sqrt(dx * dx + dy * dy) * INCH_TO_METERS;
+    }
+
+    public void updateDistanceToGoal(Follower follower, int alliance) {
+        double x = follower.getPose().getX(), y = follower.getPose().getY();
+        double dx = (alliance == 0) ? x : (144.0 - x), dy = 144.0 - y;
         distanceToDepotM = Math.sqrt(dx * dx + dy * dy) * INCH_TO_METERS;
     }
 

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import static com.seattlesolvers.solverslib.util.MathUtils.clamp;
+
+import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.seattlesolvers.solverslib.command.CommandBase;
@@ -14,7 +17,9 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleSupplier;
 
-public class LaunchAll extends CommandBase {
+@Configurable
+public class LaunchFanFire extends CommandBase {
+    public static double coefVit = 50, coefUng = 0;
     private final int alliance; // 0 - albastru, 1 - rosu
     private final Follower follower;
     private final OnofreiSubsystem onofrei;
@@ -23,10 +28,12 @@ public class LaunchAll extends CommandBase {
     private final RampaSubsystem rampa;
     private final RobotStorage robotStorage;
     private final TelemetryManager telemetry;
-    private final Timer onofreiOutTimer = new Timer(90 , TimeUnit.MILLISECONDS);
-    private final Timer onofreiInTimer = new Timer(30, TimeUnit.MILLISECONDS);
-    private final Timer paleteTimer = new Timer(150 , TimeUnit.MILLISECONDS);
-    private boolean done = false, start = false;
+
+    private final Timer paleteTimer = new Timer(200, TimeUnit.MILLISECONDS);
+    private final Timer launchTimer = new Timer(1000, TimeUnit.MILLISECONDS);
+    private final Timer onofreiOutTimer = new Timer(85, TimeUnit.MILLISECONDS);
+
+    private boolean done = false;
 
     private final DoubleSupplier launcherSpeedSupplier;
     private final DoubleSupplier rampAngleSupplier;
@@ -36,16 +43,14 @@ public class LaunchAll extends CommandBase {
         WAIT_FOR_PALETE,
         MOVE_ONOFREI_OUT,
         WAIT_FOR_ONOFREI,
-        MOVE_ONOFREI_IN,
-        WAIT_FOR_ONOFREI_RETURN,
-        INCREMENT_BALL
+        LAUNCH
     }
 
     private LaunchStep currentStep;
 
-    public LaunchAll(RobotStorage robotStorage, TelemetryManager telemetry, Follower follower, PaleteSubsytem paleteSubsytem,
-                     OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                     int alliance) {
+    public LaunchFanFire(RobotStorage robotStorage, TelemetryManager telemetry, Follower follower, PaleteSubsytem paleteSubsytem,
+                         OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                         int alliance) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
@@ -60,9 +65,9 @@ public class LaunchAll extends CommandBase {
         addRequirements(palete, onofrei, launcher, rampa);
     }
 
-    public LaunchAll(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
-                     OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                     double launcherSpeed, double rampAngle, int alliance) {
+    public LaunchFanFire(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+                         OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                         double launcherSpeed, double rampAngle, int alliance) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
@@ -77,9 +82,9 @@ public class LaunchAll extends CommandBase {
         addRequirements(palete, onofrei, launcher, rampa);
     }
 
-    public LaunchAll(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
-                     OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
-                     DoubleSupplier launcherSpeed, DoubleSupplier rampAngleSupplier, int alliance) {
+    public LaunchFanFire(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+                         OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                         DoubleSupplier launcherSpeed, DoubleSupplier rampAngleSupplier, int alliance) {
         this.palete = paleteSubsytem;
         this.onofrei = onofreiSubsystem;
         this.launcher = launcherSubsystem;
@@ -94,14 +99,10 @@ public class LaunchAll extends CommandBase {
         addRequirements(palete, onofrei, launcher, rampa);
     }
 
-    private int sector;
-
     @Override
     public void initialize() {
         done = false;
-        start = false;
         launcher.spin(getLauncherSpeed());
-        sector = 0;
         currentStep = LaunchStep.SET_PALETE_POSITION;
     }
 
@@ -111,108 +112,58 @@ public class LaunchAll extends CommandBase {
         launcher.spin(getLauncherSpeed());
         rampa.setPosition(getRampAngle());
 
-        if (sector > 2) {
-            done = true;
-            return;
-        }
-
-//        if (robotStorage.getSectorColor(sector) == 0) {
-//            sector++;
-//            return;
-//        }
-
-        if (launcher.atTargetSpeed()) {
-            start = true;
-        }
-
         switch (currentStep) {
             case SET_PALETE_POSITION:
-                // End the command if there are no more balls to launch.
-                if (sector < 0 || sector > 2) {
-                    done = true;
-                    break;
-                }
-
-                if (start) {
-                    switch (sector) {
-                        case 0:
-                            palete.setPosition(PaleteSubsytem.OUT_BILA_2);
-                            break;
-                        case 1:
-                            palete.setPosition(PaleteSubsytem.OUT_BILA_0);
-                            break;
-                        case 2:
-                            palete.setPosition(PaleteSubsytem.OUT_BILA_1);
-                            break;
-                        default:
-                            // Invalid sector, end the command gracefully.
-                            done = true;
-                            break;
-                    }
-
-                    if (!done) {
-                        paleteTimer.start();
-                        currentStep = LaunchStep.WAIT_FOR_PALETE;
-                    }
-                }
+                palete.setPosition(PaleteSubsytem.LOCK);
+                paleteTimer.start();
+                currentStep = LaunchStep.WAIT_FOR_PALETE;
                 break;
 
             case WAIT_FOR_PALETE:
-                if (paleteTimer.done() && launcher.atTargetSpeed()) {
+                if (paleteTimer.done()) {
                     currentStep = LaunchStep.MOVE_ONOFREI_OUT;
                 }
                 break;
 
             case MOVE_ONOFREI_OUT:
-                onofrei.setPosition(OnofreiSubsystem.OUT);
+                onofrei.setPosition(OnofreiSubsystem.FAN_FIRE);
                 onofreiOutTimer.start();
-//                telemetry.addLine("ono out");
                 currentStep = LaunchStep.WAIT_FOR_ONOFREI;
                 break;
 
             case WAIT_FOR_ONOFREI:
-                if (onofreiOutTimer.done()) {
-                    currentStep = LaunchStep.MOVE_ONOFREI_IN;
+                if (onofreiOutTimer.done() && launcher.atTargetSpeed()) {
+                    launchTimer.start();
+                    currentStep = LaunchStep.LAUNCH;
                 }
                 break;
 
-            case MOVE_ONOFREI_IN:
-                onofrei.setPosition(OnofreiSubsystem.IN);
-                onofreiInTimer.start();
-                currentStep = LaunchStep.WAIT_FOR_ONOFREI_RETURN;
-                break;
-
-            case WAIT_FOR_ONOFREI_RETURN: // New state
-                if (onofreiInTimer.done()) {
-                    currentStep = LaunchStep.INCREMENT_BALL;
-                }
-                break;
-
-            case INCREMENT_BALL:
-                robotStorage.setSector(sector, 0);
-                sector++;
-                currentStep = LaunchStep.SET_PALETE_POSITION;
+            case LAUNCH:
+                palete.setPosition(PaleteSubsytem.FAN_FIRE);
+                done = true;
                 break;
         }
 
-        telemetry.addData("sector", sector);
         telemetry.addData("step", currentStep.name());
 //        telemetry.addData("done", done);
 //        telemetry.addData("start", start);
         telemetry.addData("flywheel speed", launcher.getVelocity());
         telemetry.addData("flywheel target speed", getLauncherSpeed());
-//        telemetry.addData("ramp angle", getRampAngle());
+        telemetry.addData("ramp angle", getRampAngle());
     }
 
     @Override
     public void end(boolean interrupted) {
-        launcher.stop();
+        for (int i = 0; i < 3; i++)
+            robotStorage.setSector(i, 0);
         onofrei.setPosition(OnofreiSubsystem.IN);
+        palete.setPosition(PaleteSubsytem.LOCK);
+        launcher.stop();
     }
 
     @Override
     public boolean isFinished() {
-        return done && onofreiInTimer.done();
+        return done && launchTimer.done();
     }
 
     private void updateDistanceToGoal() {
@@ -227,7 +178,7 @@ public class LaunchAll extends CommandBase {
             return launcherSpeedSupplier.getAsDouble();
         }
 
-        return robotStorage.getLauncherSpeedForDist();
+        return clamp(robotStorage.getLauncherSpeedForDist() + coefVit, 0, 2050);
     }
 
     private double getRampAngle() {
@@ -235,6 +186,14 @@ public class LaunchAll extends CommandBase {
             return rampAngleSupplier.getAsDouble();
         }
 
-        return robotStorage.getRampAngleForDist();
+        double launcherSpeed = launcher.getVelocity();
+        double d2 = launcherSpeed * launcherSpeed;
+        double d3 = d2 * launcherSpeed;
+        double d4 = d3 * launcherSpeed;
+        return clamp(1.40164e-11 * d4 - 8.01586e-8 * d3 +
+                        0.000168479 * d2 -
+                        0.152832 * launcherSpeed + 50.59207
+                        + coefUng,
+                0.3, 0.92);
     }
 }

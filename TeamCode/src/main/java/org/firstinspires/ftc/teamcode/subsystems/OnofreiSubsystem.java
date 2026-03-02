@@ -7,6 +7,7 @@ import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 public class OnofreiSubsystem extends SubsystemBase {
     private final ServoEx onofrei;
     public static final double OUT = 1,
+                               FAN_FIRE = 0.4,
                                IN = 0;
 
     public OnofreiSubsystem(HardwareMap hwMap) {
