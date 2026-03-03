@@ -30,8 +30,8 @@ public class LaunchFanFire extends CommandBase {
     private final TelemetryManager telemetry;
 
     private final Timer paleteTimer = new Timer(200, TimeUnit.MILLISECONDS);
-    private final Timer launchTimer = new Timer(1000, TimeUnit.MILLISECONDS);
-    private final Timer onofreiOutTimer = new Timer(85, TimeUnit.MILLISECONDS);
+    private final Timer launchTimer = new Timer(800, TimeUnit.MILLISECONDS);
+    private final Timer onofreiOutTimer = new Timer(70, TimeUnit.MILLISECONDS);
 
     private boolean done = false;
 
@@ -93,6 +93,23 @@ public class LaunchFanFire extends CommandBase {
         this.telemetry = telemetry;
         this.launcherSpeedSupplier = launcherSpeed;
         this.rampAngleSupplier = rampAngleSupplier;
+        this.alliance = alliance;
+        this.follower = null;
+
+        addRequirements(palete, onofrei, launcher, rampa);
+    }
+
+    public LaunchFanFire(RobotStorage robotStorage, TelemetryManager telemetry, PaleteSubsytem paleteSubsytem,
+                         OnofreiSubsystem onofreiSubsystem, LauncherSubsystem launcherSubsystem, RampaSubsystem rampaSubsystem,
+                         DoubleSupplier launcherSpeed, int alliance) {
+        this.palete = paleteSubsytem;
+        this.onofrei = onofreiSubsystem;
+        this.launcher = launcherSubsystem;
+        this.rampa = rampaSubsystem;
+        this.robotStorage = robotStorage;
+        this.telemetry = telemetry;
+        this.launcherSpeedSupplier = launcherSpeed;
+        this.rampAngleSupplier = () -> 0;
         this.alliance = alliance;
         this.follower = null;
 
@@ -178,13 +195,13 @@ public class LaunchFanFire extends CommandBase {
             return launcherSpeedSupplier.getAsDouble();
         }
 
-        return clamp(robotStorage.getLauncherSpeedForDist() + coefVit, 0, 2050);
+        return clamp(robotStorage.getLauncherSpeedForDist() + coefVit, 0, 1900);
     }
 
     private double getRampAngle() {
-        if (follower == null) {
-            return rampAngleSupplier.getAsDouble();
-        }
+//        if (follower == null) {
+//            return rampAngleSupplier.getAsDouble();
+//        }
 
         double launcherSpeed = launcher.getVelocity();
         double d2 = launcherSpeed * launcherSpeed;
@@ -194,6 +211,6 @@ public class LaunchFanFire extends CommandBase {
                         0.000168479 * d2 -
                         0.152832 * launcherSpeed + 50.59207
                         + coefUng,
-                0.3, 0.92);
+                0.2, 0.92);
     }
 }

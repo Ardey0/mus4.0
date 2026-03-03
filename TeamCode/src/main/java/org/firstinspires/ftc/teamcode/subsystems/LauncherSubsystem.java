@@ -10,7 +10,7 @@ import com.seattlesolvers.solverslib.hardware.motors.MotorEx;
 
 @Configurable
 public class LauncherSubsystem extends SubsystemBase {
-    public static double kP = 0.0033, kI = 0, kD = 0.00000007, kF = 0.000353, idleSpeed = 1000;
+    public static double kP = 0.005, kI = 0, kD = 0.00000009, kF = 0.000353, idleSpeed = 1050;
 
     //public static double kP = 0.0019, kI = 0, kD = 0.00000002, kF = 0.00036, idleSpeed = 700;
     public static double nominalVoltage = 13;
@@ -25,10 +25,10 @@ public class LauncherSubsystem extends SubsystemBase {
         this.flywheel1.setInverted(true);
         this.flywheel1.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
         this.flywheel1.setRunMode(Motor.RunMode.RawPower);
-        this.flywheel1.setCachingTolerance(0.0001);
+        this.flywheel1.setCachingTolerance(0.001);
         this.flywheel2.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
         this.flywheel2.setRunMode(Motor.RunMode.RawPower);
-        this.flywheel1.setCachingTolerance(0.0001);
+        this.flywheel1.setCachingTolerance(0.001);
 
         controller.setTolerance(11);
     }
@@ -39,6 +39,11 @@ public class LauncherSubsystem extends SubsystemBase {
 
     public double getVelocity() {
         return flywheel1.getVelocity();
+    }
+
+    public double getPower()
+    {
+        return flywheel1.get();
     }
 
     public void spin(double speed) {

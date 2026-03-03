@@ -136,7 +136,8 @@ public class testV2 extends LinearOpMode {
 
             telemetryM.addData("launcher speed", launcher.getVelocity());
             telemetryM.addData("loop time", loopTime.milliseconds());
-            telemetryM.update();
+            telemetryM.addData("flywheel power", launcher.getPower());
+            telemetryM.update(telemetry);
         }
     }
 }
