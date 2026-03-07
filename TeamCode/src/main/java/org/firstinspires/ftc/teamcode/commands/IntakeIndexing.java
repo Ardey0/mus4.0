@@ -15,8 +15,8 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import java.util.concurrent.TimeUnit;
 
 public class IntakeIndexing extends CommandBase {
-    private final Timer timerPalete = new Timer(600, TimeUnit.MILLISECONDS);
-    private final Timer timerKicker = new Timer(30, TimeUnit.MILLISECONDS);
+    private final Timer timerPalete = new Timer(500, TimeUnit.MILLISECONDS);
+    private final Timer timerKicker = new Timer(60, TimeUnit.MILLISECONDS);
     private final Timer timerFail = new Timer(700, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final IntakeKickerSubsystem kicker;

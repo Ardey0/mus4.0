@@ -19,7 +19,7 @@ import java.util.function.DoubleSupplier;
 
 @Configurable
 public class LaunchFanFire extends CommandBase {
-    public static double coefVit = 50, coefUng = 0;
+    public static double coefVit = 0, coefUng = 0;
     private final int alliance; // 0 - albastru, 1 - rosu
     private final Follower follower;
     private final OnofreiSubsystem onofrei;
@@ -195,7 +195,7 @@ public class LaunchFanFire extends CommandBase {
             return launcherSpeedSupplier.getAsDouble();
         }
 
-        return clamp(robotStorage.getLauncherSpeedForDist() + coefVit, 0, 1900);
+        return clamp(robotStorage.getLauncherSpeedForDist() + coefVit, 0, 2000);
     }
 
     private double getRampAngle() {

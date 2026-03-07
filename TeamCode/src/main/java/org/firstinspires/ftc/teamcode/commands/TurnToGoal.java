@@ -19,11 +19,11 @@ public class TurnToGoal extends CommandBase {
         double x = follower.getPose().getX(), y = follower.getPose().getY();
         double targetHeadingRad;
         if (alliance == 0) {
-            targetHeadingRad = -Math.PI + Math.atan(x / (RobotStorage.fieldLengthIn - y)) +
-                    Math.asin(RobotStorage.centerToRampIn / Math.sqrt((RobotStorage.fieldLengthIn - y) * (RobotStorage.fieldLengthIn - y) + x * x));
+            targetHeadingRad = -Math.PI + Math.atan(x / (RobotStorage.fieldLengthIn - y - 6)) +
+                    Math.asin(RobotStorage.centerToRampIn / Math.sqrt((RobotStorage.fieldLengthIn - y - 6) * (RobotStorage.fieldLengthIn - y - 6) + x * x));
         } else {
-            targetHeadingRad = Math.PI - Math.atan((RobotStorage.fieldLengthIn - x) / (RobotStorage.fieldLengthIn - y)) -
-                    Math.asin(RobotStorage.centerToRampIn / Math.sqrt((RobotStorage.fieldLengthIn - y) * (RobotStorage.fieldLengthIn - y) +
+            targetHeadingRad = Math.PI - Math.atan((RobotStorage.fieldLengthIn - x) / (RobotStorage.fieldLengthIn - y - 6)) -
+                    Math.asin(RobotStorage.centerToRampIn / Math.sqrt((RobotStorage.fieldLengthIn - y - 6) * (RobotStorage.fieldLengthIn - y - 6) +
                             (RobotStorage.fieldLengthIn - x) * (RobotStorage.fieldLengthIn - x)));
         }
         follower.turnTo(targetHeadingRad);

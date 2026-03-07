@@ -2,13 +2,16 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.seattlesolvers.solverslib.util.MathUtils.clamp;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
+@Configurable
 public class RobotStorage {
     private int[] roata = new int[3], motif = new int[3];
     public static final double centerToRampIn = 2.83, fieldLengthIn = 144;
     private static final double INCH_TO_METERS = 1.0 / 39.37007874;
+    public static double coeff1 = -9.88535, coeff2 = 119.79707, coeff3 = -518.17132, coeff4 = 1120.16708, coeff5 = 365.28292;
     private static Pose autoEnd = null;
     private double distanceToDepotM = 0;
 
@@ -88,6 +91,17 @@ public class RobotStorage {
                         119.79707 * d3 -
                         518.17132 * d2 +
                         1120.16708 * distanceToDepotM + 365.28292,
+                0, 2050);
+    }
+
+    public double getLauncherSpeedForDistFentFire() {
+        double d2 = distanceToDepotM * distanceToDepotM;
+        double d3 = d2 * distanceToDepotM;
+        double d4 = d3 * distanceToDepotM;
+        return clamp(coeff1 * d4 +
+                        coeff2 * d3 +
+                        coeff3 * d2 +
+                        coeff4 * distanceToDepotM + coeff5,
                 0, 2050);
     }
 

@@ -13,6 +13,6 @@ public class Relocalize extends CommandBase {
 
     @Override
     public void initialize() {
-        follower.setPose(new Pose(34, 133.4, Math.toRadians(-90)));
+        follower.setPose(new Pose(36, 133.4, Math.toRadians(-90)));
     }
 }

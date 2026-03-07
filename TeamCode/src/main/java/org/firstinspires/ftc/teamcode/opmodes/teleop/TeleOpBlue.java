@@ -17,14 +17,11 @@ import com.seattlesolvers.solverslib.command.button.Button;
 import com.seattlesolvers.solverslib.command.button.GamepadButton;
 import com.seattlesolvers.solverslib.gamepad.GamepadEx;
 import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
-import com.seattlesolvers.solverslib.pedroCommand.TurnToCommand;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.Intake;
-import org.firstinspires.ftc.teamcode.commands.IntakeIndexing;
 import org.firstinspires.ftc.teamcode.commands.LaunchAll;
 import org.firstinspires.ftc.teamcode.commands.LaunchFanFire;
-import org.firstinspires.ftc.teamcode.commands.LaunchMotif;
 import org.firstinspires.ftc.teamcode.commands.LaunchBySector;
 import org.firstinspires.ftc.teamcode.commands.PedroDrive;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
@@ -72,7 +69,7 @@ public class TeleOpBlue extends CommandOpMode {
 
     private Button intakeButton, launchMotifButton, readMotifButton, launchSector0Button,
             launchSector1Button, launchSector2Button, launchPurpleButton, launchGreenButton, launchAllButton,
-            trackAprilTagButton, spitButton, resetRoataButton, resetPositionButton, launchFanFireButton;
+            turnToGoalButton, spitButton, resetRoataButton, resetPositionButton, launchFanFireButton;
 
     @Override
     public void initialize() {
@@ -109,7 +106,7 @@ public class TeleOpBlue extends CommandOpMode {
             readMotifButton = new GamepadButton(
                     gamepad, GamepadKeys.Button.OPTIONS
             );
-            trackAprilTagButton = new GamepadButton(
+            turnToGoalButton = new GamepadButton(
                     gamepad, GamepadKeys.Button.TRIANGLE
             );
             launchSector0Button = new GamepadButton(
@@ -136,12 +133,12 @@ public class TeleOpBlue extends CommandOpMode {
             resetRoataButton = new GamepadButton(
                     gamepad, GamepadKeys.Button.TOUCHPAD
             );
-//            resetPositionButton = new GamepadButton(
-//                    gamepad, GamepadKeys.Button.SHARE
-//            );
+            resetPositionButton = new GamepadButton(
+                    gamepad, GamepadKeys.Button.SHARE
+            );
         }
 
-        Pose start = robotStorage.getAutoEndPose() == null ? new Pose(56.1, 8.70, Math.toRadians(180)) : robotStorage.getAutoEndPose();
+        Pose start = robotStorage.getAutoEndPose() == null ? new Pose(56.7, 8.70, Math.toRadians(180)) : robotStorage.getAutoEndPose();
         follower.setStartingPose(start);
 
         CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
@@ -149,7 +146,7 @@ public class TeleOpBlue extends CommandOpMode {
 
         schedule(new PedroDrive(telemetryM, gamepad, follower));
 
-//        resetPositionButton.whenPressed(new Relocalize(follower));
+        resetPositionButton.whenPressed(new Relocalize(follower));
 
         readMotifButton.whenPressed(new ReadMotif(robotStorage, telemetryM, limelight));
 
@@ -178,7 +175,7 @@ public class TeleOpBlue extends CommandOpMode {
                 }
         ));
 
-        trackAprilTagButton.toggleWhenPressed(new TurnToGoal(follower, ALLIANCE));
+        turnToGoalButton.toggleWhenPressed(new TurnToGoal(follower, ALLIANCE));
 
         spitButton.whenPressed(new SpitBalls(intake));
 
@@ -191,7 +188,7 @@ public class TeleOpBlue extends CommandOpMode {
                         new LaunchFanFire(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                         () -> {
                             robotStorage.updateDistanceToGoal(follower, ALLIANCE);
-                            return robotStorage.getDistanceToDepotM() > 3.5;
+                            return robotStorage.getDistanceToDepotM() > 3.2 || robotStorage.getDistanceToDepotM() < 1.3;
                         }
                         )
         );
