@@ -230,6 +230,6 @@ public class TeleOpBlue extends CommandOpMode {
 
     @Override
     public void end() {
-        robotStorage.updateAutoEndPose(new Pose(56.1, 8.70, Math.toRadians(180)));
+        robotStorage.updateAutoEndPose(new Pose(56.7, 8.70, Math.toRadians(180)));
     }
 }

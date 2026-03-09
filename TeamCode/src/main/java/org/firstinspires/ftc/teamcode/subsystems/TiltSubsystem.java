@@ -6,7 +6,7 @@ import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 
 public class TiltSubsystem extends SubsystemBase {
     private final ServoEx servo1, servo2;
-    public static double UP = 0.4,
+    public static double UP = 0.5,
                          DOWN = 0;
 
     public TiltSubsystem(HardwareMap hwMap) {

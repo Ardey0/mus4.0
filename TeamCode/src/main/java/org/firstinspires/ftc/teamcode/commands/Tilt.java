@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import static org.firstinspires.ftc.teamcode.subsystems.TiltSubsystem.DOWN;
+import static org.firstinspires.ftc.teamcode.subsystems.TiltSubsystem.UP;
 
 import com.seattlesolvers.solverslib.command.CommandBase;
 
@@ -15,7 +16,11 @@ public class Tilt extends CommandBase {
         addRequirements(tilt);
     }
 
-    public void initialize(){ tilt.ridicare(); }
+    public void initialize() {
+        tilt.setPosition(UP);
+    }
 
-    public void end(boolean interrupted) { tilt.setPosition(DOWN); }
+    public void end(boolean interrupted) {
+        tilt.setPosition(DOWN);
+    }
 }
