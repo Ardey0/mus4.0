@@ -22,13 +22,14 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorRoataSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.TiltSubsystem;
 
 import java.util.List;
 
 @Configurable
 @TeleOp
 public class testV2 extends LinearOpMode {
-    public static double launcherSpeed = 0, rampAngle = 0, onoPos = 0, paletaPos = 0, intakePos = 0, intakePower = 0;
+    public static double launcherSpeed = 0, rampAngle = 0, onoPos = 0, paletaPos = 0, intakePos = 0, intakePower = 0, tiltPos = 0;
     boolean launcherState = false;
 
     private ElapsedTime loopTime = new ElapsedTime();
@@ -45,6 +46,7 @@ public class testV2 extends LinearOpMode {
     private SenzorGauraSubsystem senzorGaura;
     private RobotStorage robotStorage;
     private LimelightSubsystem limelight;
+    private TiltSubsystem tilt;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -64,6 +66,7 @@ public class testV2 extends LinearOpMode {
         intake = new IntakeSubsystem(hardwareMap);
         intakeKicker = new IntakeKickerSubsystem(hardwareMap);
         rampa = new RampaSubsystem(hardwareMap);
+        tilt = new TiltSubsystem(hardwareMap);
         senzorTavan = new SenzorTavanSubsystem(hardwareMap);
         senzorRoata = new SenzorRoataSubsystem(hardwareMap);
         senzorGaura = new SenzorGauraSubsystem(hardwareMap);
@@ -126,8 +129,7 @@ public class testV2 extends LinearOpMode {
             frontRight.setPower(frontRightPower);
             backRight.setPower(backRightPower);
 
-
-
+            tilt.setPosition(tiltPos);
             intake.suck(intakePower);
             palete.setPosition(paletaPos);
             onofrei.setPosition(onoPos);

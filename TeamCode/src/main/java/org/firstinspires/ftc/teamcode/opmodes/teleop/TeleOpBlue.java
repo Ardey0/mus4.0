@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.commands.PedroDrive;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.commands.Relocalize;
 import org.firstinspires.ftc.teamcode.commands.SpitBalls;
+import org.firstinspires.ftc.teamcode.commands.Tilt;
 import org.firstinspires.ftc.teamcode.commands.TurnToGoal;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
@@ -40,6 +41,7 @@ import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
+import org.firstinspires.ftc.teamcode.subsystems.TiltSubsystem;
 
 @Configurable
 @TeleOp
@@ -66,10 +68,11 @@ public class TeleOpBlue extends CommandOpMode {
     private SenzorGauraSubsystem senzorGaura;
     private RobotStorage robotStorage;
     private LimelightSubsystem limelight;
+    private TiltSubsystem tilt;
 
     private Button intakeButton, launchMotifButton, readMotifButton, launchSector0Button,
             launchSector1Button, launchSector2Button, launchPurpleButton, launchGreenButton, launchAllButton,
-            turnToGoalButton, spitButton, resetRoataButton, resetPositionButton, launchFanFireButton;
+            turnToGoalButton, spitButton, resetRoataButton, resetPositionButton, launchFanFireButton, tiltButton;
 
     @Override
     public void initialize() {
@@ -93,6 +96,7 @@ public class TeleOpBlue extends CommandOpMode {
             senzorGaura = new SenzorGauraSubsystem(hardwareMap);
             limelight = new LimelightSubsystem(hardwareMap, LimelightSubsystem.BLUE_APRILTAG_PIPELINE);
             robotStorage = new RobotStorage();
+            tilt = new TiltSubsystem(hardwareMap);
         }
 
         // Buttons
@@ -135,6 +139,9 @@ public class TeleOpBlue extends CommandOpMode {
             );
             resetPositionButton = new GamepadButton(
                     gamepad, GamepadKeys.Button.SHARE
+            );
+            tiltButton = new GamepadButton(
+                    gamepad, GamepadKeys.Button.RIGHT_BUMPER
             );
         }
 
@@ -199,6 +206,7 @@ public class TeleOpBlue extends CommandOpMode {
 //        launchGreenButton.toggleWhenPressed(new LaunchBallByColor(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE, 1));
 
 //        launchSector0Button.toggleWhenPressed(new LaunchFanFire(robotStorage, telemetryM, palete, onofrei, launcher, rampa, () -> launcherSpeed, 0));
+        tiltButton.toggleWhenPressed(new Tilt(tilt));
     }
 
     @Override
