@@ -142,12 +142,6 @@ public class AutoBlueCloseSolo extends CommandOpMode {
                                 grab2
                         )
                 )
-                .addParametricCallback(2.5, () ->
-                        follower.setMaxPower(0.8)
-                )
-                .addParametricCallback(3.7, () ->
-                        follower.setMaxPower(1)
-                )
                 .setLinearHeadingInterpolation(launchPre.getHeading(), grab2.getHeading())
                 .build();
         Launch2 = follower.pathBuilder()
@@ -185,12 +179,6 @@ public class AutoBlueCloseSolo extends CommandOpMode {
                                 new Pose(39.028, 35.486),
                                 grab3
                         )
-                )
-                .addParametricCallback(3, ()->
-                        follower.setMaxPower(0.8)
-                )
-                .addParametricCallback(3.9, () ->
-                        follower.setMaxPower(1)
                 )
                 .setLinearHeadingInterpolation(launchEdge.getHeading(), grab3.getHeading())
                 .build();
@@ -277,7 +265,7 @@ public class AutoBlueCloseSolo extends CommandOpMode {
 
 
                 new ParallelCommandGroup(
-                        new Intake(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6500),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6500),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, GrabGate, true),
                                 new WaitCommand(1000),
@@ -286,7 +274,7 @@ public class AutoBlueCloseSolo extends CommandOpMode {
                 ),
 
                 new ConditionalCommand(
-                        new LaunchFanFire(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+                        new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                         new LaunchFanFire(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
                         () -> {
                             int verzi = 0, mov = 0;
@@ -347,27 +335,29 @@ public class AutoBlueCloseSolo extends CommandOpMode {
                                 new FollowPathCommand(follower, Grab3, true),
                                 new FollowPathCommand(follower, Launch3, true)
                         )
-                ),
-                new ParallelCommandGroup(
-                        new ConditionalCommand(
-                                new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                new LaunchFanFire(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-                                () -> {
-                                    int verzi = 0, mov = 0;
-                                    for (int i = 0; i <= 2; i++) {
-                                        if (robotStorage.getSectorColor(i) == 1) verzi++;
-                                        if (robotStorage.getSectorColor(i) == 2) mov++;
-                                    }
-                                    return verzi == 1 && mov == 2 && robotStorage.getMotif()[0] != 0;
-                                }
-                        ),
-                        new SpitBalls(intake).withTimeout(1000)
-                ),
-                new InstantCommand(
-                        () -> {
-                            launcher.brake();
-                        }
                 )
+
+//                new ParallelCommandGroup(
+//                        new ConditionalCommand(
+//                                new LaunchMotif(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+//                                new LaunchFanFire(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
+//                                () -> {
+//                                    int verzi = 0, mov = 0;
+//                                    for (int i = 0; i <= 2; i++) {
+//                                        if (robotStorage.getSectorColor(i) == 1) verzi++;
+//                                        if (robotStorage.getSectorColor(i) == 2) mov++;
+//                                    }
+//                                    return verzi == 1 && mov == 2 && robotStorage.getMotif()[0] != 0;
+//                                }
+//                        ),
+//                        new SpitBalls(intake).withTimeout(1000)
+//                ),
+//                new InstantCommand(
+//                        () -> {
+//                            launcher.brake();
+//                        }
+//                )
+
         );
         schedule(autonomousSequence);
     }

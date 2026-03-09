@@ -15,8 +15,8 @@ import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 import java.util.concurrent.TimeUnit;
 
 public class Intake extends CommandBase {
-    private final Timing.Timer timerPalete = new Timing.Timer(500, TimeUnit.MILLISECONDS);
-    private final Timing.Timer timerKicker = new Timing.Timer(60, TimeUnit.MILLISECONDS);
+    private final Timing.Timer timerPalete = new Timing.Timer(350, TimeUnit.MILLISECONDS);
+    private final Timing.Timer timerKicker = new Timing.Timer(40, TimeUnit.MILLISECONDS);
     private final Timing.Timer timerFail = new Timing.Timer(700, TimeUnit.MILLISECONDS);
     private final IntakeSubsystem intake;
     private final IntakeKickerSubsystem kicker;

@@ -25,6 +25,7 @@ import com.seattlesolvers.solverslib.pedroCommand.TurnToCommand;
 import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.IntakeIndexing;
 import org.firstinspires.ftc.teamcode.commands.LaunchAll;
+import org.firstinspires.ftc.teamcode.commands.LaunchFanFire;
 import org.firstinspires.ftc.teamcode.commands.LaunchMotif;
 import org.firstinspires.ftc.teamcode.commands.ReadMotif;
 import org.firstinspires.ftc.teamcode.commands.SpitBalls;
@@ -84,10 +85,10 @@ public class AutoBlueClose extends CommandOpMode {
     private final Pose launch1 = new Pose(53, 90, Math.toRadians(-129));
     private final Pose launch2 = new Pose(52, 90, Math.toRadians(-130));
     private final Pose launch3 = new Pose(56, 98, Math.toRadians(-128));
-    private final Pose grab1 = new Pose(22, 82, Math.toRadians(180));
+    private final Pose grab1 = new Pose(23, 82, Math.toRadians(180));
     private final Pose clearGate = new Pose(13, 73, Math.toRadians(90));
-    private final Pose grab2 = new Pose(13, 58, Math.toRadians(180));
-    private final Pose grab3 = new Pose(13, 35, Math.toRadians(180));
+    private final Pose grab2 = new Pose(17, 58, Math.toRadians(180));
+    private final Pose grab3 = new Pose(17, 35, Math.toRadians(180));
     private final Pose exit = new Pose(34, 75, Math.toRadians(-135));
 
     public void buildPaths() {
@@ -109,6 +110,12 @@ public class AutoBlueClose extends CommandOpMode {
                         new BezierCurve(launchPre,
                                 new Pose(42.663, 79.380),
                                 grab1)
+                )
+                .addParametricCallback(0.15, () ->
+                        follower.setMaxPower(0.5)
+                        )
+                .addParametricCallback(0.8, () ->
+                        follower.setMaxPower(1)
                 )
                 .setConstantHeadingInterpolation(grab1.getHeading())
                 .build();
@@ -135,6 +142,12 @@ public class AutoBlueClose extends CommandOpMode {
                                 grab2
                         )
                 )
+                .addParametricCallback(0.6, () ->
+                        follower.setMaxPower(0.5)
+                )
+                .addParametricCallback(1, () ->
+                        follower.setMaxPower(1)
+                )
                 .setLinearHeadingInterpolation(launch1.getHeading(), grab2.getHeading())
                 .build();
         Launch2 = follower.pathBuilder()
@@ -154,6 +167,12 @@ public class AutoBlueClose extends CommandOpMode {
                                 new Pose(39.028, 35.486),
                                 grab3
                         )
+                )
+                .addParametricCallback(0.6 , () ->
+                        follower.setMaxPower(0.5)
+                )
+                .addParametricCallback(1, () ->
+                        follower.setMaxPower(1)
                 )
                 .setLinearHeadingInterpolation(launch2.getHeading(), grab3.getHeading())
                 .build();
@@ -290,10 +309,10 @@ public class AutoBlueClose extends CommandOpMode {
                         new TurnToCommand(follower, Math.toRadians(180))
                 ),
                 new ParallelCommandGroup(
-                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(6000),
                         new SequentialCommandGroup(
                                 new FollowPathCommand(follower, Grab1, true),
-                                new FollowPathCommand(follower, ClearGate, true).withTimeout(1500),
+                                new FollowPathCommand(follower, ClearGate, true),
                                 new WaitCommand(300),
                                 new FollowPathCommand(follower, Launch1, true)
                         )

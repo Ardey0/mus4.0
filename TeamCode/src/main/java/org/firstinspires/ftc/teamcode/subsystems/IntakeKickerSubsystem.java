@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 
-public class IntakeKickerSubsystem extends SubsystemBase {
+public class  IntakeKickerSubsystem extends SubsystemBase {
     private final ServoEx kicker;
     public static final double OUT = 1,
             IN = 0.01;

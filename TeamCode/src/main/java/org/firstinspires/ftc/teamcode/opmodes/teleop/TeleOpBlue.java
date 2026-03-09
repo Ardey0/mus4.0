@@ -145,7 +145,7 @@ public class TeleOpBlue extends CommandOpMode {
             );
         }
 
-        Pose start = robotStorage.getAutoEndPose() == null ? new Pose(56.7, 8.70, Math.toRadians(180)) : robotStorage.getAutoEndPose();
+        Pose start = robotStorage.getAutoEndPose() == null ? new Pose(55.7, 8.70, Math.toRadians(180)) : robotStorage.getAutoEndPose();
         follower.setStartingPose(start);
 
         CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
