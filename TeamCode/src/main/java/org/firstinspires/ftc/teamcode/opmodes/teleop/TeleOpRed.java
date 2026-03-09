@@ -40,6 +40,7 @@ import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
+import org.firstinspires.ftc.teamcode.subsystems.TiltSubsystem;
 
 @Configurable
 @TeleOp
@@ -60,6 +61,7 @@ public class TeleOpRed extends CommandOpMode {
     private IntakeSubsystem intake;
     private IntakeKickerSubsystem intakeKicker;
     private RampaSubsystem rampa;
+    private TiltSubsystem tilt;
     private SenzorTavanSubsystem senzorTavan;
     private SenzorRoataSubsystem senzorRoata;
     private SenzorGauraSubsystem senzorGaura;
@@ -87,6 +89,7 @@ public class TeleOpRed extends CommandOpMode {
             intake = new IntakeSubsystem(hardwareMap);
             intakeKicker = new IntakeKickerSubsystem(hardwareMap);
             rampa = new RampaSubsystem(hardwareMap);
+            tilt = new TiltSubsystem(hardwareMap);
             senzorTavan = new SenzorTavanSubsystem(hardwareMap);
             senzorRoata = new SenzorRoataSubsystem(hardwareMap);
             senzorGaura = new SenzorGauraSubsystem(hardwareMap);
@@ -138,7 +141,7 @@ public class TeleOpRed extends CommandOpMode {
         follower.setStartingPose(start);
 
         CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-        schedule(new Init(palete, onofrei, rampa, intakeKicker));
+        schedule(new Init(palete, onofrei, rampa, intakeKicker, tilt));
 
         schedule(new PedroDrive(telemetryM, gamepad, follower));
         readMotifButton.whenPressed(new ReadMotif(robotStorage, telemetryM, limelight));

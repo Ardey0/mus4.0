@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorRoataSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.TiltSubsystem;
 
 @Autonomous
 public class AutoBlueFarHumanBoogey extends CommandOpMode {
@@ -50,6 +51,7 @@ public class AutoBlueFarHumanBoogey extends CommandOpMode {
     private IntakeSubsystem intake;
     private IntakeKickerSubsystem intakeKicker;
     private RampaSubsystem rampa;
+    private TiltSubsystem tilt;
     private SenzorTavanSubsystem senzorTavan;
     private SenzorRoataSubsystem senzorRoata;
     private SenzorGauraSubsystem senzorGaura;
@@ -211,11 +213,12 @@ public class AutoBlueFarHumanBoogey extends CommandOpMode {
         intake = new IntakeSubsystem(hardwareMap);
         intakeKicker = new IntakeKickerSubsystem(hardwareMap);
         rampa = new RampaSubsystem(hardwareMap);
+        tilt = new TiltSubsystem(hardwareMap);
         senzorTavan = new SenzorTavanSubsystem(hardwareMap);
         senzorRoata = new SenzorRoataSubsystem(hardwareMap);
         senzorGaura = new SenzorGauraSubsystem(hardwareMap);
 
-        init = new Init(palete, onofrei, rampa, intakeKicker);
+        init = new Init(palete, onofrei, rampa, intakeKicker, tilt);
 
         readMotif = new ReadMotif(robotStorage, telemetryM, limelight);
 

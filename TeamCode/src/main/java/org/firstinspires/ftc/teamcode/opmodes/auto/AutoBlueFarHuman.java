@@ -35,6 +35,7 @@ import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OnofreiSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PaleteSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
+import org.firstinspires.ftc.teamcode.subsystems.TiltSubsystem;
 
 @Autonomous
 public class AutoBlueFarHuman extends CommandOpMode {
@@ -48,6 +49,7 @@ public class AutoBlueFarHuman extends CommandOpMode {
     private IntakeSubsystem intake;
     private IntakeKickerSubsystem intakeKicker;
     private RampaSubsystem rampa;
+    private TiltSubsystem tilt;
     private SenzorTavanSubsystem senzorTavan;
     private SenzorRoataSubsystem senzorRoata;
     private SenzorGauraSubsystem senzorGaura;
@@ -208,12 +210,13 @@ public class AutoBlueFarHuman extends CommandOpMode {
         onofrei = new OnofreiSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
         intakeKicker = new IntakeKickerSubsystem(hardwareMap);
+        tilt = new TiltSubsystem(hardwareMap);
         rampa = new RampaSubsystem(hardwareMap);
         senzorTavan = new SenzorTavanSubsystem(hardwareMap);
         senzorRoata = new SenzorRoataSubsystem(hardwareMap);
         senzorGaura = new SenzorGauraSubsystem(hardwareMap);
 
-        init = new Init(palete, onofrei, rampa, intakeKicker);
+        init = new Init(palete, onofrei, rampa, intakeKicker, tilt);
 
         readMotif = new ReadMotif(robotStorage, telemetryM, limelight);
 

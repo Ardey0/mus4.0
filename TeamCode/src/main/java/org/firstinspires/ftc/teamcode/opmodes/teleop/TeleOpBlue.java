@@ -141,7 +141,7 @@ public class TeleOpBlue extends CommandOpMode {
                     gamepad, GamepadKeys.Button.SHARE
             );
             tiltButton = new GamepadButton(
-                    gamepad, GamepadKeys.Button.RIGHT_BUMPER
+                    gamepad, GamepadKeys.Button.PS
             );
         }
 
@@ -149,7 +149,7 @@ public class TeleOpBlue extends CommandOpMode {
         follower.setStartingPose(start);
 
         CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
-        schedule(new Init(palete, onofrei, rampa, intakeKicker));
+        schedule(new Init(palete, onofrei, rampa, intakeKicker, tilt));
 
         schedule(new PedroDrive(telemetryM, gamepad, follower));
 

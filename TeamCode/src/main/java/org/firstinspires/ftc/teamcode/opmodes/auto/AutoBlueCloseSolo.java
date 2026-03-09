@@ -42,6 +42,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotStorage;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorGauraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorRoataSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.TiltSubsystem;
 
 @Autonomous
 public class AutoBlueCloseSolo extends CommandOpMode {
@@ -53,6 +54,7 @@ public class AutoBlueCloseSolo extends CommandOpMode {
     private PaleteSubsytem palete;
     private OnofreiSubsystem onofrei;
     private IntakeSubsystem intake;
+    private TiltSubsystem tilt;
     private IntakeKickerSubsystem intakeKicker;
     private RampaSubsystem rampa;
     private SenzorTavanSubsystem senzorTavan;
@@ -222,11 +224,12 @@ public class AutoBlueCloseSolo extends CommandOpMode {
         intake = new IntakeSubsystem(hardwareMap);
         intakeKicker = new IntakeKickerSubsystem(hardwareMap);
         rampa = new RampaSubsystem(hardwareMap);
+        tilt = new TiltSubsystem(hardwareMap);
         senzorTavan = new SenzorTavanSubsystem(hardwareMap);
         senzorRoata = new SenzorRoataSubsystem(hardwareMap);
         senzorGaura = new SenzorGauraSubsystem(hardwareMap);
 
-        init = new Init(palete, onofrei, rampa, intakeKicker);
+        init = new Init(palete, onofrei, rampa, intakeKicker, tilt);
 
         robotStorage.setSector(0, 2);
         robotStorage.setSector(1, 2);
