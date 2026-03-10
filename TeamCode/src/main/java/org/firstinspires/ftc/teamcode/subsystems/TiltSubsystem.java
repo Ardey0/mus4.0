@@ -20,8 +20,4 @@ public class TiltSubsystem extends SubsystemBase {
         servo1.set(position);
         servo2.set(position);
     }
-
-    public void ridicare(){
-        setPosition(UP);
-    }
 }
