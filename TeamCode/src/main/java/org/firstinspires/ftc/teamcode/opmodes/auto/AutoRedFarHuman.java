@@ -87,7 +87,7 @@ public class AutoRedFarHuman extends CommandOpMode {
     private final Pose start = new Pose(88, 8.740, Math.toRadians(180));
     private final Pose launchHuman = new Pose(87.5, 20, Math.toRadians(159));
     private final Pose grab1 = new Pose(105, 36, Math.toRadians(0));
-    private final Pose pickup1 = new Pose(132, 36, Math.toRadians(0));
+    private final Pose pickup1 = new Pose(125, 36, Math.toRadians(0));
     private final Pose grab2 = new Pose(105, 58, Math.toRadians(0));
     private final Pose pickup2 = new Pose(133, 58, Math.toRadians(0));
     private final Pose launchMiddle = new Pose(93.7, 87.40, Math.toRadians(150));
@@ -115,6 +115,12 @@ public class AutoRedFarHuman extends CommandOpMode {
         Pickup1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(grab1, pickup1)
+                )
+                .addParametricCallback(0.01, () ->
+                        follower.setMaxPower(0.5)
+                )
+                .addParametricCallback(1, () ->
+                        follower.setMaxPower(1)
                 )
                 .setLinearHeadingInterpolation(grab1.getHeading(), pickup1.getHeading())
                 .build();
@@ -164,11 +170,23 @@ public class AutoRedFarHuman extends CommandOpMode {
                 .addPath(
                         new BezierLine(launchHuman, grabHuman)
                 )
+                .addParametricCallback(0.8, () ->
+                        follower.setMaxPower(0.5)
+                )
+                .addParametricCallback(1, () ->
+                        follower.setMaxPower(1)
+                )
                 .setLinearHeadingInterpolation(launchHuman.getHeading(), grabHuman.getHeading())
                 .build();
         PickupHuman = follower.pathBuilder()
                 .addPath(
                         new BezierLine(grabHuman, pickupHuman)
+                )
+                .addParametricCallback(0.6, () ->
+                        follower.setMaxPower(0.5)
+                )
+                .addParametricCallback(1, () ->
+                        follower.setMaxPower(1)
                 )
                 .setLinearHeadingInterpolation(grabHuman.getHeading(), pickupHuman.getHeading())
                 .build();
@@ -177,11 +195,23 @@ public class AutoRedFarHuman extends CommandOpMode {
                 .addPath(
                         new BezierLine(launchHuman, grabHuman2)
                 )
+                .addParametricCallback(0.8, () ->
+                        follower.setMaxPower(0.5)
+                )
+                .addParametricCallback(1, () ->
+                        follower.setMaxPower(1)
+                )
                 .setLinearHeadingInterpolation(launchHuman.getHeading(), grabHuman2.getHeading())
                 .build();
         PickupHuman2 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(grabHuman2, pickupHuman2)
+                )
+                .addParametricCallback(0.6, () ->
+                        follower.setMaxPower(0.5)
+                )
+                .addParametricCallback(1, () ->
+                        follower.setMaxPower(1)
                 )
                 .setLinearHeadingInterpolation(grabHuman2.getHeading(), pickupHuman2.getHeading())
                 .build();
@@ -247,10 +277,10 @@ public class AutoRedFarHuman extends CommandOpMode {
                         ),
                         new FollowPathCommand(follower, preload, true, 1)
                 ),
-                new FollowPathCommand(follower, Grab1, true, 1),
                 new ParallelCommandGroup(
-                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(4000),
+                        new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(5500),
                         new SequentialCommandGroup(
+                                new FollowPathCommand(follower, Grab1, true, 1),
                                 new FollowPathCommand(follower, Pickup1, true, 0.2),
                                 new FollowPathCommand(follower, Launch1, true, 0.7)
                         )

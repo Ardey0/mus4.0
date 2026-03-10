@@ -14,22 +14,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
-import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
-import com.seattlesolvers.solverslib.pedroCommand.TurnToCommand;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.Intake;
-import org.firstinspires.ftc.teamcode.commands.LaunchFanFire;
-import org.firstinspires.ftc.teamcode.commands.IntakeIndexing;
 import org.firstinspires.ftc.teamcode.commands.LaunchAll;
-import org.firstinspires.ftc.teamcode.commands.LaunchMotif;
-import org.firstinspires.ftc.teamcode.commands.ReadMotif;
-import org.firstinspires.ftc.teamcode.commands.SpitBalls;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeKickerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
@@ -45,8 +38,8 @@ import org.firstinspires.ftc.teamcode.subsystems.SenzorTavanSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.TiltSubsystem;
 
 @Autonomous
-public class AutoBlueCloseSolo extends CommandOpMode {
-    private final int ALLIANCE = 0; // BLUE
+public class AutoRedCloseSolo extends CommandOpMode {
+    private final int ALLIANCE = 1; // BLUE
 
     private TelemetryManager telemetryM;
 
@@ -82,18 +75,18 @@ public class AutoBlueCloseSolo extends CommandOpMode {
     public PathChain Motif;
     public PathChain LaunchGate;
     public PathChain GrabGate;
-    private final Pose start = new Pose(19.26, 121.36, Math.toRadians(-127.6));
-    private final Pose launchPre = new Pose(45, 95, Math.toRadians(-131));
+    private final Pose start = new Pose(123.6, 121.1, Math.toRadians(129.2));
+    private final Pose launchPre = new Pose(88, 87.3, Math.toRadians(135));
     private final Pose motif = new Pose(45, 95, Math.toRadians(-180));
     private final Pose launch1 = new Pose(53, 90, Math.toRadians(-129));
-    private final Pose launchEdge = new Pose(53, 80, Math.toRadians(-137));
-    private final Pose launchFinal = new Pose(56, 99, Math.toRadians(-128));
-    private final Pose grab1 = new Pose(22, 84.5, Math.toRadians(180));
+    private final Pose launchEdge = new Pose(89, 80, Math.toRadians(139));
+    private final Pose launchFinal = new Pose(86, 99, Math.toRadians(128));
+    private final Pose grab1 = new Pose(120, 84.5, Math.toRadians(0));
     private final Pose clearGateSafe = new Pose(13, 73, Math.toRadians(90));
     private final Pose clearGateRisky = new Pose(13.7,64.5, Math.toRadians(180));
-    private final Pose grab2 = new Pose(17, 58, Math.toRadians(180));
+    private final Pose grab2 = new Pose(126, 59, Math.toRadians(0));
     private final Pose grab3 = new Pose(17, 35, Math.toRadians(180));
-    private final Pose grabGate = new Pose(9.5, 61, Math.toRadians(146));
+    private final Pose grabGate = new Pose(129, 59, Math.toRadians(31.5));
     private final Pose exit = new Pose(34, 75, Math.toRadians(-135));
 
     public void buildPaths() {
@@ -114,7 +107,7 @@ public class AutoBlueCloseSolo extends CommandOpMode {
                 .addPath(
                         new BezierCurve(
                                 launchEdge,
-                                new Pose(48.8, 89.5),
+                                new Pose(72.4, 72.4),
                                 grab1)
                 )
                 .setLinearHeadingInterpolation(launchEdge.getHeading(),grab1.getHeading())
@@ -143,15 +136,14 @@ public class AutoBlueCloseSolo extends CommandOpMode {
                 .addPath(
                         new BezierCurve(
                                 launchPre,
-                                new Pose(47.981, 53.975),
-                                new Pose(51.262, 61.897),
+                                new Pose(77.5, 44.2),
                                 grab2
                         )
                 )
-                .addParametricCallback(0.6, () ->
+                .addParametricCallback(0.75, () ->
                         follower.setMaxPower(0.5)
                 )
-                .addParametricCallback(1, () ->
+                .addParametricCallback(0.99, () ->
                         follower.setMaxPower(1)
                 )
                 .setLinearHeadingInterpolation(launchPre.getHeading(), grab2.getHeading())
@@ -174,14 +166,14 @@ public class AutoBlueCloseSolo extends CommandOpMode {
                 .addPath(
                         new BezierCurve(
                                 launchEdge,
-                                new Pose(30.79,60.4),
+                                new Pose(108.2,56.7),
                                 grabGate
                         )
                 )
-                .addParametricCallback(0.6, () ->
-                        follower.setMaxPower(0.5)
+                .addParametricCallback(0.8, () ->
+                        follower.setMaxPower(0.7)
                 )
-                .addParametricCallback(1, () ->
+                .addParametricCallback(0.99, () ->
                         follower.setMaxPower(1)
                 )
                 .setLinearHeadingInterpolation(launchEdge.getHeading(),grabGate.getHeading())
@@ -190,7 +182,7 @@ public class AutoBlueCloseSolo extends CommandOpMode {
                 .addPath(
                         new BezierCurve(
                                 grabGate,
-                                new Pose(32.5,67.3),
+                                new Pose(105.8,66.9),
                                 launchEdge
                         )
                 )
@@ -202,40 +194,6 @@ public class AutoBlueCloseSolo extends CommandOpMode {
                 )
                 .setLinearHeadingInterpolation(grabGate.getHeading(), launchEdge.getHeading())
                 .build();
-//        Grab3 = follower.pathBuilder()
-//                .addPath(
-//                        new BezierCurve(
-//                                launchEdge,
-//                                new Pose(60.561, 29.383),
-//                                new Pose(39.028, 35.486),
-//                                grab3
-//                        )
-//                )
-//                .addParametricCallback(0.6 , () ->
-//                        follower.setMaxPower(0.5)
-//                )
-//                .addParametricCallback(1, () ->
-//                        follower.setMaxPower(1)
-//                )
-//                .setLinearHeadingInterpolation(launchEdge.getHeading(), grab3.getHeading())
-//                .build();
-//        Launch3 = follower.pathBuilder()
-//                .addPath(
-//                        new BezierLine(grab3, launchEdge)
-//                )
-//                .addParametricCallback(0.7, () ->
-//                        follower.setMaxPower(0.5)
-//                )
-//                .addParametricCallback(1, () ->
-//                        follower.setMaxPower(1)
-//                )
-//                .setLinearHeadingInterpolation(grab3.getHeading(), launchEdge.getHeading())
-//                .build();
-//        Exit = follower.pathBuilder()
-//                .addPath(
-//                        new BezierLine(launchFinal, exit)
-//                )
-//                .build();
     }
 
     public void initialize() {
@@ -295,11 +253,11 @@ public class AutoBlueCloseSolo extends CommandOpMode {
                                 new InstantCommand(() -> {
                                     follower.setMaxPower(1);
                                 }),
+                                new WaitCommand(600),
                                 new FollowPathCommand(follower, LaunchGate, true)
                         )
                 ),
                 new LaunchAll(robotStorage, telemetryM, follower, palete, onofrei, launcher, rampa, ALLIANCE),
-
 
                 new ParallelCommandGroup(
                         new Intake(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker).withTimeout(5500),
@@ -308,7 +266,7 @@ public class AutoBlueCloseSolo extends CommandOpMode {
                                 new InstantCommand(() -> {
                                     follower.setMaxPower(1);
                                 }),
-                                new WaitCommand(400),
+                                new WaitCommand(1000),
                                 new FollowPathCommand(follower, LaunchGate, true)
                         )
                 ),
