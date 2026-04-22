@@ -20,6 +20,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.commands.Init;
 import org.firstinspires.ftc.teamcode.commands.Intake;
+import org.firstinspires.ftc.teamcode.commands.IntakeIndexing;
 import org.firstinspires.ftc.teamcode.commands.LaunchAll;
 import org.firstinspires.ftc.teamcode.commands.LaunchFanFire;
 import org.firstinspires.ftc.teamcode.commands.LaunchBySector;
@@ -165,7 +166,7 @@ public class TeleOpBlue extends CommandOpMode {
 //                )
 //        );
 
-        intakeButton.toggleWhenPressed(new Intake(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker));
+        intakeButton.toggleWhenPressed(new IntakeIndexing(robotStorage, telemetryM, intake, palete, senzorTavan, senzorRoata, senzorGaura, intakeKicker));
 
         palete.setDefaultCommand(new RunCommand(
                 () -> {

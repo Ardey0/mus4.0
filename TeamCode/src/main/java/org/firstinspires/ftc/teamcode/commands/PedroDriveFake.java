@@ -1,0 +1,38 @@
+package org.firstinspires.ftc.teamcode.commands;
+
+
+import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
+import com.seattlesolvers.solverslib.command.CommandBase;
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
+
+public class PedroDriveFake extends CommandBase {
+    private final Follower follower;
+    private final GamepadEx gamepad;
+    private final TelemetryManager telemetry;
+
+    public PedroDriveFake(TelemetryManager telemetryManager, GamepadEx gamepad, Follower follower) {
+        this.follower = follower;
+        this.gamepad = gamepad;
+        this.telemetry = telemetryManager;
+    }
+
+    @Override
+    public void initialize() {
+        follower.startTeleOpDrive(true);
+    }
+
+    @Override
+    public void execute() {
+        follower.setTeleOpDrive(
+                0,
+                0,
+                -gamepad.getRightX(),
+                true
+        ); // Robot Centric
+
+        telemetry.addData("X", follower.getPose().getX());
+        telemetry.addData("Y", follower.getPose().getY());
+        telemetry.addData("Heading", Math.toDegrees(follower.getPose().getHeading()));
+    }
+}

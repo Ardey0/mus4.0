@@ -53,6 +53,14 @@ public class RobotStorage {
         return roata[index];
     }
 
+    public int getBallCount() {
+        int cnt = 0;
+        for (int i : roata) {
+            if (roata[i] != 0) cnt++;
+        }
+        return cnt;
+    }
+
     public int getNextFreeSector() {
         for (int i = 0; i < 3; i++) {
             if (roata[i] == 0) {
